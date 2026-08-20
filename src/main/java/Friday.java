@@ -24,6 +24,7 @@ public class Friday {
     private static final String EMPTY_TODO_MESSAGE = "Sir, description of a todo cannot be empty.";
     private static final String INVALID_MARK_MESSAGE = "Sir, Invalid mark format. Use: mark TASK_NUMBER";
     private static final String INVALID_UNMARK_MESSAGE = "Sir, Invalid unmark format. Use: unmark TASK_NUMBER";
+    private static final String INVALID_DELETE_MESSAGE = "Sir, Invalid delete format. Use: delete TASK_NUMBER";
     private static final String INVALID_TASK_NUMBER_MESSAGE = "Sir, The task number is invalid.";
 
     public static void main(String[] args) {
@@ -41,7 +42,7 @@ public class Friday {
 
             System.out.println(SEPARATOR);
             if (command.equals("bye")) {
-                System.out.println("Bye. Hope, I was of use today:)");
+                System.out.println("Bye. Hope to see you again soon!");
                 System.out.println(SEPARATOR);
                 break;
             } else if (command.equals("hello")) {
@@ -89,6 +90,21 @@ public class Friday {
                 System.out.println("Use the number shown here with mark/unmark.");
                 for (int i = 0; i < taskCount; i++) {
                     System.out.println((i + 1) + "." + tasks[i]);
+                }
+                continue;
+            } else if (command.equals("delete") || command.startsWith("delete ")) {
+                int taskNumber = parseTaskNumber(command);
+                if (taskNumber == -1) {
+                    System.out.println(INVALID_DELETE_MESSAGE);
+                } else if (taskNumber < 1 || taskNumber > taskCount) {
+                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                } else {
+                    Task removedTask = deleteTask(tasks, taskCount, taskNumber);
+                    taskCount--;
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
+                            + " in the list.");
                 }
                 continue;
             } else if (command.equals("mark") || command.startsWith("mark ")) {
@@ -140,6 +156,15 @@ public class Friday {
         System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
                 + " in the list.");
         return taskCount;
+    }
+
+    private static Task deleteTask(Task[] tasks, int taskCount, int taskNumber) {
+        Task removedTask = tasks[taskNumber - 1];
+        for (int i = taskNumber - 1; i < taskCount - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        tasks[taskCount - 1] = null;
+        return removedTask;
     }
 
     private static String parseTextBefore(String text, String delimiter) {

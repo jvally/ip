@@ -52,7 +52,7 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-OOPS!!! The description of a todo cannot be empty.
+Sir, description of a todo cannot be empty.
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -72,7 +72,50 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-OOPS!!! I'm sorry, but I don't know what that means :-(
+Sir, I don't know what you are saying :-(
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Delete a task
+- Aim: Verify that `delete` removes the selected task and shifts the remaining tasks up.
+- Inputs:
+```text
+todo borrow book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+delete 3
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________________________________
+Noted. I've removed this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 2 tasks in the list.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] borrow book
+2.[D][ ] return book (by: Sunday)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -221,7 +264,7 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-Invalid mark format. Use: mark TASK_NUMBER
+Sir, Invalid mark format. Use: mark TASK_NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -246,7 +289,27 @@ Got it. I've added this task:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-OOPS!!! The task number is invalid.
+Sir, The task number is invalid.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid delete format
+- Aim: Verify that `delete` shows an error message when no task number is provided.
+- Inputs:
+```text
+delete
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Sir, Invalid delete format. Use: delete TASK_NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -291,7 +354,7 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-Invalid unmark format. Use: unmark TASK_NUMBER
+Sir, Invalid unmark format. Use: unmark TASK_NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -316,7 +379,32 @@ Got it. I've added this task:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-OOPS!!! The task number is invalid.
+Sir, The task number is invalid.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid delete number
+- Aim: Verify that `delete` shows an error message when the task number is out of range.
+- Inputs:
+```text
+todo borrow book
+delete 2
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
+____________________________________________________________
+Sir, The task number is invalid.
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________

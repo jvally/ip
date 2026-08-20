@@ -49,7 +49,6 @@ as polymorphism and inheritance(More details given within the Friday Class)
 Level-5: Added handling errors and exceptions using Codex-5.4-mini which helped me check errors that came from 
 insufficient testing from Level-0 to LEvel-4 on Friday class 
 
-
 ## Exception handling test cases
 
 The UI test plan includes a few checks for error handling. These help confirm that Friday gives clear feedback when the user enters invalid input:
@@ -60,7 +59,17 @@ The UI test plan includes a few checks for error handling. These help confirm th
 - `event` without `/from` or `/to`
 - `mark` and `unmark` without a task number
 - `mark` and `unmark` with a task number that is out of range
+- `delete` without a task number
+- `delete` with a task number that is out of range
 
 These cases are recorded in `test/ui-test-plan.md` and are meant to keep the chatbot from silently accepting bad input.
+
+Level-6 : Used Codex-5.4 on the deletion code inside the Friday Class
+Updated `Friday.java` to handle invalid input more safely, 
+including empty `todo` commands, unknown commands, invalid `deadline` and `event` formats, 
+and out-of-range task numbers for `mark`, `unmark`, and `delete`. I also added `delete` support 
+for removing tasks from the list and updated `test/ui-test-plan.md` so these edge cases are covered by UI regression tests.
+
+Also used it to update the docs/readme.md file
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
