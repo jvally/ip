@@ -65,10 +65,16 @@ public class Friday {
             } else if (command.startsWith("unmark ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber >= 1 && taskNumber <= taskCount) {
-                    tasks[taskNumber - 1].unmarkAsDone();
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  [" + tasks[taskNumber - 1].getStatusIcon() + "] "
-                            + tasks[taskNumber - 1].getDescription());
+                    //added a check for edge case when user unchecks even when task has not been marked
+                    //done using Codex-5.4-mini, to write this line of code
+                    if (!tasks[taskNumber - 1].isDone) {
+                        System.out.println("This task is already not marked as done.");
+                    } else {
+                        tasks[taskNumber - 1].unmarkAsDone();
+                        System.out.println("OK, I've marked this task as not done yet:");
+                        System.out.println("  [" + tasks[taskNumber - 1].getStatusIcon() + "] "
+                                + tasks[taskNumber - 1].getDescription());
+                    }
                 }
                 continue;
             }

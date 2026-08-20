@@ -69,6 +69,29 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test Case: Unmarking an already unmarked task
+- Aim: Verify that `unmark` reports when the task is already not done.
+- Inputs:
+```text
+read book
+unmark 1
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+added: read book
+____________________________________________________________
+This task is already not marked as done.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test Case: Help command
 - Aim: Verify that `help` prints the project link.
 - Inputs:
