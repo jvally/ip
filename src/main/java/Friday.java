@@ -1,5 +1,9 @@
 import java.util.Scanner;
 
+/**
+ * Friday chatbot entry point.
+ * Uses inheritance for shared Task behavior and polymorphism to store multiple task types in one Task[].
+ */
 public class Friday {
     private static final String GOOD_DAY_ART = """
             ________________________________
@@ -46,46 +50,55 @@ public class Friday {
                 System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
                 continue;
             } else if (command.startsWith("deadline ")) {
-                String description = parseDeadlineDescription(command);
-                String by = parseDeadlineBy(command);
+                String commandBody = parseCommandBody(command, "deadline ");
+                String description = parseTextBefore(commandBody, " /by ");
+                String by = parseTextAfter(commandBody, " /by ");
                 if (!description.isEmpty() && !by.isEmpty()) {
-                    tasks[taskCount] = new Deadline(description, by);
-                    taskCount++;
-                    System.out.println("Got it. I've added this task:");
-                    System.out.println("  " + tasks[taskCount - 1]);
-                    System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
-                            + " in the list.");
+                    taskCount = addTask(tasks, taskCount, new Deadline(description, by));
+                } else {
+                    System.out.println("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
+                }
+                continue;
+            } else if (command.startsWith("event ")) {
+                String commandBody = parseCommandBody(command, "event ");
+                String description = parseTextBefore(commandBody, " /from ");
+                String fromAndTo = parseTextAfter(commandBody, " /from ");
+                String from = parseTextBefore(fromAndTo, " /to ");
+                String to = parseTextAfter(commandBody, " /to ");
+                if (!description.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
+                    taskCount = addTask(tasks, taskCount, new Event(description, from, to));
+                } else {
+                    System.out.println("Invalid event format. Use: event DESCRIPTION /from START /to END");
                 }
                 continue;
             } else if (command.startsWith("todo ")) {
                 String description = parseCommandBody(command, "todo ");
                 if (!description.isEmpty()) {
-                    tasks[taskCount] = new ToDo(description);
-                    taskCount++;
-                    System.out.println("Got it. I've added this task:");
-                    System.out.println("  " + tasks[taskCount - 1]);
-                    System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
-                            + " in the list.");
+                    taskCount = addTask(tasks, taskCount, new ToDo(description));
                 }
                 continue;
             } else if (command.equals("list")) {
                 System.out.println("Here are the tasks in your list:");
+                System.out.println("Use the number shown here with mark/unmark.");
                 for (int i = 0; i < taskCount; i++) {
                     System.out.println((i + 1) + "." + tasks[i]);
                 }
                 continue;
-            } else if (command.startsWith("mark ")) {
-                //used Codex 5.4-mini to make the Task class and compared it without using class approach
+            } else if (command.equals("mark") || command.startsWith("mark ")) {
                 int taskNumber = parseTaskNumber(command);
-                if (taskNumber >= 1 && taskNumber <= taskCount) {
+                if (taskNumber == -1) {
+                    System.out.println("Invalid mark format. Use: mark TASK_NUMBER");
+                } else if (taskNumber >= 1 && taskNumber <= taskCount) {
                     tasks[taskNumber - 1].markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks[taskNumber - 1]);
                 }
                 continue;
-            } else if (command.startsWith("unmark ")) {
+            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                 int taskNumber = parseTaskNumber(command);
-                if (taskNumber >= 1 && taskNumber <= taskCount) {
+                if (taskNumber == -1) {
+                    System.out.println("Invalid unmark format. Use: unmark TASK_NUMBER");
+                } else if (taskNumber >= 1 && taskNumber <= taskCount) {
                     if (!tasks[taskNumber - 1].isDone()) {
                         System.out.println("This task is already not marked as done.");
                     } else {
@@ -98,36 +111,9 @@ public class Friday {
             }
 
             if (taskCount < tasks.length) {
-                tasks[taskCount] = new ToDo(command);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-                System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
-                        + " in the list.");
+                taskCount = addTask(tasks, taskCount, new ToDo(command));
             }
         }
-    }
-
-    private static String parseDescription(String command) {
-        return parseCommandBody(command, "todo ");
-    }
-
-    private static String parseDeadlineDescription(String command) {
-        String commandBody = parseCommandBody(command, "deadline ");
-        int byIndex = commandBody.indexOf(" /by ");
-        if (byIndex == -1) {
-            return "";
-        }
-        return commandBody.substring(0, byIndex).trim();
-    }
-
-    private static String parseDeadlineBy(String command) {
-        String commandBody = parseCommandBody(command, "deadline ");
-        int byIndex = commandBody.indexOf(" /by ");
-        if (byIndex == -1) {
-            return "";
-        }
-        return commandBody.substring(byIndex + " /by ".length()).trim();
     }
 
     private static String parseCommandBody(String command, String prefix) {
@@ -135,6 +121,32 @@ public class Friday {
             return "";
         }
         return command.substring(prefix.length()).trim();
+    }
+
+    private static int addTask(Task[] tasks, int taskCount, Task task) {
+        tasks[taskCount] = task;
+        taskCount++;
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + taskCount + " task" + (taskCount == 1 ? "" : "s")
+                + " in the list.");
+        return taskCount;
+    }
+
+    private static String parseTextBefore(String text, String delimiter) {
+        int delimiterIndex = text.indexOf(delimiter);
+        if (delimiterIndex == -1) {
+            return "";
+        }
+        return text.substring(0, delimiterIndex).trim();
+    }
+
+    private static String parseTextAfter(String text, String delimiter) {
+        int delimiterIndex = text.indexOf(delimiter);
+        if (delimiterIndex == -1) {
+            return "";
+        }
+        return text.substring(delimiterIndex + delimiter.length()).trim();
     }
 
     private static int parseTaskNumber(String command) {

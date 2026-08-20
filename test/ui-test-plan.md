@@ -30,6 +30,7 @@ Got it. I've added this task:
 Now you have 2 tasks in the list.
 ____________________________________________________________
 Here are the tasks in your list:
+Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
 2.[T][ ] buy bread
 ____________________________________________________________
@@ -57,7 +58,75 @@ Got it. I've added this task:
 Now you have 1 task in the list.
 ____________________________________________________________
 Here are the tasks in your list:
+Use the number shown here with mark/unmark.
 1.[D][ ] return book (by: Sunday)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid deadline format
+- Aim: Verify that `deadline` shows an error message when `/by` is missing.
+- Inputs:
+```text
+deadline return book
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Add and list events
+- Aim: Verify that `event` adds Event tasks and shows the from/to times.
+- Inputs:
+```text
+event project meeting /from Mon 2pm /to 4pm
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 1 task in the list.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid event format
+- Aim: Verify that `event` shows an error message when `/from` or `/to` is missing.
+- Inputs:
+```text
+event project meeting /from Mon 2pm
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid event format. Use: event DESCRIPTION /from START /to END
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -91,7 +160,28 @@ OK, I've marked this task as not done yet:
   [T][ ] borrow book
 ____________________________________________________________
 Here are the tasks in your list:
+Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid mark format
+- Aim: Verify that `mark` shows an error message when no task number is provided.
+- Inputs:
+```text
+mark
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid mark format. Use: mark TASK_NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -117,6 +207,26 @@ Got it. I've added this task:
 Now you have 1 task in the list.
 ____________________________________________________________
 This task is already not marked as done.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid unmark format
+- Aim: Verify that `unmark` shows an error message when no task number is provided.
+- Inputs:
+```text
+unmark
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid unmark format. Use: unmark TASK_NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
