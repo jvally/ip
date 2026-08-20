@@ -20,6 +20,11 @@ public class Friday {
             """;
 
     private static final String SEPARATOR = "____________________________________________________________";
+    private static final String UNKNOWN_COMMAND_MESSAGE = "Sir, I don't know what you are saying :-(";
+    private static final String EMPTY_TODO_MESSAGE = "Sir, description of a todo cannot be empty.";
+    private static final String INVALID_MARK_MESSAGE = "Sir, Invalid mark format. Use: mark TASK_NUMBER";
+    private static final String INVALID_UNMARK_MESSAGE = "Sir, Invalid unmark format. Use: unmark TASK_NUMBER";
+    private static final String INVALID_TASK_NUMBER_MESSAGE = "Sir, The task number is invalid.";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -36,7 +41,7 @@ public class Friday {
 
             System.out.println(SEPARATOR);
             if (command.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
+                System.out.println("Bye. Hope, I was of use today:)");
                 System.out.println(SEPARATOR);
                 break;
             } else if (command.equals("hello")) {
@@ -49,7 +54,15 @@ public class Friday {
                 System.out.println("Sure. Here you go:");
                 System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
                 continue;
-            } else if (command.startsWith("deadline ")) {
+            } else if (command.equals("todo") || command.startsWith("todo ")) {
+                String description = parseCommandBody(command, "todo ");
+                if (!description.isEmpty()) {
+                    taskCount = addTask(tasks, taskCount, new ToDo(description));
+                } else {
+                    System.out.println(EMPTY_TODO_MESSAGE);
+                }
+                continue;
+            } else if (command.equals("deadline") || command.startsWith("deadline ")) {
                 String commandBody = parseCommandBody(command, "deadline ");
                 String description = parseTextBefore(commandBody, " /by ");
                 String by = parseTextAfter(commandBody, " /by ");
@@ -59,22 +72,16 @@ public class Friday {
                     System.out.println("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
                 }
                 continue;
-            } else if (command.startsWith("event ")) {
+            } else if (command.equals("event") || command.startsWith("event ")) {
                 String commandBody = parseCommandBody(command, "event ");
                 String description = parseTextBefore(commandBody, " /from ");
                 String fromAndTo = parseTextAfter(commandBody, " /from ");
                 String from = parseTextBefore(fromAndTo, " /to ");
-                String to = parseTextAfter(commandBody, " /to ");
+                String to = parseTextAfter(fromAndTo, " /to ");
                 if (!description.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
                     taskCount = addTask(tasks, taskCount, new Event(description, from, to));
                 } else {
                     System.out.println("Invalid event format. Use: event DESCRIPTION /from START /to END");
-                }
-                continue;
-            } else if (command.startsWith("todo ")) {
-                String description = parseCommandBody(command, "todo ");
-                if (!description.isEmpty()) {
-                    taskCount = addTask(tasks, taskCount, new ToDo(description));
                 }
                 continue;
             } else if (command.equals("list")) {
@@ -87,8 +94,10 @@ public class Friday {
             } else if (command.equals("mark") || command.startsWith("mark ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
-                    System.out.println("Invalid mark format. Use: mark TASK_NUMBER");
-                } else if (taskNumber >= 1 && taskNumber <= taskCount) {
+                    System.out.println(INVALID_MARK_MESSAGE);
+                } else if (taskNumber < 1 || taskNumber > taskCount) {
+                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                } else {
                     tasks[taskNumber - 1].markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks[taskNumber - 1]);
@@ -97,8 +106,10 @@ public class Friday {
             } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
-                    System.out.println("Invalid unmark format. Use: unmark TASK_NUMBER");
-                } else if (taskNumber >= 1 && taskNumber <= taskCount) {
+                    System.out.println(INVALID_UNMARK_MESSAGE);
+                } else if (taskNumber < 1 || taskNumber > taskCount) {
+                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                } else {
                     if (!tasks[taskNumber - 1].isDone()) {
                         System.out.println("This task is already not marked as done.");
                     } else {
@@ -110,9 +121,7 @@ public class Friday {
                 continue;
             }
 
-            if (taskCount < tasks.length) {
-                taskCount = addTask(tasks, taskCount, new ToDo(command));
-            }
+            System.out.println(UNKNOWN_COMMAND_MESSAGE);
         }
     }
 

@@ -38,6 +38,46 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test Case: Invalid todo format
+- Aim: Verify that `todo` shows an error message when the description is missing.
+- Inputs:
+```text
+todo
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The description of a todo cannot be empty.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Unknown command
+- Aim: Verify that unrecognized input produces a clear error message.
+- Inputs:
+```text
+blah
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+OOPS!!! I'm sorry, but I don't know what that means :-(
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test Case: Add and list deadlines
 - Aim: Verify that `deadline` adds Deadline tasks and shows the by-date.
 - Inputs:
@@ -187,6 +227,31 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test Case: Invalid mark number
+- Aim: Verify that `mark` shows an error message when the task number is out of range.
+- Inputs:
+```text
+todo borrow book
+mark 2
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
+____________________________________________________________
+OOPS!!! The task number is invalid.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test Case: Unmarking an already unmarked task
 - Aim: Verify that `unmark` reports when the task is already not done.
 - Inputs:
@@ -227,6 +292,31 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Invalid unmark format. Use: unmark TASK_NUMBER
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid unmark number
+- Aim: Verify that `unmark` shows an error message when the task number is out of range.
+- Inputs:
+```text
+todo borrow book
+unmark 2
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
+____________________________________________________________
+OOPS!!! The task number is invalid.
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
