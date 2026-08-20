@@ -15,11 +15,20 @@ public class Task {
         return isDone ? "X" : " ";
     }
 
+    public boolean isDone() {
+        return isDone;
+    }
+
     public void markAsDone() {
         isDone = true;
     }
 
     public void unmarkAsDone() {
         isDone = false;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + description;
     }
 }

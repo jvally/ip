@@ -5,12 +5,12 @@ Update it whenever the console UI changes.
 
 Program command: `javac -d /private/tmp/ui-test-build src/main/java/*.java && java -cp /private/tmp/ui-test-build Friday`
 
-## Test Case: Add and list tasks
-- Aim: Verify that new tasks are stored and shown by `list`.
+## Test Case: Add and list todos
+- Aim: Verify that `todo` adds ToDo tasks and that `list` shows the ToDo prefix.
 - Inputs:
 ```text
-read book
-return book
+todo borrow book
+todo buy bread
 list
 bye
 ```
@@ -21,26 +21,27 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-added: read book
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
 ____________________________________________________________
-added: return book
+Got it. I've added this task:
+  [T][ ] buy bread
+Now you have 2 tasks in the list.
 ____________________________________________________________
 Here are the tasks in your list:
-1.[ ] read book
-2.[ ] return book
+1.[T][ ] borrow book
+2.[T][ ] buy bread
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
-## Test Case: Mark and unmark a task
-- Aim: Verify that `mark` and `unmark` update the done status.
+## Test Case: Add and list deadlines
+- Aim: Verify that `deadline` adds Deadline tasks and shows the by-date.
 - Inputs:
 ```text
-read book
-return book
-mark 2
-unmark 2
+deadline return book /by Sunday
 list
 bye
 ```
@@ -51,19 +52,46 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-added: read book
-____________________________________________________________
-added: return book
-____________________________________________________________
-Nice! I've marked this task as done:
-  [X] return book
-____________________________________________________________
-OK, I've marked this task as not done yet:
-  [ ] return book
+Got it. I've added this task:
+  [D][ ] return book (by: Sunday)
+Now you have 1 task in the list.
 ____________________________________________________________
 Here are the tasks in your list:
-1.[ ] read book
-2.[ ] return book
+1.[D][ ] return book (by: Sunday)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Mark and unmark a todo
+- Aim: Verify that `mark` and `unmark` update the done status of a ToDo.
+- Inputs:
+```text
+todo borrow book
+mark 1
+unmark 1
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] borrow book
+____________________________________________________________
+OK, I've marked this task as not done yet:
+  [T][ ] borrow book
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] borrow book
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -73,7 +101,7 @@ ____________________________________________________________
 - Aim: Verify that `unmark` reports when the task is already not done.
 - Inputs:
 ```text
-read book
+todo borrow book
 unmark 1
 bye
 ```
@@ -84,7 +112,9 @@ Hello! I'm Friday.
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-added: read book
+Got it. I've added this task:
+  [T][ ] borrow book
+Now you have 1 task in the list.
 ____________________________________________________________
 This task is already not marked as done.
 ____________________________________________________________
