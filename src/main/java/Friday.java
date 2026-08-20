@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class Friday {
-    //used ChatGPT 5.4-mini to help me do the ascii art
     private static final String GOOD_DAY_ART = """
             ________________________________
            |                                |
@@ -17,12 +16,15 @@ public class Friday {
             """;
 
     public static void main(String[] args) {
+        //used Codex-5.4-mini to help the for loop to display items added into the array
         String separator = "____________________________________________________________";
         Scanner scanner = new Scanner(System.in);
+        String[] tasks = new String[100];
+        int taskCount = 0;
 
         System.out.println(separator);
-        System.out.println("Wassup! I'm Friday, your personalized academic weapon.");
-        System.out.println("What do you need today?");
+        System.out.println("Hello! I'm Friday.");
+        System.out.println("What can I do for you?");
         System.out.println(separator);
 
         while (scanner.hasNextLine()) {
@@ -30,7 +32,7 @@ public class Friday {
 
             System.out.println(separator);
             if (command.equals("bye")) {
-                System.out.println("Bye. I hope I DON'T see you again soon:)");
+                System.out.println("Bye. Hope to see you again soon!");
                 System.out.println(separator);
                 break;
             } else if (command.equals("hello")) {
@@ -43,9 +45,18 @@ public class Friday {
                 System.out.println("Sure. Here you go:");
                 System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
                 continue;
+            } else if (command.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+                continue;
             }
 
-            System.out.println(command);
+            if (taskCount < tasks.length) {
+                tasks[taskCount] = command;
+                taskCount++;
+                System.out.println("added: " + command);
+            }
         }
     }
 }
