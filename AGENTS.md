@@ -28,6 +28,10 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 Ensure that Java 25.0.3.fx-zulu is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to this SDK if needed.
 
+## UI testing
+
+Keep `test/ui-test-plan.md` as the source of truth for command-driven UI tests. After any code update that changes the console UI, update the plan if needed and run the `test-ui` skill before reporting completion.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
