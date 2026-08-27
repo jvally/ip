@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -110,6 +112,14 @@ public class Friday {
                     System.out.println("Invalid event format. Use: event DESCRIPTION /from START /to END");
                 }
                 continue;
+            } else if (command.equals("on") || command.startsWith("on ")) {
+                try {
+                    LocalDate date = LocalDate.parse(parseCommandBody(command, "on "));
+                    listTasksOn(tasks, date);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).");
+                }
+                continue;
             } else if (command.equals("list")) {
                 System.out.println("Here are the tasks in your list:");
                 System.out.println("Use the number shown here with mark/unmark.");
@@ -169,6 +179,22 @@ public class Friday {
             }
 
             System.out.println(UNKNOWN_COMMAND_MESSAGE);
+        }
+    }
+
+    /** Shows matching dated tasks using their original list numbers, without modifying or saving the list. */
+    private static void listTasksOn(List<Task> tasks, LocalDate date) {
+        System.out.println("Here are the deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
+        System.out.println("Use the number shown here with mark/unmark.");
+        boolean found = false;
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).occursOn(date)) {
+                System.out.println((i + 1) + "." + tasks.get(i));
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No deadlines or events on this date.");
         }
     }
 

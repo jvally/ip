@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -9,7 +10,8 @@ public class DateTimeTest {
         testInvalidDates();
         testDisplay();
         testTaskDates();
-        System.out.println("All 4 date/time test groups passed.");
+        testDateMatching();
+        System.out.println("All 5 date/time test groups passed.");
     }
 
     /** Alternate input formats must produce the same actual date-time value. */
@@ -76,6 +78,24 @@ public class DateTimeTest {
             check(expected.getMessage().equals("An event cannot end before it starts."),
                     "Explain the invalid interval.");
         }
+    }
+
+    /** Date queries include completed tasks and both event boundary dates, but exclude undated todos. */
+    private static void testDateMatching() {
+        LocalDate day = LocalDate.of(2019, 12, 2);
+        check(!new ToDo("read book").occursOn(day), "Todos must not match a date.");
+        Deadline deadline = new Deadline("return book", "2019-12-02 18:00");
+        deadline.markAsDone();
+        check(deadline.occursOn(day) && !deadline.occursOn(day.plusDays(1)),
+                "A deadline must match only its due date, even when done.");
+        Event event = new Event("conference", "2019-12-01 10:00", "2019-12-03 00:00");
+        check(event.occursOn(day.minusDays(1)) && event.occursOn(day) && event.occursOn(day.plusDays(1)),
+                "An event must include its start date, interior dates, and end date.");
+        check(!event.occursOn(day.minusDays(2)) && !event.occursOn(day.plusDays(2)),
+                "An event must not match outside its date range.");
+        Event instant = new Event("reminder", "2019-12-02", "2019-12-02");
+        check(instant.occursOn(day) && !instant.occursOn(day.plusDays(1)),
+                "An event with equal endpoints must match its single date.");
     }
 
     private static void check(boolean condition, String message) {

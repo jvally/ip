@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /** A task that must be completed by the given date or time. */
@@ -12,6 +13,12 @@ public class Deadline extends Task {
 
     public LocalDateTime getBy() {
         return by;
+    }
+
+    /** Matches the due date regardless of its time or the task's completion status. */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        return by.toLocalDate().equals(date);
     }
 
     @Override

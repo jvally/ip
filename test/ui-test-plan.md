@@ -877,3 +877,124 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test Case: Find dated tasks with original list numbers
+- Aim: Verify date queries include completed events, inclusive event boundary dates, and exact deadline dates while excluding todos and preserving task numbers after a restart.
+- Inputs:
+```text
+@file T|0|buy bread
+@file D|0|return book|2019-12-02T18:00
+@file E|1|conference|2019-12-01T10:00|2019-12-03T00:00
+@file D|0|later task|2019-12-04T00:00
+on 2019-12-02
+mark 2
+@restart
+on 2019-12-02
+on 2019-12-01
+on 2019-12-03
+on 2019-12-04
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Dec 02 2019:
+Use the number shown here with mark/unmark.
+2.[D][ ] return book (by: Dec 02 2019, 18:00)
+3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
+____________________________________________________________
+Nice! I've marked this task as done:
+  [D][X] return book (by: Dec 02 2019, 18:00)
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Dec 02 2019:
+Use the number shown here with mark/unmark.
+2.[D][X] return book (by: Dec 02 2019, 18:00)
+3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
+____________________________________________________________
+Here are the deadlines and events on Dec 01 2019:
+Use the number shown here with mark/unmark.
+3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
+____________________________________________________________
+Here are the deadlines and events on Dec 03 2019:
+Use the number shown here with mark/unmark.
+3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
+____________________________________________________________
+Here are the deadlines and events on Dec 04 2019:
+Use the number shown here with mark/unmark.
+4.[D][ ] later task (by: Dec 04 2019)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Date queries with no matching tasks
+- Aim: Verify empty lists and lists containing only todos report no matching deadlines or events.
+- Inputs:
+```text
+on 2019-12-02
+todo buy bread
+on 2019-12-02
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the deadlines and events on Dec 02 2019:
+Use the number shown here with mark/unmark.
+No deadlines or events on this date.
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] buy bread
+Now you have 1 task in the list.
+____________________________________________________________
+Here are the deadlines and events on Dec 02 2019:
+Use the number shown here with mark/unmark.
+No deadlines or events on this date.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Invalid date query formats
+- Aim: Verify on requires a valid ISO calendar date without a time, and errors do not terminate the chatbot.
+- Inputs:
+```text
+on
+on Sunday
+on 2019-02-29
+on 2019-12-02 18:00
+on 2/12/2019
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```

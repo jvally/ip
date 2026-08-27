@@ -67,6 +67,19 @@ list
 
 Friday shows each task with its number. Use that number for `mark`, `unmark`, and `delete`.
 
+## Finding tasks on a date
+
+Use `on yyyy-MM-dd` to show deadlines and events on a specific date:
+
+```text
+on 2019-12-02
+```
+
+Deadlines match their due date. Events match every calendar date from their start date through their
+end date, including both boundary dates (even an end at midnight). Completed tasks are included;
+undated todos are excluded. The displayed numbers are the original list numbers, so they still work
+with `mark`, `unmark`, and `delete`. This command does not change or save the task list.
+
 ## Marking tasks
 
 Use `mark` to mark a task as done.

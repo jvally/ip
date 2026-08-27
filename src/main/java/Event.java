@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /** A task scheduled between a start and an end time. */
@@ -21,6 +22,12 @@ public class Event extends Task {
 
     public LocalDateTime getTo() {
         return to;
+    }
+
+    /** Matches every calendar date from the start date through the end date, inclusive. */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        return !date.isBefore(from.toLocalDate()) && !date.isAfter(to.toLocalDate());
     }
 
     @Override

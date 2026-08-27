@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /** A task's description and completion status, shared by all task types. */
 public class Task {
     protected String description;
@@ -26,6 +28,11 @@ public class Task {
 
     public void unmarkAsDone() {
         isDone = false;
+    }
+
+    /** Tasks without a date do not appear in date-based searches. */
+    public boolean occursOn(LocalDate date) {
+        return false;
     }
 
     @Override
