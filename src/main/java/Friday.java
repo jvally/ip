@@ -2,13 +2,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Friday chatbot entry point.
  * Uses inheritance for shared Task behavior and polymorphism to store multiple task types in one list.
- * Delegates console interactions to Ui and persistence to Storage.
+ * Delegates console interactions to Ui, task operations to TaskList, and persistence to Storage.
  */
 public class Friday {
     private static final String UNKNOWN_COMMAND_MESSAGE = "Sir, I don't know what you are saying :-(";
@@ -23,12 +22,12 @@ public class Friday {
     public static void main(String[] args) {
         Ui ui = new Ui();
         Storage storage = new Storage(DATA_FILE);
-        List<Task> tasks = new ArrayList<>();
+        TaskList tasks = new TaskList();
         boolean savingEnabled = true;
 
         ui.showWelcome();
         try {
-            tasks = storage.load();
+            tasks = new TaskList(storage.load());
         } catch (IOException | SecurityException e) {
             savingEnabled = false;
             ui.showLoadingError();
@@ -102,18 +101,18 @@ public class Friday {
                 continue;
             } else if (command.equals("list")) {
                 ui.showTaskListHeader();
-                for (int i = 0; i < tasks.size(); i++) {
-                    ui.showNumberedTask(i + 1, tasks.get(i));
+                for (int taskNumber = 1; taskNumber <= tasks.size(); taskNumber++) {
+                    ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
                 }
                 continue;
             } else if (command.equals("delete") || command.startsWith("delete ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
                     ui.showError(INVALID_DELETE_MESSAGE);
-                } else if (taskNumber < 1 || taskNumber > tasks.size()) {
+                } else if (!tasks.isValidTaskNumber(taskNumber)) {
                     ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
-                    Task removedTask = tasks.remove(taskNumber - 1);
+                    Task removedTask = tasks.delete(taskNumber);
                     ui.showTaskDeleted(removedTask, tasks.size());
                     saveTasks(storage, tasks, savingEnabled, ui);
                 }
@@ -122,14 +121,12 @@ public class Friday {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
                     ui.showError(INVALID_MARK_MESSAGE);
-                } else if (taskNumber < 1 || taskNumber > tasks.size()) {
+                } else if (!tasks.isValidTaskNumber(taskNumber)) {
                     ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
-                    Task task = tasks.get(taskNumber - 1);
-                    boolean wasDone = task.isDone();
-                    task.markAsDone();
-                    ui.showTaskMarked(task);
-                    if (!wasDone) {
+                    boolean changed = tasks.mark(taskNumber);
+                    ui.showTaskMarked(tasks.get(taskNumber));
+                    if (changed) {
                         saveTasks(storage, tasks, savingEnabled, ui);
                     }
                 }
@@ -138,15 +135,14 @@ public class Friday {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
                     ui.showError(INVALID_UNMARK_MESSAGE);
-                } else if (taskNumber < 1 || taskNumber > tasks.size()) {
+                } else if (!tasks.isValidTaskNumber(taskNumber)) {
                     ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
-                    if (!tasks.get(taskNumber - 1).isDone()) {
-                        ui.showAlreadyUnmarked();
-                    } else {
-                        tasks.get(taskNumber - 1).unmarkAsDone();
-                        ui.showTaskUnmarked(tasks.get(taskNumber - 1));
+                    if (tasks.unmark(taskNumber)) {
+                        ui.showTaskUnmarked(tasks.get(taskNumber));
                         saveTasks(storage, tasks, savingEnabled, ui);
+                    } else {
+                        ui.showAlreadyUnmarked();
                     }
                 }
                 continue;
@@ -157,28 +153,25 @@ public class Friday {
     }
 
     /** Shows matching dated tasks using their original list numbers, without modifying or saving the list. */
-    private static void listTasksOn(List<Task> tasks, LocalDate date, Ui ui) {
+    private static void listTasksOn(TaskList tasks, LocalDate date, Ui ui) {
         ui.showDateHeader(date);
-        boolean found = false;
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).occursOn(date)) {
-                ui.showNumberedTask(i + 1, tasks.get(i));
-                found = true;
-            }
-        }
-        if (!found) {
+        List<Integer> matches = tasks.findTaskNumbersOn(date);
+        if (matches.isEmpty()) {
             ui.showNoTasksOnDate();
+        }
+        for (int taskNumber : matches) {
+            ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
         }
     }
 
     /** Reports storage failures without terminating the command loop or discarding session tasks. */
-    private static void saveTasks(Storage storage, List<Task> tasks, boolean savingEnabled, Ui ui) {
+    private static void saveTasks(Storage storage, TaskList tasks, boolean savingEnabled, Ui ui) {
         if (!savingEnabled) {
             ui.showSavingDisabled();
             return;
         }
         try {
-            storage.save(tasks);
+            storage.save(tasks.toList());
         } catch (IOException | SecurityException e) {
             ui.showSavingError();
         }
@@ -193,7 +186,7 @@ public class Friday {
     }
 
     /** Adds a task and displays the updated list size. */
-    private static void addTask(List<Task> tasks, Task task, Ui ui) {
+    private static void addTask(TaskList tasks, Task task, Ui ui) {
         tasks.add(task);
         ui.showTaskAdded(task, tasks.size());
     }

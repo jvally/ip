@@ -95,4 +95,13 @@ Extracted `Ui` to own console input, separators, greetings, task feedback, and s
 `Storage` already handles persistence separately. Existing command output and saved data formats are unchanged.
 This keeps the first refactoring step small. The next step is to extract `TaskList`, followed by `Parser`.
 
+## A-MoreOOP: Iteration 2 — task collection
+
+Extracted `TaskList` to own task ordering, addition, deletion, completion changes, and date filtering.
+Its operations use the same one-based task numbers as the console, and status changes report whether a save
+is needed. It copies the loaded list and supplies an unmodifiable list copy to `Storage`, keeping collection
+changes behind its methods while reusing the existing task objects. `Friday` coordinates these operations with
+`Ui` and `Storage`; command output and saved data formats remain unchanged. Focused tests cover collection
+ownership, task numbering, repeated status changes, and date queries. The next step is to extract `Parser`.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

@@ -17,13 +17,14 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 
 The helper does not supply expected output; all console expectations remain in this plan.
 
-Storage and date/time checks (including malformed records, invalid dates, failed writes, and large lists)
+Task-list, storage, and date/time checks (including task numbering, malformed records, invalid dates, and failed writes)
 can also be run with the same JDK from the project root:
 
 ```bash
-javac -d /private/tmp/friday-storage-build src/main/java/*.java test/StorageTest.java test/DateTimeTest.java
+javac -d /private/tmp/friday-storage-build src/main/java/*.java test/StorageTest.java test/DateTimeTest.java test/TaskListTest.java
 java -cp /private/tmp/friday-storage-build StorageTest
 java -cp /private/tmp/friday-storage-build DateTimeTest
+java -cp /private/tmp/friday-storage-build TaskListTest
 ```
 
 ## Test Case: Add and list todos
@@ -994,6 +995,49 @@ ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
 ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Save only when completion changes
+- Aim: Verify repeated mark/unmark commands do not attempt a save, while actual status changes still try to save and retain their in-memory result after a write failure.
+- Inputs:
+```text
+@file T|1|finished task
+@file T|0|pending task
+@block-save
+mark 1
+unmark 2
+mark 2
+unmark 1
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] finished task
+____________________________________________________________
+This task is already not marked as done.
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] pending task
+Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+OK, I've marked this task as not done yet:
+  [T][ ] finished task
+Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] finished task
+2.[T][X] pending task
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
