@@ -38,9 +38,20 @@ Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Commit completed, verified work at logical milestones on the active branch, as requested by the user.
 Leave unrelated user edits uncommitted unless the user asks to include them.
-Do not push unless explicitly asked.
+Do not push outside the level workflow below unless explicitly asked.
 
-When asked to publish a completed course level:
+## Level development workflow
+
+When implementing a course level:
+* Create `branch-Level-N` from the latest `master` before changing level code.
+* Break the level into meaningful, independently verifiable increments rather than one large final commit.
+* After each increment passes the relevant tests, create a detailed commit and push `branch-Level-N` to the fork.
+  Good intervals include a completed model/storage layer, its UI integration, and a stretch feature; avoid commits for
+  incomplete or unverified code merely because time has passed.
+* Update the root `README.md` with a concise `Level-N` implementation summary during every level. Also update
+  `docs/README.md` whenever user-visible commands, formats, setup, or recovery behavior changes.
+* Before merging, run all relevant checks with the required Java SDK and commit and push the final documentation
+  and test updates to `branch-Level-N`.
 * Merge the level branch into `master` with `--no-ff` so there is a merge commit.
 * Add the lightweight `Level-N` tag to that merge commit on `master`.
 * Push `master`, the level branch, and the `Level-N` tag to the user's fork.

@@ -72,4 +72,20 @@ for removing tasks from the list and updated `test/ui-test-plan.md` so these edg
 
 Also used it to update the docs/readme.md file
 
+## Level 7: Save
+
+Friday now loads tasks from `data/friday.txt` at startup and saves automatically after every task-list change.
+The storage layer creates missing folders, preserves todos, deadlines, events, and completion status, and writes
+through a temporary file to reduce the risk of replacing valid data with a partial save. Invalid or unreadable
+files produce a warning and remain protected from overwriting. Storage and restart behavior are covered by
+automated regression tests.
+
+## Level 8: Dates and times
+
+Deadline and event date fields are stored as `LocalDateTime` values rather than free-form strings. Friday accepts
+`yyyy-MM-dd`, `yyyy-MM-dd HH:mm`, and `d/M/yyyy HHmm`, rejects impossible dates and backwards event intervals,
+and displays dates with readable English month names. The `on yyyy-MM-dd` command finds deadlines and events on
+a date while retaining their original task numbers. Date parsing, persistence, validation, and filtering are
+covered by unit and console UI tests.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
