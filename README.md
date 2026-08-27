@@ -4,16 +4,16 @@ This is a project template for a greenfield Java project. It's named after the J
 
 ## Setting up in Intellij
 
-Prerequisites: JDK 25, update Intellij to the most recent version.
+Prerequisites: JDK **25.0.3.fx-zulu**, update Intellij to the most recent version.
 
 1. Open Intellij (if you are not in the welcome screen, click `File` > `Close Project` to close the existing project first)
 2. Open the project into Intellij as follows:
    a. Click `Open`.
    b. Select the project directory, and click `OK`.
    c. If there are any further prompts, accept the defaults.
-3. Configure the project to use **JDK 25** (not other versions) as explained in .<br>
+3. Configure the project to use **JDK 25.0.3.fx-zulu** (not other versions) as explained in .<br>
    In the same dialog, set the **Project language level** field to the option.
-4. After that, locate the `src/main/java/Friday.java` file, right-click it, and 
+4. After that, locate the `src/main/java/friday/Friday.java` file, right-click it, and
    choose `Run Friday.main()` (if the code editor is showing compile errors, try restarting the IDE). 
    If the setup is correct, you should see something like the below as the output:
    ```
@@ -123,5 +123,22 @@ Callers import the task types explicitly; test runners now discover Java files r
 launch tests by their package-qualified class names. The application source root remains `src/main/java`.
 Task-model tests mirror their production package under the existing `test` source root.
 Console commands and saved data remain unchanged.
+
+## A-Packages: Increment 2 — application boundaries
+
+The entry point is now `friday.Friday`, with `Parser` in `friday.parser`, `Storage` in
+`friday.storage`, and `Ui` in `friday.ui`. Parser and storage tests mirror their production
+packages under `test`. The UI runner launches the qualified entry point, while `src/main/java`
+remains the application source root. No command syntax, console output, or save format changed.
+
+| Package | Classes |
+| --- | --- |
+| `friday` | `Friday` |
+| `friday.task` | `Task`, `ToDo`, `Deadline`, `Event`, `TaskList`, `TaskDateTime` |
+| `friday.parser` | `Parser` |
+| `friday.storage` | `Storage` |
+| `friday.ui` | `Ui` |
+
+For launch and test commands, see [the user guide](docs/README.md#setup-and-running).
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

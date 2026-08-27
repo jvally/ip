@@ -1,3 +1,5 @@
+package friday.ui;
+
 import java.time.LocalDate;
 import java.util.Scanner;
 

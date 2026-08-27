@@ -1,10 +1,15 @@
+package friday;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
+import friday.parser.Parser;
+import friday.storage.Storage;
 import friday.task.Task;
 import friday.task.TaskList;
+import friday.ui.Ui;
 
 /**
  * Friday chatbot entry point.

@@ -15,6 +15,7 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@directory` creates a directory instead of the save file, to test a read failure.
 - `@block-save` blocks the destination with a nonempty directory after startup, to test a write failure.
 
+The session helper launches `friday.Friday`; it does not depend on a default-package entry point.
 Both runners discover Java sources in nested package folders under `src/main/java`.
 Java test classes mirror their package directories under `test`, which remains the test source root.
 

@@ -33,7 +33,7 @@ def run_session(build, working_directory, lines):
         data_file.write_text("\n".join(records) + "\n", encoding="utf-8")
 
     process = subprocess.Popen(
-        ["java", "-cp", str(build), "Friday"],
+        ["java", "-cp", str(build), "friday.Friday"],
         cwd=working_directory,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,

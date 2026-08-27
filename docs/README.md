@@ -2,6 +2,27 @@
 
 Friday is a command-line chatbot for managing tasks.
 
+## Setup and running
+
+Keep `src/main/java` marked as the source root in IntelliJ; `src`, `main`, and `java` are
+not Java packages. Select Java **25.0.3.fx-zulu** and run
+`src/main/java/friday/Friday.java`. Update any existing run configuration's main class to
+`friday.Friday` and keep the project root as its working directory so `data/friday.txt`
+continues to resolve to the same saved tasks.
+
+Alternatively, on macOS with SDKMAN installed, run from the project root:
+
+```bash
+sdk use java 25.0.3.fx-zulu
+mkdir -p build/classes
+find src/main/java -name '*.java' > build/sources.txt
+javac -d build/classes @build/sources.txt
+java -cp build/classes friday.Friday
+```
+
+Compilation must include sources in subfolders; `src/main/java/*.java` no longer finds them.
+The `build` directory is ignored by Git. No task-data migration is needed.
+
 ## Development tests
 
 Use Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS).
