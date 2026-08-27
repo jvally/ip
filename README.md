@@ -104,4 +104,15 @@ changes behind its methods while reusing the existing task objects. `Friday` coo
 `Ui` and `Storage`; command output and saved data formats remain unchanged. Focused tests cover collection
 ownership, task numbering, repeated status changes, and date queries. The next step is to extract `Parser`.
 
+## A-MoreOOP: Iteration 3 — command parser
+
+Extracted `Parser` to identify commands, validate argument syntax, and construct tasks or parsed dates and numbers.
+`Friday` now dispatches the parsed command type, checks task numbers against `TaskList`, and saves in one place
+after a successful change. Existing command boundaries, whitespace rules, error messages, and storage protection
+are preserved. Parser tests and console regression tests cover valid commands and invalid input.
+
+The minimum A-MoreOOP extraction is complete: `Ui` handles interaction, `Storage` handles files, `TaskList` owns
+task operations, and `Parser` handles command syntax. A stateless parser and an enum-based dispatch keep this step
+small; the optional command-class hierarchy remains a separate stretch increment.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
