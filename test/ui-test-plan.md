@@ -17,12 +17,13 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 
 The helper does not supply expected output; all console expectations remain in this plan.
 
-Storage-level checks (including malformed records, failed writes, and lists above 100 tasks)
+Storage and date/time checks (including malformed records, invalid dates, failed writes, and large lists)
 can also be run with the same JDK from the project root:
 
 ```bash
-javac -d /private/tmp/friday-storage-build src/main/java/*.java test/StorageTest.java
+javac -d /private/tmp/friday-storage-build src/main/java/*.java test/StorageTest.java test/DateTimeTest.java
 java -cp /private/tmp/friday-storage-build StorageTest
+java -cp /private/tmp/friday-storage-build DateTimeTest
 ```
 
 ## Test Case: Add and list todos
@@ -103,8 +104,8 @@ ____________________________________________________________
 - Inputs:
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-01
+event project meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00
 delete 3
 list
 bye
@@ -121,21 +122,21 @@ Got it. I've added this task:
 Now you have 1 task in the list.
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 01 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 Noted. I've removed this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
-2.[D][ ] return book (by: Sunday)
+2.[D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -145,7 +146,7 @@ ____________________________________________________________
 - Aim: Verify that `deadline` adds Deadline tasks and shows the by-date.
 - Inputs:
 ```text
-deadline return book /by Sunday
+deadline return book /by 2019-12-01
 list
 bye
 ```
@@ -157,12 +158,12 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 01 2019)
 Now you have 1 task in the list.
 ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
-1.[D][ ] return book (by: Sunday)
+1.[D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -192,7 +193,7 @@ ____________________________________________________________
 - Aim: Verify that `event` adds Event tasks and shows the from/to times.
 - Inputs:
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00
 list
 bye
 ```
@@ -204,12 +205,12 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 1 task in the list.
 ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
-1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+1.[E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -219,7 +220,7 @@ ____________________________________________________________
 - Aim: Verify that `event` shows an error message when `/from` or `/to` is missing.
 - Inputs:
 ```text
-event project meeting /from Mon 2pm
+event project meeting /from 2019-12-02 14:00
 bye
 ```
 - Expected output:
@@ -456,8 +457,8 @@ ____________________________________________________________
 - Inputs:
 ```text
 todo read book
-deadline return book /by Sunday
-event meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-01
+event meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00
 mark 2
 @restart
 list
@@ -483,15 +484,15 @@ Got it. I've added this task:
 Now you have 1 task in the list.
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 01 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] meeting (from: Mon 2pm to: 4pm)
+  [E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: Sunday)
+  [D][X] return book (by: Dec 01 2019)
 ____________________________________________________________
 Hello! I'm Friday.
 What can I do for you?
@@ -500,11 +501,11 @@ ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
-2.[D][X] return book (by: Sunday)
-3.[E][ ] meeting (from: Mon 2pm to: 4pm)
+2.[D][X] return book (by: Dec 01 2019)
+3.[E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
 OK, I've marked this task as not done yet:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
 Noted. I've removed this task:
   [T][ ] read book
@@ -516,15 +517,15 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
-1.[D][ ] return book (by: Sunday)
-2.[E][ ] meeting (from: Mon 2pm to: 4pm)
+1.[D][ ] return book (by: Dec 01 2019)
+2.[E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
 Noted. I've removed this task:
-  [E][ ] meeting (from: Mon 2pm to: 4pm)
+  [E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 1 task in the list.
 ____________________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Dec 01 2019)
 Now you have 0 tasks in the list.
 ____________________________________________________________
 Hello! I'm Friday.
@@ -543,8 +544,8 @@ ____________________________________________________________
 - Inputs:
 ```text
 @file T|1|read book
-@file D|1|return book|Sunday
-@file E|1|meeting|Mon 2pm|4pm
+@file D|1|return book|2019-12-01T00:00
+@file E|1|meeting|2019-12-02T14:00|2019-12-02T16:00
 list
 bye
 ```
@@ -558,8 +559,8 @@ ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
 1.[T][X] read book
-2.[D][X] return book (by: Sunday)
-3.[E][X] meeting (from: Mon 2pm to: 4pm)
+2.[D][X] return book (by: Dec 01 2019)
+3.[E][X] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -684,6 +685,194 @@ ____________________________________________________________
 Here are the tasks in your list:
 Use the number shown here with mark/unmark.
 1.[T][ ] session only
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Parse timed deadlines and preserve times across restarts
+- Aim: Verify day-first HHmm and ISO HH:mm inputs produce readable dates and retain actual times after loading.
+- Inputs:
+```text
+deadline return book /by 2/12/2019 1800
+deadline submit report /by 2019-12-02 09:30
+@restart
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Dec 02 2019, 18:00)
+Now you have 1 task in the list.
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] submit report (by: Dec 02 2019, 09:30)
+Now you have 2 tasks in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[D][ ] return book (by: Dec 02 2019, 18:00)
+2.[D][ ] submit report (by: Dec 02 2019, 09:30)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Reject impossible deadline dates and times
+- Aim: Verify invalid calendar dates, times, and vague text are rejected without adding tasks.
+- Inputs:
+```text
+deadline task /by 2019-02-29
+deadline task /by 2019-02-29 18:00
+deadline task /by 31/4/2019 1800
+deadline task /by 2019-12-02 24:00
+deadline task /by Sunday
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Reject invalid event endpoints and backwards intervals
+- Aim: Verify both endpoints are validated and an event cannot end before it starts.
+- Inputs:
+```text
+event meeting /from bad /to 2019-12-02 16:00
+event meeting /from 2019-12-02 14:00 /to 2019-12-02 18:60
+event meeting /from 2019-12-02 16:00 /to 2019-12-02 14:00
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
+____________________________________________________________
+An event cannot end before it starts.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Accept leap days and equal event endpoints
+- Aim: Verify real leap days, date-only events, and equal event endpoints survive saving and loading.
+- Inputs:
+```text
+deadline leap day /by 29/2/2024 1800
+event conference /from 2024-02-29 /to 2024-03-01
+event reminder /from 29/2/2024 1800 /to 2024-02-29 18:00
+@restart
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] leap day (by: Feb 29 2024, 18:00)
+Now you have 1 task in the list.
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] conference (from: Feb 29 2024 to: Mar 01 2024)
+Now you have 2 tasks in the list.
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] reminder (from: Feb 29 2024, 18:00 to: Feb 29 2024, 18:00)
+Now you have 3 tasks in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[D][ ] leap day (by: Feb 29 2024, 18:00)
+2.[E][ ] conference (from: Feb 29 2024 to: Mar 01 2024)
+3.[E][ ] reminder (from: Feb 29 2024, 18:00 to: Feb 29 2024, 18:00)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Protect older saves with ambiguous dates
+- Aim: Verify a Level 7 date such as Sunday is not guessed or overwritten and the chatbot remains usable.
+- Inputs:
+```text
+@file T|0|keep this task
+@file D|0|return book|Sunday
+list
+todo session only
+@restart
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] session only
+Now you have 1 task in the list.
+Warning: This change is only in memory; saving is disabled until you fix the file and restart.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________

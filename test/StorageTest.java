@@ -15,7 +15,8 @@ public class StorageTest {
             testInvalidRecords(directory);
             testLargeList(directory);
             testFailedSave(directory);
-            System.out.println("All 5 storage test groups passed.");
+            testLegacyDateRecords(directory);
+            System.out.println("All 6 storage test groups passed.");
         } finally {
             try (var paths = Files.walk(directory)) {
                 for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
@@ -40,17 +41,24 @@ public class StorageTest {
         Storage storage = new Storage(directory.resolve("round-trip.txt"));
         List<Task> tasks = new ArrayList<>(List.of(
                 new ToDo("read | books \\ notes\nnext\rline café 读书"),
-                new Deadline("return book", "Sun | Mon \\ evening"),
-                new Event("meeting", "Mon\n2pm", "Tue\r4pm")));
+                new Deadline("return | book \\ café", "2/12/2019 1800"),
+                new Event("meeting\nnext\rline", "2019-12-02 14:00", "2019-12-03 16:00")));
         tasks.get(0).markAsDone();
         tasks.get(2).markAsDone();
         storage.save(tasks);
+        String saved = Files.readString(directory.resolve("round-trip.txt"));
+        check(saved.contains("|2019-12-02T18:00"), "Store dates in canonical ISO format.");
         List<Task> loaded = storage.load();
         check(loaded.size() == tasks.size(), "Every task must load.");
         for (int i = 0; i < tasks.size(); i++) {
             check(loaded.get(i).getClass() == tasks.get(i).getClass(), "Task type must survive.");
             check(loaded.get(i).toString().equals(tasks.get(i).toString()), "Task fields must survive.");
         }
+        check(((Deadline) loaded.get(1)).getBy().equals(((Deadline) tasks.get(1)).getBy()),
+                "The actual deadline date-time must survive.");
+        check(((Event) loaded.get(2)).getFrom().equals(((Event) tasks.get(2)).getFrom())
+                && ((Event) loaded.get(2)).getTo().equals(((Event) tasks.get(2)).getTo()),
+                "Both actual event endpoints must survive.");
         loaded.get(0).unmarkAsDone();
         loaded.get(1).markAsDone();
         loaded.remove(2);
@@ -69,7 +77,10 @@ public class StorageTest {
         for (String invalid : List.of("", "nonsense", "Q|0|unknown", "T|2|bad status",
                 "T|true|bad status", "T|0|", "T|0|   ", "T|0|extra|field", "D|0|missing date",
                 "D|0|empty date|", "E|0|missing end|start", "E|0|event||end", "E|0|event|start|end|extra",
-                "T|0|bad\\q", "T|0|trailing\\")) {
+                "T|0|bad\\q", "T|0|trailing\\", "D|0|old deadline|Sunday",
+                "D|0|impossible date|2019-02-29", "D|0|bad time|2019-12-02T24:00",
+                "E|0|old event|Mon 2pm|4pm", "E|0|backwards|2019-12-03|2019-12-02",
+                "E|0|bad end|2019-12-02|2019-02-29")) {
             String original = "T|0|valid first record\n" + invalid + "\n";
             Files.writeString(file, original);
             try {
@@ -137,6 +148,22 @@ public class StorageTest {
         } catch (IllegalArgumentException expected) {
             check(Files.readString(file).equals(original), "A partial write must not replace a valid save.");
         }
+    }
+
+    /** Older records with unambiguous supported dates can load and be saved in canonical form. */
+    private static void testLegacyDateRecords(Path directory) throws IOException {
+        Path file = directory.resolve("legacy-dates.txt");
+        Files.writeString(file, "D|1|return book|2019-12-02\n"
+                + "E|0|meeting|2/12/2019 1800|2019-12-02 20:00\n");
+        Storage storage = new Storage(file);
+        List<Task> loaded = storage.load();
+        check(((Deadline) loaded.get(0)).getBy().equals(TaskDateTime.parse("2019-12-02")),
+                "Older ISO date-only fields must remain readable.");
+        check(loaded.get(0).isDone(), "Loading dates must preserve completion status.");
+        storage.save(loaded);
+        check(Files.readString(file).equals("D|1|return book|2019-12-02T00:00" + System.lineSeparator()
+                + "E|0|meeting|2019-12-02T18:00|2019-12-02T20:00" + System.lineSeparator()),
+                "Saving must normalize supported older date fields without losing time information.");
     }
 
     private static void check(boolean condition, String message) {

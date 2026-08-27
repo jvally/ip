@@ -1,24 +1,31 @@
+import java.time.LocalDateTime;
+
 /** A task scheduled between a start and an end time. */
 public class Event extends Task {
-    protected String from;
-    protected String to;
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
+    /** Parses both endpoints and rejects a backwards interval; equal endpoints are allowed. */
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.from = TaskDateTime.parse(from);
+        this.to = TaskDateTime.parse(to);
+        if (this.to.isBefore(this.from)) {
+            throw new IllegalArgumentException("An event cannot end before it starts.");
+        }
     }
 
-    public String getFrom() {
+    public LocalDateTime getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public LocalDateTime getTo() {
         return to;
     }
 
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E]" + super.toString() + " (from: " + TaskDateTime.format(from)
+                + " to: " + TaskDateTime.format(to) + ")";
     }
 }

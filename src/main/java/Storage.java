@@ -81,9 +81,9 @@ public class Storage {
     private String formatTask(Task task) {
         String fields = "|" + (task.isDone() ? "1" : "0") + "|" + escape(task.getDescription());
         if (task instanceof Deadline deadline) {
-            return "D" + fields + "|" + escape(deadline.getBy());
+            return "D" + fields + "|" + deadline.getBy();
         } else if (task instanceof Event event) {
-            return "E" + fields + "|" + escape(event.getFrom()) + "|" + escape(event.getTo());
+            return "E" + fields + "|" + event.getFrom() + "|" + event.getTo();
         } else if (task instanceof ToDo) {
             return "T" + fields;
         }

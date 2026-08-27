@@ -8,7 +8,8 @@ public class DateTimeTest {
         testSupportedFormats();
         testInvalidDates();
         testDisplay();
-        System.out.println("All 3 date/time test groups passed.");
+        testTaskDates();
+        System.out.println("All 4 date/time test groups passed.");
     }
 
     /** Alternate input formats must produce the same actual date-time value. */
@@ -54,6 +55,26 @@ public class DateTimeTest {
                     "Midnight must be displayed consistently with date-only input.");
         } finally {
             Locale.setDefault(original);
+        }
+    }
+
+    /** Task objects expose real date-time values and enforce chronological event endpoints. */
+    private static void testTaskDates() {
+        Deadline deadline = new Deadline("return book", "2/12/2019 1800");
+        check(deadline.getBy().equals(LocalDateTime.of(2019, 12, 2, 18, 0)),
+                "Deadlines must store LocalDateTime values.");
+        Event event = new Event("overnight", "2019-12-02 23:00", "2019-12-03 01:00");
+        check(event.getFrom().equals(LocalDateTime.of(2019, 12, 2, 23, 0))
+                && event.getTo().equals(LocalDateTime.of(2019, 12, 3, 1, 0)),
+                "Events must store both endpoints as LocalDateTime values.");
+        Event instant = new Event("reminder", "2019-12-02", "2019-12-02");
+        check(instant.getFrom().equals(instant.getTo()), "Equal endpoints must be allowed.");
+        try {
+            new Event("backwards", "2019-12-03", "2019-12-02");
+            throw new AssertionError("Accepted an event ending before its start.");
+        } catch (IllegalArgumentException expected) {
+            check(expected.getMessage().equals("An event cannot end before it starts."),
+                    "Explain the invalid interval.");
         }
     }
 

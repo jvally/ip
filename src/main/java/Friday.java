@@ -83,8 +83,12 @@ public class Friday {
                 String description = parseTextBefore(commandBody, " /by ");
                 String by = parseTextAfter(commandBody, " /by ");
                 if (!description.isEmpty() && !by.isEmpty()) {
-                    addTask(tasks, new Deadline(description, by));
-                    saveTasks(storage, tasks, savingEnabled);
+                    try {
+                        addTask(tasks, new Deadline(description, by));
+                        saveTasks(storage, tasks, savingEnabled);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
                 } else {
                     System.out.println("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
                 }
@@ -96,8 +100,12 @@ public class Friday {
                 String from = parseTextBefore(fromAndTo, " /to ");
                 String to = parseTextAfter(fromAndTo, " /to ");
                 if (!description.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
-                    addTask(tasks, new Event(description, from, to));
-                    saveTasks(storage, tasks, savingEnabled);
+                    try {
+                        addTask(tasks, new Event(description, from, to));
+                        saveTasks(storage, tasks, savingEnabled);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
                 } else {
                     System.out.println("Invalid event format. Use: event DESCRIPTION /from START /to END");
                 }

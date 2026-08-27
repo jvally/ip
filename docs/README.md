@@ -23,10 +23,10 @@ Use `deadline` when a task has a due date.
 
 Example:
 ```text
-deadline return book /by Sunday
+deadline return book /by 2019-12-02
 ```
 
-Friday stores both the description and the deadline text.
+Friday stores the deadline as a `LocalDateTime` and displays `Dec 02 2019`.
 
 ## Adding events
 
@@ -34,10 +34,27 @@ Use `event` for tasks with a start and end time.
 
 Example:
 ```text
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-12-02 14:00 /to 2019-12-02 16:00
 ```
 
-Friday stores the description, start time, and end time.
+Friday stores the start and end as `LocalDateTime` values. The end cannot be before the start;
+equal endpoints are allowed. Give a full date for both endpoints, including events within one day.
+
+## Dates and times
+
+Deadlines and event endpoints accept these formats:
+
+| Input format | Example | Display |
+| --- | --- | --- |
+| `yyyy-MM-dd` | `2019-10-15` | `Oct 15 2019` |
+| `yyyy-MM-dd HH:mm` | `2019-12-02 18:00` | `Dec 02 2019, 18:00` |
+| `d/M/yyyy HHmm` | `2/12/2019 1800` | `Dec 02 2019, 18:00` |
+
+Slash-separated dates are day/month/year, so `2/12/2019` means 2 December.
+Times use the 24-hour clock. Date-only input means midnight; midnight is displayed as a date alone.
+These are local dates and times without a timezone. Month names always display in English.
+Invalid dates (such as `2019-02-29`), invalid times (such as `24:00`), and vague dates (such as
+`Sunday`) produce an error without adding a task. The ISO storage form `2019-12-02T18:00` is also accepted.
 
 ## Listing tasks
 
@@ -87,12 +104,18 @@ The UTF-8 text format uses one task per line, with `0` for not done and `1` for 
 
 ```text
 T|1|read book
-D|0|return book|Sunday
-E|0|project meeting|Mon 2pm|4pm
+D|0|return book|2019-12-02T00:00
+E|0|project meeting|2019-12-02T14:00|2019-12-02T16:00
 ```
 
 Fields are separated by `|` with no added spaces. Within text fields, `\|` means a literal pipe,
 `\\` a backslash, `\n` a newline, and `\r` a carriage return. Empty files represent empty lists.
+Date fields use ISO date-time values with minute precision, independently of the console display.
+
+Older Level 7 records still load when their date fields match a supported format.
+Text such as `Sunday` or `Mon 2pm` cannot be converted without guessing a date.
+If your save contains such text, back up the file and replace those fields with explicit dates
+before restarting. Friday will preserve an unreadable or invalid original file as described below.
 
 If the file is malformed or unreadable, Friday starts with an empty session list and displays a warning.
 Saving stays disabled for that session to protect the original file; any new changes remain only in memory.
