@@ -75,6 +75,32 @@ Example:
 delete 3
 ```
 
+## Saving and loading
+
+Run Friday with the project root as the working directory (including in IntelliJ).
+Tasks load automatically at startup and save after each addition, deletion, or completion-status change
+to `data/friday.txt`, relative to that directory. No save command or `bye` is required.
+Friday creates the `data` folder and file on the first change if they do not exist.
+Local task data is excluded from Git.
+
+The UTF-8 text format uses one task per line, with `0` for not done and `1` for done:
+
+```text
+T|1|read book
+D|0|return book|Sunday
+E|0|project meeting|Mon 2pm|4pm
+```
+
+Fields are separated by `|` with no added spaces. Within text fields, `\|` means a literal pipe,
+`\\` a backslash, `\n` a newline, and `\r` a carriage return. Empty files represent empty lists.
+
+If the file is malformed or unreadable, Friday starts with an empty session list and displays a warning.
+Saving stays disabled for that session to protect the original file; any new changes remain only in memory.
+Back up and repair the file (or move it aside to start fresh), then restart Friday.
+If a save fails, Friday warns you and keeps the session running. Fix the folder or file permissions;
+the next task-list change retries saving the full list. Successful saves write a temporary snapshot before
+replacing the old file, using an atomic move when the filesystem supports it.
+
 ## Friendly commands
 
 Friday also responds to a few personality commands:
