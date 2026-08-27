@@ -3,6 +3,9 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
+import friday.task.Task;
+import friday.task.TaskList;
+
 /**
  * Friday chatbot entry point.
  * Coordinates Parser, Ui, TaskList, and Storage without interpreting command syntax itself.

@@ -10,6 +10,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import friday.task.Deadline;
+import friday.task.Event;
+import friday.task.Task;
+import friday.task.ToDo;
+
 /**
  * Reads and writes UTF-8 task records, keeping file handling separate from the console UI.
  * Each line contains a task type, completion status, description, and any date fields.

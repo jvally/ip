@@ -13,8 +13,8 @@ import tempfile
 def main():
     """Run each *Test.java main method, stopping if compilation or any test fails."""
     repo = Path(__file__).resolve().parents[1]
-    sources = sorted((repo / "src/main/java").glob("*.java"))
-    tests = sorted((repo / "test").glob("*Test.java"))
+    sources = sorted((repo / "src/main/java").rglob("*.java"))
+    tests = sorted((repo / "test").rglob("*Test.java"))
     if not tests:
         raise SystemExit("No Java test classes found.")
     with tempfile.TemporaryDirectory(prefix="friday-unit-") as temporary:
@@ -25,7 +25,9 @@ def main():
             cwd=repo,
         )
         for test in tests:
-            subprocess.run(["java", "-cp", str(build), test.stem], check=True, cwd=repo)
+            # Test folders mirror Java packages relative to the test source root.
+            class_name = ".".join(test.relative_to(repo / "test").with_suffix("").parts)
+            subprocess.run(["java", "-cp", str(build), class_name], check=True, cwd=repo)
 
 
 if __name__ == "__main__":

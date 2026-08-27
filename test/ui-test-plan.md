@@ -15,6 +15,9 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@directory` creates a directory instead of the save file, to test a read failure.
 - `@block-save` blocks the destination with a nonempty directory after startup, to test a write failure.
 
+Both runners discover Java sources in nested package folders under `src/main/java`.
+Java test classes mirror their package directories under `test`, which remains the test source root.
+
 The helper does not supply expected output; all console expectations remain in this plan.
 
 Parser, task-list, storage, and date/time checks (including command syntax, task numbering, invalid records, and failed writes)

@@ -1,6 +1,9 @@
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import friday.task.Task;
+import friday.task.TaskDateTime;
+
 /** Handles console input and presentation without parsing commands or changing tasks. */
 public class Ui {
     private static final String GOOD_DAY_ART = """

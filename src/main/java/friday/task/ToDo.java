@@ -1,3 +1,5 @@
+package friday.task;
+
 /** A task with no date or time attached. */
 public class ToDo extends Task {
     public ToDo(String description) {

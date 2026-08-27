@@ -67,7 +67,7 @@ def main():
         build = working_directory / "classes"
         subprocess.run(
             ["javac", "-d", str(build)]
-            + [str(source) for source in sorted((repo / "src/main/java").glob("*.java"))],
+            + [str(source) for source in sorted((repo / "src/main/java").rglob("*.java"))],
             check=True,
         )
         session = []

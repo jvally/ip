@@ -115,4 +115,13 @@ The minimum A-MoreOOP extraction is complete: `Ui` handles interaction, `Storage
 task operations, and `Parser` handles command syntax. A stateless parser and an enum-based dispatch keep this step
 small; the optional command-class hierarchy remains a separate stretch increment.
 
+## A-Packages: Increment 1 — task model
+
+Grouped `Task`, `ToDo`, `Deadline`, `Event`, `TaskList`, and `TaskDateTime` in `friday.task`.
+Task date handling stays beside the task model rather than in a general-purpose utility package.
+Callers import the task types explicitly; test runners now discover Java files recursively and
+launch tests by their package-qualified class names. The application source root remains `src/main/java`.
+Task-model tests mirror their production package under the existing `test` source root.
+Console commands and saved data remain unchanged.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

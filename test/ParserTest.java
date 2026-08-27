@@ -2,6 +2,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
+import friday.task.Deadline;
+import friday.task.Event;
+import friday.task.Task;
+import friday.task.TaskDateTime;
+import friday.task.ToDo;
+
 /** Dependency-free regression tests for command recognition and argument parsing. */
 public class ParserTest {
     public static void main(String[] args) {

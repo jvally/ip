@@ -1,3 +1,5 @@
+package friday.task;
+
 import java.time.LocalDate;
 
 /** A task's description and completion status, shared by all task types. */

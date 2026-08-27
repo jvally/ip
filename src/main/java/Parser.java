@@ -1,6 +1,11 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+import friday.task.Deadline;
+import friday.task.Event;
+import friday.task.Task;
+import friday.task.ToDo;
+
 /** Interprets command text and validates arguments without reading input or changing the task list. */
 public final class Parser {
     private static final String UNKNOWN_COMMAND_MESSAGE = "Sir, I don't know what you are saying :-(";

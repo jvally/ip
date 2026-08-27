@@ -2,6 +2,14 @@
 
 Friday is a command-line chatbot for managing tasks.
 
+## Development tests
+
+Use Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS).
+From the project root, run `python3 test/run-unit-tests.py` for the Java tests.
+The runner discovers nested source and test packages automatically. Command-driven UI tests
+are defined in `test/ui-test-plan.md` and run with the repository's `test-ui` skill.
+On Windows, use `python` or `py -3` if `python3` is unavailable.
+
 ## Quick start
 
 Type a command and press Enter. Friday supports todos, deadlines, events, and a few helper commands.
