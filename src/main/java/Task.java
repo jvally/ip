@@ -1,3 +1,4 @@
+/** A task's description and completion status, shared by all task types. */
 public class Task {
     protected String description;
     protected boolean isDone;
