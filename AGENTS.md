@@ -36,4 +36,12 @@ Keep `test/ui-test-plan.md` as the source of truth for command-driven UI tests. 
 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
-Do not commit or push unless explicitly asked.
+Commit completed, verified work at logical milestones on the active branch, as requested by the user.
+Leave unrelated user edits uncommitted unless the user asks to include them.
+Do not push unless explicitly asked.
+
+When asked to publish a completed course level:
+* Merge the level branch into `master` with `--no-ff` so there is a merge commit.
+* Add the lightweight `Level-N` tag to that merge commit on `master`.
+* Push `master`, the level branch, and the `Level-N` tag to the user's fork.
+* Keep the level branch after merging; the course checks require the merged branch to remain available.
