@@ -4,28 +4,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Friday chatbot entry point.
  * Uses inheritance for shared Task behavior and polymorphism to store multiple task types in one list.
+ * Delegates console interactions to Ui and persistence to Storage.
  */
 public class Friday {
-    private static final String GOOD_DAY_ART = """
-            ________________________________
-           |                                |
-           |  Good day to you sir!          |
-           |________________________________|
-            """;
-
-    private static final String THANKS_ART = """
-            ________________________
-           |                        |
-           |  Thanks!               |
-           |________________________|
-            """;
-
-    private static final String SEPARATOR = "____________________________________________________________";
     private static final String UNKNOWN_COMMAND_MESSAGE = "Sir, I don't know what you are saying :-(";
     private static final String EMPTY_TODO_MESSAGE = "Sir, description of a todo cannot be empty.";
     private static final String INVALID_MARK_MESSAGE = "Sir, Invalid mark format. Use: mark TASK_NUMBER";
@@ -36,48 +21,43 @@ public class Friday {
 
     /** Loads saved tasks and processes commands, saving after each task-list change. */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
         Storage storage = new Storage(DATA_FILE);
         List<Task> tasks = new ArrayList<>();
         boolean savingEnabled = true;
 
-        System.out.println(SEPARATOR);
-        System.out.println("Hello! I'm Friday.");
-        System.out.println("What can I do for you?");
+        ui.showWelcome();
         try {
             tasks = storage.load();
         } catch (IOException | SecurityException e) {
             savingEnabled = false;
-            System.out.println("Warning: I couldn't load data/friday.txt. "
-                    + "Check the file and restart; saving is disabled to protect existing data.");
+            ui.showLoadingError();
         }
-        System.out.println(SEPARATOR);
+        ui.showLine();
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
 
-            System.out.println(SEPARATOR);
+            ui.showLine();
             if (command.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(SEPARATOR);
+                ui.showGoodbye();
                 break;
             } else if (command.equals("hello")) {
-                System.out.println(GOOD_DAY_ART);
+                ui.showGreeting();
                 continue;
             } else if (command.equals("thanks")) {
-                System.out.println(THANKS_ART);
+                ui.showThanks();
                 continue;
             } else if (command.equals("help")) {
-                System.out.println("Sure. Here you go:");
-                System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
+                ui.showHelp();
                 continue;
             } else if (command.equals("todo") || command.startsWith("todo ")) {
                 String description = parseCommandBody(command, "todo ");
                 if (!description.isEmpty()) {
-                    addTask(tasks, new ToDo(description));
-                    saveTasks(storage, tasks, savingEnabled);
+                    addTask(tasks, new ToDo(description), ui);
+                    saveTasks(storage, tasks, savingEnabled, ui);
                 } else {
-                    System.out.println(EMPTY_TODO_MESSAGE);
+                    ui.showError(EMPTY_TODO_MESSAGE);
                 }
                 continue;
             } else if (command.equals("deadline") || command.startsWith("deadline ")) {
@@ -86,13 +66,13 @@ public class Friday {
                 String by = parseTextAfter(commandBody, " /by ");
                 if (!description.isEmpty() && !by.isEmpty()) {
                     try {
-                        addTask(tasks, new Deadline(description, by));
-                        saveTasks(storage, tasks, savingEnabled);
+                        addTask(tasks, new Deadline(description, by), ui);
+                        saveTasks(storage, tasks, savingEnabled, ui);
                     } catch (IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
+                        ui.showError(e.getMessage());
                     }
                 } else {
-                    System.out.println("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
+                    ui.showError("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
                 }
                 continue;
             } else if (command.equals("event") || command.startsWith("event ")) {
@@ -103,113 +83,104 @@ public class Friday {
                 String to = parseTextAfter(fromAndTo, " /to ");
                 if (!description.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
                     try {
-                        addTask(tasks, new Event(description, from, to));
-                        saveTasks(storage, tasks, savingEnabled);
+                        addTask(tasks, new Event(description, from, to), ui);
+                        saveTasks(storage, tasks, savingEnabled, ui);
                     } catch (IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
+                        ui.showError(e.getMessage());
                     }
                 } else {
-                    System.out.println("Invalid event format. Use: event DESCRIPTION /from START /to END");
+                    ui.showError("Invalid event format. Use: event DESCRIPTION /from START /to END");
                 }
                 continue;
             } else if (command.equals("on") || command.startsWith("on ")) {
                 try {
                     LocalDate date = LocalDate.parse(parseCommandBody(command, "on "));
-                    listTasksOn(tasks, date);
+                    listTasksOn(tasks, date, ui);
                 } catch (DateTimeParseException e) {
-                    System.out.println("Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).");
+                    ui.showError("Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).");
                 }
                 continue;
             } else if (command.equals("list")) {
-                System.out.println("Here are the tasks in your list:");
-                System.out.println("Use the number shown here with mark/unmark.");
+                ui.showTaskListHeader();
                 for (int i = 0; i < tasks.size(); i++) {
-                    System.out.println((i + 1) + "." + tasks.get(i));
+                    ui.showNumberedTask(i + 1, tasks.get(i));
                 }
                 continue;
             } else if (command.equals("delete") || command.startsWith("delete ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
-                    System.out.println(INVALID_DELETE_MESSAGE);
+                    ui.showError(INVALID_DELETE_MESSAGE);
                 } else if (taskNumber < 1 || taskNumber > tasks.size()) {
-                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                    ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
                     Task removedTask = tasks.remove(taskNumber - 1);
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removedTask);
-                    System.out.println("Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s")
-                            + " in the list.");
-                    saveTasks(storage, tasks, savingEnabled);
+                    ui.showTaskDeleted(removedTask, tasks.size());
+                    saveTasks(storage, tasks, savingEnabled, ui);
                 }
                 continue;
             } else if (command.equals("mark") || command.startsWith("mark ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
-                    System.out.println(INVALID_MARK_MESSAGE);
+                    ui.showError(INVALID_MARK_MESSAGE);
                 } else if (taskNumber < 1 || taskNumber > tasks.size()) {
-                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                    ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
                     Task task = tasks.get(taskNumber - 1);
                     boolean wasDone = task.isDone();
                     task.markAsDone();
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + task);
+                    ui.showTaskMarked(task);
                     if (!wasDone) {
-                        saveTasks(storage, tasks, savingEnabled);
+                        saveTasks(storage, tasks, savingEnabled, ui);
                     }
                 }
                 continue;
             } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                 int taskNumber = parseTaskNumber(command);
                 if (taskNumber == -1) {
-                    System.out.println(INVALID_UNMARK_MESSAGE);
+                    ui.showError(INVALID_UNMARK_MESSAGE);
                 } else if (taskNumber < 1 || taskNumber > tasks.size()) {
-                    System.out.println(INVALID_TASK_NUMBER_MESSAGE);
+                    ui.showError(INVALID_TASK_NUMBER_MESSAGE);
                 } else {
                     if (!tasks.get(taskNumber - 1).isDone()) {
-                        System.out.println("This task is already not marked as done.");
+                        ui.showAlreadyUnmarked();
                     } else {
                         tasks.get(taskNumber - 1).unmarkAsDone();
-                        System.out.println("OK, I've marked this task as not done yet:");
-                        System.out.println("  " + tasks.get(taskNumber - 1));
-                        saveTasks(storage, tasks, savingEnabled);
+                        ui.showTaskUnmarked(tasks.get(taskNumber - 1));
+                        saveTasks(storage, tasks, savingEnabled, ui);
                     }
                 }
                 continue;
             }
 
-            System.out.println(UNKNOWN_COMMAND_MESSAGE);
+            ui.showError(UNKNOWN_COMMAND_MESSAGE);
         }
     }
 
     /** Shows matching dated tasks using their original list numbers, without modifying or saving the list. */
-    private static void listTasksOn(List<Task> tasks, LocalDate date) {
-        System.out.println("Here are the deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
-        System.out.println("Use the number shown here with mark/unmark.");
+    private static void listTasksOn(List<Task> tasks, LocalDate date, Ui ui) {
+        ui.showDateHeader(date);
         boolean found = false;
         for (int i = 0; i < tasks.size(); i++) {
             if (tasks.get(i).occursOn(date)) {
-                System.out.println((i + 1) + "." + tasks.get(i));
+                ui.showNumberedTask(i + 1, tasks.get(i));
                 found = true;
             }
         }
         if (!found) {
-            System.out.println("No deadlines or events on this date.");
+            ui.showNoTasksOnDate();
         }
     }
 
     /** Reports storage failures without terminating the command loop or discarding session tasks. */
-    private static void saveTasks(Storage storage, List<Task> tasks, boolean savingEnabled) {
+    private static void saveTasks(Storage storage, List<Task> tasks, boolean savingEnabled, Ui ui) {
         if (!savingEnabled) {
-            System.out.println("Warning: This change is only in memory; saving is disabled until you fix the file "
-                    + "and restart.");
+            ui.showSavingDisabled();
             return;
         }
         try {
             storage.save(tasks);
         } catch (IOException | SecurityException e) {
-            System.out.println("Warning: I couldn't save data/friday.txt. "
-                    + "Your changes are only in memory; check the folder and file permissions.");
+            ui.showSavingError();
         }
     }
 
@@ -222,12 +193,9 @@ public class Friday {
     }
 
     /** Adds a task and displays the updated list size. */
-    private static void addTask(List<Task> tasks, Task task) {
+    private static void addTask(List<Task> tasks, Task task, Ui ui) {
         tasks.add(task);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + tasks.size() + " task" + (tasks.size() == 1 ? "" : "s")
-                + " in the list.");
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /** Returns text before the first delimiter, or an empty string when it is missing. */

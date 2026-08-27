@@ -88,4 +88,11 @@ and displays dates with readable English month names. The `on yyyy-MM-dd` comman
 a date while retaining their original task numbers. Date parsing, persistence, validation, and filtering are
 covered by unit and console UI tests.
 
+## A-MoreOOP: Iteration 1 — console UI
+
+Extracted `Ui` to own console input, separators, greetings, task feedback, and storage warnings.
+`Friday` delegates presentation to `Ui` while retaining command parsing and task operations for now;
+`Storage` already handles persistence separately. Existing command output and saved data formats are unchanged.
+This keeps the first refactoring step small. The next step is to extract `TaskList`, followed by `Parser`.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
