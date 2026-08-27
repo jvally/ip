@@ -4,16 +4,16 @@ This is a project template for a greenfield Java project. It's named after the J
 
 ## Setting up in Intellij
 
-Prerequisites: JDK 25, update Intellij to the most recent version.
+Prerequisites: JDK **25.0.3.fx-zulu**, update Intellij to the most recent version.
 
 1. Open Intellij (if you are not in the welcome screen, click `File` > `Close Project` to close the existing project first)
 2. Open the project into Intellij as follows:
    a. Click `Open`.
    b. Select the project directory, and click `OK`.
    c. If there are any further prompts, accept the defaults.
-3. Configure the project to use **JDK 25** (not other versions) as explained in .<br>
+3. Configure the project to use **JDK 25.0.3.fx-zulu** (not other versions) as explained in .<br>
    In the same dialog, set the **Project language level** field to the option.
-4. After that, locate the `src/main/java/Friday.java` file, right-click it, and 
+4. After that, locate the `src/main/java/friday/Friday.java` file, right-click it, and
    choose `Run Friday.main()` (if the code editor is showing compile errors, try restarting the IDE). 
    If the setup is correct, you should see something like the below as the output:
    ```
@@ -87,5 +87,58 @@ Deadline and event date fields are stored as `LocalDateTime` values rather than 
 and displays dates with readable English month names. The `on yyyy-MM-dd` command finds deadlines and events on
 a date while retaining their original task numbers. Date parsing, persistence, validation, and filtering are
 covered by unit and console UI tests.
+
+## A-MoreOOP: Iteration 1 — console UI
+
+Extracted `Ui` to own console input, separators, greetings, task feedback, and storage warnings.
+`Friday` delegates presentation to `Ui` while retaining command parsing and task operations for now;
+`Storage` already handles persistence separately. Existing command output and saved data formats are unchanged.
+This keeps the first refactoring step small. The next step is to extract `TaskList`, followed by `Parser`.
+
+## A-MoreOOP: Iteration 2 — task collection
+
+Extracted `TaskList` to own task ordering, addition, deletion, completion changes, and date filtering.
+Its operations use the same one-based task numbers as the console, and status changes report whether a save
+is needed. It copies the loaded list and supplies an unmodifiable list copy to `Storage`, keeping collection
+changes behind its methods while reusing the existing task objects. `Friday` coordinates these operations with
+`Ui` and `Storage`; command output and saved data formats remain unchanged. Focused tests cover collection
+ownership, task numbering, repeated status changes, and date queries. The next step is to extract `Parser`.
+
+## A-MoreOOP: Iteration 3 — command parser
+
+Extracted `Parser` to identify commands, validate argument syntax, and construct tasks or parsed dates and numbers.
+`Friday` now dispatches the parsed command type, checks task numbers against `TaskList`, and saves in one place
+after a successful change. Existing command boundaries, whitespace rules, error messages, and storage protection
+are preserved. Parser tests and console regression tests cover valid commands and invalid input.
+
+The minimum A-MoreOOP extraction is complete: `Ui` handles interaction, `Storage` handles files, `TaskList` owns
+task operations, and `Parser` handles command syntax. A stateless parser and an enum-based dispatch keep this step
+small; the optional command-class hierarchy remains a separate stretch increment.
+
+## A-Packages: Increment 1 — task model
+
+Grouped `Task`, `ToDo`, `Deadline`, `Event`, `TaskList`, and `TaskDateTime` in `friday.task`.
+Task date handling stays beside the task model rather than in a general-purpose utility package.
+Callers import the task types explicitly; test runners now discover Java files recursively and
+launch tests by their package-qualified class names. The application source root remains `src/main/java`.
+Task-model tests mirror their production package under the existing `test` source root.
+Console commands and saved data remain unchanged.
+
+## A-Packages: Increment 2 — application boundaries
+
+The entry point is now `friday.Friday`, with `Parser` in `friday.parser`, `Storage` in
+`friday.storage`, and `Ui` in `friday.ui`. Parser and storage tests mirror their production
+packages under `test`. The UI runner launches the qualified entry point, while `src/main/java`
+remains the application source root. No command syntax, console output, or save format changed.
+
+| Package | Classes |
+| --- | --- |
+| `friday` | `Friday` |
+| `friday.task` | `Task`, `ToDo`, `Deadline`, `Event`, `TaskList`, `TaskDateTime` |
+| `friday.parser` | `Parser` |
+| `friday.storage` | `Storage` |
+| `friday.ui` | `Ui` |
+
+For launch and test commands, see [the user guide](docs/README.md#setup-and-running).
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

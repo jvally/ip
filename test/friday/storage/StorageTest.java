@@ -1,9 +1,17 @@
+package friday.storage;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import friday.task.Deadline;
+import friday.task.Event;
+import friday.task.Task;
+import friday.task.TaskDateTime;
+import friday.task.ToDo;
 
 /** Dependency-free storage regression tests; run with Java 25.0.3.fx-zulu. */
 public class StorageTest {

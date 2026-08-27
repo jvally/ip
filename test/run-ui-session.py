@@ -33,7 +33,7 @@ def run_session(build, working_directory, lines):
         data_file.write_text("\n".join(records) + "\n", encoding="utf-8")
 
     process = subprocess.Popen(
-        ["java", "-cp", str(build), "Friday"],
+        ["java", "-cp", str(build), "friday.Friday"],
         cwd=working_directory,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
@@ -46,6 +46,9 @@ def run_session(build, working_directory, lines):
         # A nonempty directory works without relying on OS permission bits or root status.
         for _ in range(4):
             print(process.stdout.readline(), end="")
+        # A seeded save has already been loaded; replace only this test's temporary file.
+        if data_file.is_file():
+            data_file.unlink()
         data_file.mkdir(parents=True)
         (data_file / "blocker").write_text("Keep this directory nonempty.", encoding="utf-8")
     output, errors = process.communicate("\n".join(commands) + "\n", timeout=15)
@@ -64,7 +67,7 @@ def main():
         build = working_directory / "classes"
         subprocess.run(
             ["javac", "-d", str(build)]
-            + [str(source) for source in sorted((repo / "src/main/java").glob("*.java"))],
+            + [str(source) for source in sorted((repo / "src/main/java").rglob("*.java"))],
             check=True,
         )
         session = []

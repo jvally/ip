@@ -15,16 +15,21 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@directory` creates a directory instead of the save file, to test a read failure.
 - `@block-save` blocks the destination with a nonempty directory after startup, to test a write failure.
 
+The session helper launches `friday.Friday`; it does not depend on a default-package entry point.
+Both runners discover Java sources in nested package folders under `src/main/java`.
+Java test classes mirror their package directories under `test`, which remains the test source root.
+
 The helper does not supply expected output; all console expectations remain in this plan.
 
-Storage and date/time checks (including malformed records, invalid dates, failed writes, and large lists)
+Parser, task-list, storage, and date/time checks (including command syntax, task numbering, invalid records, and failed writes)
 can also be run with the same JDK from the project root:
 
 ```bash
-javac -d /private/tmp/friday-storage-build src/main/java/*.java test/StorageTest.java test/DateTimeTest.java
-java -cp /private/tmp/friday-storage-build StorageTest
-java -cp /private/tmp/friday-storage-build DateTimeTest
+python3 test/run-unit-tests.py
 ```
+
+Both test runners use Python's platform-specific temporary directory and require `java` and `javac` on `PATH`.
+On Windows, use `python` or `py -3` if your Python installation does not provide `python3`.
 
 ## Test Case: Add and list todos
 - Aim: Verify that `todo` adds ToDo tasks and that `list` shows the ToDo prefix.
@@ -994,6 +999,130 @@ ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
 ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Save only when completion changes
+- Aim: Verify repeated mark/unmark commands do not attempt a save, while actual status changes still try to save and retain their in-memory result after a write failure.
+- Inputs:
+```text
+@file T|1|finished task
+@file T|0|pending task
+@block-save
+mark 1
+unmark 2
+mark 2
+unmark 1
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] finished task
+____________________________________________________________
+This task is already not marked as done.
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] pending task
+Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+OK, I've marked this task as not done yet:
+  [T][ ] finished task
+Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] finished task
+2.[T][X] pending task
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Task-number syntax and range errors
+- Aim: Verify malformed numbers retain command-specific errors, out-of-range numbers do not change tasks, valid integer spellings still work, and input errors do not end the session.
+- Inputs:
+```text
+todo read book
+mark nope
+mark -1
+unmark 0
+delete 2147483648
+delete -2
+mark +1
+unmark 01
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 task in the list.
+____________________________________________________________
+Sir, Invalid mark format. Use: mark TASK_NUMBER
+____________________________________________________________
+Sir, Invalid mark format. Use: mark TASK_NUMBER
+____________________________________________________________
+Sir, The task number is invalid.
+____________________________________________________________
+Sir, Invalid delete format. Use: delete TASK_NUMBER
+____________________________________________________________
+Sir, The task number is invalid.
+____________________________________________________________
+Nice! I've marked this task as done:
+  [T][X] read book
+____________________________________________________________
+OK, I've marked this task as not done yet:
+  [T][ ] read book
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] read book
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Greeting and thanks output
+- Aim: Verify the extracted UI preserves both ASCII banners, blank lines, and separators exactly as before the refactor.
+- Inputs:
+```text
+hello
+thanks
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ ________________________________
+|                                |
+|  Good day to you sir!          |
+|________________________________|
+
+____________________________________________________________
+ ________________________
+|                        |
+|  Thanks!               |
+|________________________|
+
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
