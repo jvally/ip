@@ -24,6 +24,9 @@ import friday.task.ToDo;
 public class Storage {
     private final Path file;
 
+    /**
+     * Creates storage for the supplied save-file path.
+     */
     public Storage(Path file) {
         this.file = file;
     }
@@ -32,7 +35,7 @@ public class Storage {
      * Loads all tasks, or returns an empty list on the first run when no file exists.
      * Rejects the entire file on a malformed record so a partial list cannot replace saved data.
      *
-     * @throws IOException if the file cannot be read or contains an invalid record
+     * @throws IOException if the file cannot be read or contains an invalid record.
      */
     public List<Task> load() throws IOException {
         List<Task> tasks = new ArrayList<>();
@@ -57,7 +60,7 @@ public class Storage {
      * Writes a complete snapshot to a temporary file before replacing the previous save.
      * Creates missing directories and falls back to a regular move if atomic moves are unsupported.
      *
-     * @throws IOException if the snapshot cannot be written or moved into place
+     * @throws IOException if the snapshot cannot be written or moved into place.
      */
     public void save(List<Task> tasks) throws IOException {
         Path directory = file.getParent();
@@ -84,7 +87,9 @@ public class Storage {
         }
     }
 
-    /** Encodes task-specific fields without depending on the task's display format. */
+    /**
+     * Encodes task-specific fields without depending on the task's display format.
+     */
     private String formatTask(Task task) {
         String fields = "|" + (task.isDone() ? "1" : "0") + "|" + escape(task.getDescription());
         if (task instanceof Deadline deadline) {
@@ -97,7 +102,9 @@ public class Storage {
         throw new IllegalArgumentException("Unsupported task type.");
     }
 
-    /** Validates the type, status, field count, and required text before constructing a task. */
+    /**
+     * Validates the type, status, field count, and required text before constructing a task.
+     */
     private Task parseTask(String line) {
         List<String> fields = splitFields(line);
         if (fields.size() < 3 || !(fields.get(1).equals("0") || fields.get(1).equals("1"))) {
@@ -126,28 +133,32 @@ public class Storage {
         return task;
     }
 
-    /** Escapes delimiters and line breaks so arbitrary text stays within one record. */
+    /**
+     * Escapes delimiters and line breaks so arbitrary text stays within one record.
+     */
     private String escape(String text) {
         return text.replace("\\", "\\\\").replace("|", "\\|")
                 .replace("\n", "\\n").replace("\r", "\\r");
     }
 
-    /** Splits on unescaped pipes and rejects incomplete or unknown escape sequences. */
+    /**
+     * Splits on unescaped pipes and rejects incomplete or unknown escape sequences.
+     */
     private List<String> splitFields(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
-        boolean escaped = false;
+        boolean isEscaped = false;
         for (char character : line.toCharArray()) {
-            if (escaped) {
+            if (isEscaped) {
                 switch (character) {
-                case '\\', '|' -> field.append(character);
-                case 'n' -> field.append('\n');
-                case 'r' -> field.append('\r');
-                default -> throw new IllegalArgumentException("Unknown escape sequence.");
+                    case '\\', '|' -> field.append(character);
+                    case 'n' -> field.append('\n');
+                    case 'r' -> field.append('\r');
+                    default -> throw new IllegalArgumentException("Unknown escape sequence.");
                 }
-                escaped = false;
+                isEscaped = false;
             } else if (character == '\\') {
-                escaped = true;
+                isEscaped = true;
             } else if (character == '|') {
                 fields.add(field.toString());
                 field.setLength(0);
@@ -155,7 +166,7 @@ public class Storage {
                 field.append(character);
             }
         }
-        if (escaped) {
+        if (isEscaped) {
             throw new IllegalArgumentException("Incomplete escape sequence.");
         }
         fields.add(field.toString());

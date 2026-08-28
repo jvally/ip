@@ -176,11 +176,31 @@ requires reviewing/updating relevant JUnit tests after every code change. This p
 important behavior rather than promising a measured line-coverage percentage. See the
 [user guide's testing section](docs/README.md#development-tests) for commands and priorities.
 
-## Level-9: Find
+## A-JavaDoc: Minimal documentation
 
-Added `find KEYWORD` to search task descriptions using case-sensitive literal substring matching.
-Results include completed tasks and retain their original list numbers for subsequent commands.
-The parser rejects blank keywords, and the UI reports empty results without modifying or saving
-the list. JUnit and console regressions cover parsing, matching, numbering, and read-only behavior.
+Documented every public method and constructor in `Task` and `TaskList`, including parameters,
+return values, invalid task numbers, and the distinction between copying a list and sharing its tasks.
+Together with existing class and method comments, this meets the minimum Javadoc requirement of
+header comments on at least half of the non-private classes and methods in the production code.
+This increment changes documentation only; commands, task behavior, and saved data are unchanged.
+
+## A-CodingStandard: Java and Git conventions
+
+Applied the SE-EDU basic and intermediate Java conventions to production code and JUnit tests:
+switch indentation, wrapped expressions and annotations, boolean and collection names, related
+constant prefixes, and descriptive Javadoc headers. Console messages and saved data are unchanged.
+
+The versioned project skills
+[seedu-java-coding-standard](.agents/skills/seedu-java-coding-standard/SKILL.md) and
+[seedu-git-standard](.agents/skills/seedu-git-standard/SKILL.md) link to the authoritative rules
+and provide review checklists. `AGENTS.md` and `CLAUDE.md` require them for future Java changes
+and commit messages. Existing JUnit and console tests remain the behavioral regression checks.
+
+Parallel-branch reflection: merging after A-JavaDoc conflicted in `Task`, `TaskList`, and this
+README because both branches edited the same documentation. The resolution retains the API
+contracts, applies the standard's punctuation, and keeps both increment summaries. Applying
+formatting before branching for later feature work would reduce this overlap. Reversing the
+merge order alone would still leave overlapping edits; shorter-lived branches or a shared
+formatting baseline would help more.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

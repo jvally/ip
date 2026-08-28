@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-/** Tests one-based selection, mutation feedback, collection ownership, and date queries. */
+/**
+ * Tests one-based selection, mutation feedback, collection ownership, and date queries.
+ */
 class TaskListTest {
     @Test
     void addAndDelete_mixedTaskTypes_preservesOrderAndRenumbersTasks() {
@@ -81,9 +83,9 @@ class TaskListTest {
     void constructor_sourceListChanges_doesNotChangeOwnedMembership() {
         Task completed = new ToDo("already finished");
         completed.markAsDone();
-        List<Task> loaded = new ArrayList<>(List.of(completed));
-        TaskList tasks = new TaskList(loaded);
-        loaded.clear();
+        List<Task> loadedTasks = new ArrayList<>(List.of(completed));
+        TaskList tasks = new TaskList(loadedTasks);
+        loadedTasks.clear();
         assertEquals(List.of(completed), tasks.toList());
         assertTrue(tasks.get(1).isDone());
         tasks.add(new ToDo("new task"));
@@ -94,15 +96,15 @@ class TaskListTest {
     void toList_laterChanges_preservesSnapshotMembershipButSharesTaskObjects() {
         Task original = new ToDo("original");
         TaskList tasks = new TaskList(List.of(original));
-        List<Task> snapshot = tasks.toList();
-        assertThrows(UnsupportedOperationException.class, () -> snapshot.add(new ToDo("external")));
-        assertThrows(UnsupportedOperationException.class, snapshot::clear);
+        List<Task> snapshotTasks = tasks.toList();
+        assertThrows(UnsupportedOperationException.class, () -> snapshotTasks.add(new ToDo("external")));
+        assertThrows(UnsupportedOperationException.class, snapshotTasks::clear);
         tasks.mark(1);
-        assertSame(original, snapshot.getFirst());
-        assertTrue(snapshot.getFirst().isDone(), "The snapshot is shallow, as documented.");
+        assertSame(original, snapshotTasks.getFirst());
+        assertTrue(snapshotTasks.getFirst().isDone(), "The snapshot is shallow, as documented.");
         tasks.add(new ToDo("new task"));
         tasks.delete(1);
-        assertEquals(List.of(original), snapshot);
+        assertEquals(List.of(original), snapshotTasks);
         assertEquals("new task", tasks.get(1).getDescription());
     }
 
@@ -114,9 +116,9 @@ class TaskListTest {
                 new Deadline("later", "2019-12-04"),
                 new Event("conference", "2019-12-01 10:00", "2019-12-03 00:00")));
         tasks.mark(4);
-        List<Task> before = tasks.toList();
+        List<Task> tasksBeforeQuery = tasks.toList();
         assertEquals(List.of(2, 4), tasks.findTaskNumbersOn(day));
-        assertEquals(before, tasks.toList());
+        assertEquals(tasksBeforeQuery, tasks.toList());
         assertFalse(tasks.get(2).isDone());
         assertTrue(tasks.get(4).isDone());
         tasks.delete(1);

@@ -24,6 +24,18 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Required project standards
+
+For every Java change or review, read and follow the project skill
+[seedu-java-coding-standard](.agents/skills/seedu-java-coding-standard/SKILL.md).
+Apply it to all production code and JUnit tests, including new code and merge resolutions.
+Its authoritative source is the SE-EDU basic and intermediate Java standard.
+
+Before proposing or creating any commit, including a merge commit, read and follow
+[seedu-git-standard](.agents/skills/seedu-git-standard/SKILL.md).
+Check the actual staged changes and explain their rationale and verified checks.
+These skills do not override the user's requested scope or authorize Git operations.
+
 ## Java version:
 
 Ensure that Java 25.0.3.fx-zulu is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to this SDK if needed.
