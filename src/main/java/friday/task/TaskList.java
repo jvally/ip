@@ -22,7 +22,7 @@ public class TaskList {
      * Copies the initial list so external membership changes do not affect this collection.
      * The task objects themselves are shared, so their completion status is not copied.
      *
-     * @param initialTasks tasks to include, in their original order
+     * @param initialTasks tasks to include, in their original order.
      */
     public TaskList(List<Task> initialTasks) {
         tasks = new ArrayList<>(initialTasks);
@@ -31,7 +31,7 @@ public class TaskList {
     /**
      * Returns the number of tasks, including completed tasks.
      *
-     * @return the current task count
+     * @return the current task count.
      */
     public int size() {
         return tasks.size();
@@ -40,8 +40,8 @@ public class TaskList {
     /**
      * Checks whether a one-based task number refers to an existing task.
      *
-     * @param taskNumber number shown to the user
-     * @return {@code true} if the number is between one and the task count, inclusive
+     * @param taskNumber number shown to the user.
+     * @return {@code true} if the number is between one and the task count, inclusive.
      */
     public boolean isValidTaskNumber(int taskNumber) {
         return taskNumber >= 1 && taskNumber <= tasks.size();
@@ -50,7 +50,7 @@ public class TaskList {
     /**
      * Appends a task without changing its completion status.
      *
-     * @param task task to place at the end of the list
+     * @param task task to place at the end of the list.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -59,9 +59,9 @@ public class TaskList {
     /**
      * Returns the task at the given one-based number.
      *
-     * @param taskNumber number shown to the user
-     * @return the task object held by this list, not a copy
-     * @throws IndexOutOfBoundsException if the task number does not exist
+     * @param taskNumber number shown to the user.
+     * @return the task object held by this list, not a copy.
+     * @throws IndexOutOfBoundsException if the task number does not exist.
      */
     public Task get(int taskNumber) {
         return tasks.get(toIndex(taskNumber));
@@ -70,9 +70,9 @@ public class TaskList {
     /**
      * Removes and returns a task; later tasks move up by one number.
      *
-     * @param taskNumber one-based number of the task to remove
-     * @return the removed task
-     * @throws IndexOutOfBoundsException if the task number does not exist
+     * @param taskNumber one-based number of the task to remove.
+     * @return the removed task.
+     * @throws IndexOutOfBoundsException if the task number does not exist.
      */
     public Task delete(int taskNumber) {
         return tasks.remove(toIndex(taskNumber));
@@ -81,9 +81,9 @@ public class TaskList {
     /**
      * Marks a task as done and reports whether its status changed.
      *
-     * @param taskNumber one-based number of the task to mark
-     * @return {@code true} if the status changed and needs saving
-     * @throws IndexOutOfBoundsException if the task number does not exist
+     * @param taskNumber one-based number of the task to mark.
+     * @return {@code true} if the status changed and needs saving.
+     * @throws IndexOutOfBoundsException if the task number does not exist.
      */
     public boolean mark(int taskNumber) {
         Task task = get(taskNumber);
@@ -97,9 +97,9 @@ public class TaskList {
     /**
      * Marks a task as not done and reports whether its status changed.
      *
-     * @param taskNumber one-based number of the task to unmark
-     * @return {@code true} if the status changed and needs saving
-     * @throws IndexOutOfBoundsException if the task number does not exist
+     * @param taskNumber one-based number of the task to unmark.
+     * @return {@code true} if the status changed and needs saving.
+     * @throws IndexOutOfBoundsException if the task number does not exist.
      */
     public boolean unmark(int taskNumber) {
         Task task = get(taskNumber);
@@ -114,8 +114,8 @@ public class TaskList {
      * Finds tasks occurring on a date without changing the collection.
      * Completed tasks are included when their date matches.
      *
-     * @param date calendar date to search for
-     * @return matching tasks' original one-based list numbers, in list order
+     * @param date calendar date to search for.
+     * @return matching tasks' original one-based list numbers, in list order.
      */
     public List<Integer> findTaskNumbersOn(LocalDate date) {
         List<Integer> matches = new ArrayList<>();
@@ -131,13 +131,15 @@ public class TaskList {
      * Returns an unmodifiable copy of the current list for storage.
      * Membership and order are copied; the mutable task objects themselves are shared.
      *
-     * @return an unmodifiable snapshot of the task references in list order
+     * @return an unmodifiable snapshot of the task references in list order.
      */
     public List<Task> toList() {
         return List.copyOf(tasks);
     }
 
-    /** Validates a user-facing task number before converting it to an internal list index. */
+    /**
+     * Validates a user-facing task number before converting it to an internal list index.
+     */
     private int toIndex(int taskNumber) {
         if (!isValidTaskNumber(taskNumber)) {
             throw new IndexOutOfBoundsException("Invalid task number: " + taskNumber);

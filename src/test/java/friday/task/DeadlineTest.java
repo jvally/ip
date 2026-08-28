@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-/** Tests deadline date construction and matching independently of completion and time. */
+/**
+ * Tests deadline date construction and matching independently of completion and time.
+ */
 class DeadlineTest {
     @Test
     void constructor_supportedDateTime_storesParsedValue() {
@@ -19,10 +21,10 @@ class DeadlineTest {
 
     @ParameterizedTest
     @CsvSource({"2019-12-01,false", "2019-12-02,true", "2019-12-03,false"})
-    void occursOn_dueDate_onlyMatchesThatDateRegardlessOfStatus(String date, boolean expected) {
+    void occursOn_dueDate_onlyMatchesThatDateRegardlessOfStatus(String date, boolean isExpectedMatch) {
         Deadline deadline = new Deadline("return book", "2019-12-02 18:00");
-        assertEquals(expected, deadline.occursOn(LocalDate.parse(date)));
+        assertEquals(isExpectedMatch, deadline.occursOn(LocalDate.parse(date)));
         deadline.markAsDone();
-        assertEquals(expected, deadline.occursOn(LocalDate.parse(date)));
+        assertEquals(isExpectedMatch, deadline.occursOn(LocalDate.parse(date)));
     }
 }

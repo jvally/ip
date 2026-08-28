@@ -2,7 +2,9 @@ package friday.task;
 
 import java.time.LocalDate;
 
-/** A task's description and completion status, shared by all task types. */
+/**
+ * A task's description and completion status, shared by all task types.
+ */
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -10,7 +12,7 @@ public class Task {
     /**
      * Creates a task that is initially not done.
      *
-     * @param description text describing the task
+     * @param description text describing the task.
      */
     public Task(String description) {
         this.description = description;
@@ -20,7 +22,7 @@ public class Task {
     /**
      * Returns the task description without status or type markers.
      *
-     * @return the description supplied at construction
+     * @return the description supplied at construction.
      */
     public String getDescription() {
         return description;
@@ -29,7 +31,7 @@ public class Task {
     /**
      * Returns the completion marker used in the console task display.
      *
-     * @return {@code "X"} when done, or a single space otherwise
+     * @return {@code "X"} when done, or a single space otherwise.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -38,7 +40,7 @@ public class Task {
     /**
      * Reports whether the task has been completed.
      *
-     * @return {@code true} if the task is marked done
+     * @return {@code true} if the task is marked done.
      */
     public boolean isDone() {
         return isDone;
@@ -62,8 +64,8 @@ public class Task {
      * Checks whether this task occurs on a calendar date.
      * Dated task types override this method to provide their matching rules.
      *
-     * @param date calendar date to check
-     * @return {@code false}, because this base task has no date
+     * @param date calendar date to check.
+     * @return {@code false}, because this base task has no date.
      */
     public boolean occursOn(LocalDate date) {
         return false;
@@ -72,7 +74,7 @@ public class Task {
     /**
      * Returns the completion marker and description for display.
      *
-     * @return the task text, such as {@code [X] read book}
+     * @return the task text, such as {@code [X] read book}.
      */
     @Override
     public String toString() {

@@ -11,7 +11,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-/** Tests interval validation and inclusive calendar-date matching, including midnight boundaries. */
+/**
+ * Tests interval validation and inclusive calendar-date matching, including midnight boundaries.
+ */
 class EventTest {
     @Test
     void constructor_overnightEvent_preservesBothDateTimes() {
@@ -36,19 +38,19 @@ class EventTest {
 
     @ParameterizedTest
     @CsvSource({"2019-11-30,false", "2019-12-01,true", "2019-12-02,true",
-        "2019-12-03,true", "2019-12-04,false"})
-    void occursOn_multiDayEvent_includesBothBoundaryDatesRegardlessOfStatus(String date, boolean expected) {
+            "2019-12-03,true", "2019-12-04,false"})
+    void occursOn_multiDayEvent_includesBothBoundaryDatesRegardlessOfStatus(String date, boolean isExpectedMatch) {
         Event event = new Event("conference", "2019-12-01 10:00", "2019-12-03 00:00");
-        assertEquals(expected, event.occursOn(LocalDate.parse(date)));
+        assertEquals(isExpectedMatch, event.occursOn(LocalDate.parse(date)));
         event.markAsDone();
-        assertEquals(expected, event.occursOn(LocalDate.parse(date)));
+        assertEquals(isExpectedMatch, event.occursOn(LocalDate.parse(date)));
     }
 
     @ParameterizedTest
     @CsvSource({"2019-12-01,false", "2019-12-02,true", "2019-12-03,false"})
-    void occursOn_equalEndpoints_matchesOnlyTheSingleDate(String date, boolean expected) {
+    void occursOn_equalEndpoints_matchesOnlyTheSingleDate(String date, boolean isExpectedMatch) {
         Event event = new Event("reminder", "2019-12-02", "2019-12-02");
         assertEquals(event.getFrom(), event.getTo());
-        assertEquals(expected, event.occursOn(LocalDate.parse(date)));
+        assertEquals(isExpectedMatch, event.occursOn(LocalDate.parse(date)));
     }
 }
