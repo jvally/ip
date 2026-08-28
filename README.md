@@ -33,9 +33,11 @@ Type `hello` and then `bye` to check input and shutdown. On Windows, select the 
 `JAVA_HOME` and use `gradlew.bat` in place of `./gradlew` (or `.\gradlew.bat` in PowerShell).
 The first invocation needs internet access to download the pinned Gradle distribution.
 
-`build` compiles and packages the application. It does **not** run the existing main-method
-regression tests; continue using `python3 test/run-unit-tests.py` and the `test-ui` skill.
-JUnit integration is deferred to **A-JUnit**, so Gradle's `test` task currently reports `NO-SOURCE`.
+`build` compiles, runs the JUnit tests, and packages the application. Run `./gradlew test`
+for JUnit alone; the report is `build/reports/tests/test/index.html`. Tests follow Gradle's
+conventions under `src/test/java`, mirroring the production packages. The existing command
+`python3 test/run-unit-tests.py` now delegates to the same Gradle test task.
+Run the separate `test-ui` skill for console regressions defined in `test/ui-test-plan.md`.
 
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.
@@ -158,7 +160,20 @@ For launch and test commands, see [the user guide](docs/README.md#setup-and-runn
 Integrated the Duke `add-gradle-support` branch and adapted its wrapper-based build to Friday.
 Gradle 9.6.1 builds the Java 25 sources and launches `friday.Friday` with console input and the
 project working directory preserved. The wrapper download is pinned by SHA-256, and the
-project name is `friday` regardless of the checkout directory. JUnit dependencies and Shadow
-packaging are deferred to later increments; the existing regression runners remain unchanged.
+project name is `friday` regardless of the checkout directory. At this increment, JUnit and
+Shadow packaging were deferred; A-JUnit below adds the JUnit integration.
+
+## A-JUnit: Core behavior tests
+
+Enabled JUnit Jupiter 5.14.4 through Gradle and migrated the standalone regression tests into
+`src/test/java`. Six test classes cover command parsing, task-list mutations and snapshots,
+strict date parsing/display, event and deadline matching, and storage integrity and recovery.
+Parameterized tests report boundary and invalid-input cases separately; storage fixtures use
+JUnit `@TempDir` and never access real task data. Existing UI expectations are unchanged.
+
+The testing policy in `AGENTS.md` focuses on roughly the **50% highest-value methods** and
+requires reviewing/updating relevant JUnit tests after every code change. This prioritizes
+important behavior rather than promising a measured line-coverage percentage. See the
+[user guide's testing section](docs/README.md#development-tests) for commands and priorities.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

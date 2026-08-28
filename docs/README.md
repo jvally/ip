@@ -44,19 +44,60 @@ Generated output is under the ignored `build` directory. `clean` removes that ou
 - **Permission denied on `./gradlew`:** restore the executable bit with `chmod +x gradlew`.
 - **Download failure:** check internet/proxy access and retry. Do not disable the wrapper's
   checksum verification to work around a failed or mismatched download.
-- **No tests run:** JUnit integration is deferred to A-JUnit. A successful Gradle build alone
-  is not evidence that the existing regression tests passed.
+- **No tests run:** JUnit classes belong under `src/test/java` with `@Test` or
+  `@ParameterizedTest` methods. Reload the Gradle project and run `./gradlew test --rerun-tasks`.
+  A fresh run must discover tests; `NO-SOURCE` is not the expected result after A-JUnit.
 
 ## Development tests
 
-Gradle `test` currently reports `NO-SOURCE`: the tests under `test/friday` are standalone
-Java programs, not JUnit tests. `build` does not run them. Continue running them explicitly:
+Select Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS), then run from the
+project root:
 
-Use Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS).
-From the project root, run `python3 test/run-unit-tests.py` for the Java tests.
-The runner discovers nested source and test packages automatically. Command-driven UI tests
-are defined in `test/ui-test-plan.md` and run with the repository's `test-ui` skill.
-On Windows, use `python` or `py -3` if `python3` is unavailable.
+```bash
+./gradlew test
+./gradlew test --tests friday.parser.ParserTest
+./gradlew clean build
+```
+
+`test` runs JUnit Jupiter 5.14.4. `build` includes the same tests before packaging.
+Use `--rerun-tasks` to execute tests again even when Gradle considers their outputs current.
+The first run needs internet access for JUnit dependencies. HTML results are written to
+`build/reports/tests/test/index.html` and XML results to `build/test-results/test/`.
+A failed assertion or unexpected exception causes the Gradle command to fail.
+On Windows, use `gradlew.bat` or `.\gradlew.bat` instead of `./gradlew`.
+
+Test files follow the normal Gradle layout: for example, `friday.parser.Parser` has
+`src/test/java/friday/parser/ParserTest.java`. IntelliJ can run a test method or class using
+its gutter icon after you reload the Gradle project. Names follow
+`methodUnderTest_scenario_expectedBehavior`. `assertEquals` checks a result; `assertThrows`
+checks that invalid input produces the expected exception. Parameterized tests repeat a
+behavior check over separate named inputs. Storage tests use a fresh `@TempDir` for isolation.
+
+The old `python3 test/run-unit-tests.py` command remains available as a thin wrapper around
+`gradlew test`; extra arguments such as `--tests friday.storage.StorageTest` are forwarded.
+There is no duplicate standalone Java suite to maintain. The console test runner remains
+separate: use the `test-ui` skill and `test/ui-test-plan.md` for exact user-visible behavior.
+
+### Coverage priorities
+
+The target is the roughly **50% highest-value methods**, selected by complexity and impact.
+It is not a measured 50% line/branch-coverage threshold or a cap on useful tests. After every
+code change, review/update the related JUnit tests and reassess these priorities, as required
+by `AGENTS.md` and referenced by `CLAUDE.md`.
+
+| Test class | Prioritized behavior | Bugs the tests aim to catch |
+| --- | --- | --- |
+| `ParserTest` | `parseCommandType`, `parseTask`, `parseTaskNumber`, `parseDate` | Wrong command boundaries, lost task fields, malformed arguments, overflow, incorrect errors |
+| `TaskListTest` | Construction, add/get/delete, number validation, mark/unmark, date filtering, `toList` | Off-by-one selection, wrong renumbering, redundant saves, unintended mutation and aliasing |
+| `TaskDateTimeTest` | `parse`, `format` | Invalid dates silently accepted, leap-year errors, lost time, locale-dependent output |
+| `EventTest` | Constructor and `occursOn` | Backwards intervals and excluded start/end dates, including an end at midnight |
+| `DeadlineTest` | Constructor and `occursOn` | Wrong parsed deadline, matching the wrong day, completion status affecting date lookup |
+| `StorageTest` | `load`, `save` and their private helpers through those APIs | Lost fields/status, bad escaping, corrupt/partial files, leaked temporary files, failed recovery |
+
+Simple accessors are checked through these behaviors where useful. Console printing and the
+application loop remain covered by the UI plan rather than duplicating every output assertion
+in JUnit. Extend the existing test class when behavior changes, and use expected values that
+do not call the same production logic being tested.
 
 ## Quick start
 
