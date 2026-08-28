@@ -176,4 +176,12 @@ requires reviewing/updating relevant JUnit tests after every code change. This p
 important behavior rather than promising a measured line-coverage percentage. See the
 [user guide's testing section](docs/README.md#development-tests) for commands and priorities.
 
+## A-JavaDoc: Minimal documentation
+
+Documented every public method and constructor in `Task` and `TaskList`, including parameters,
+return values, invalid task numbers, and the distinction between copying a list and sharing its tasks.
+Together with existing class and method comments, this meets the minimum Javadoc requirement of
+header comments on at least half of the non-private classes and methods in the production code.
+This increment changes documentation only; commands, task behavior, and saved data are unchanged.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
