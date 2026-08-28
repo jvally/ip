@@ -130,4 +130,52 @@ class TaskListTest {
     void findTaskNumbersOn_emptyList_returnsEmptyList() {
         assertTrue(new TaskList().findTaskNumbersOn(LocalDate.of(2019, 12, 2)).isEmpty());
     }
+
+    @Test
+    void findTaskNumbersContaining_mixedTasks_preservesNumbersAndStatus() {
+        TaskList tasks = new TaskList(List.of(new ToDo("bread"), new ToDo("read book"),
+                new Deadline("return book", "2019-12-02"),
+                new Event("book club", "2019-12-02", "2019-12-03"), new ToDo("bookshelf")));
+        tasks.mark(2);
+        tasks.mark(3);
+        List<Task> tasksBeforeSearch = tasks.toList();
+
+        List<Integer> matches = tasks.findTaskNumbersContaining("book");
+        assertEquals(List.of(2, 3, 4, 5), matches);
+        assertEquals(tasksBeforeSearch, tasks.toList());
+        assertTrue(tasks.get(2).isDone());
+        assertTrue(tasks.get(3).isDone());
+        assertFalse(tasks.get(4).isDone());
+        matches.clear();
+        assertEquals(List.of(2, 3, 4, 5), tasks.findTaskNumbersContaining("book"));
+
+        tasks.delete(1);
+        assertEquals(List.of(1, 2, 3, 4), tasks.findTaskNumbersContaining("book"));
+    }
+
+    @Test
+    void findTaskNumbersContaining_casePhraseAndSymbols_matchesLiteralDescriptionsOnly() {
+        TaskList tasks = new TaskList(List.of(new ToDo("Read Book"), new ToDo("read book"),
+                new ToDo("read  book"), new ToDo("literal .* 读书"),
+                new Deadline("return notes", "2019-12-02")));
+
+        assertEquals(List.of(1), tasks.findTaskNumbersContaining("Book"));
+        assertEquals(List.of(2), tasks.findTaskNumbersContaining("read book"));
+        assertEquals(List.of(3), tasks.findTaskNumbersContaining("read  book"));
+        assertEquals(List.of(4), tasks.findTaskNumbersContaining(".*"));
+        assertEquals(List.of(4), tasks.findTaskNumbersContaining("读书"));
+        assertTrue(tasks.findTaskNumbersContaining("Dec").isEmpty());
+        assertTrue(tasks.findTaskNumbersContaining("[D]").isEmpty());
+        assertTrue(tasks.findTaskNumbersContaining("missing").isEmpty());
+        assertTrue(new TaskList().findTaskNumbersContaining("book").isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "\t", "\u2003"})
+    void findTaskNumbersContaining_blankKeyword_throwsWithoutChangingTasks(String keyword) {
+        TaskList tasks = new TaskList(List.of(new ToDo("keep book")));
+        assertThrows(IllegalArgumentException.class, () -> tasks.findTaskNumbersContaining(keyword));
+        assertEquals(1, tasks.size());
+        assertFalse(tasks.get(1).isDone());
+    }
 }

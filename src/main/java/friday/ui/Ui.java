@@ -79,6 +79,21 @@ public class Ui {
         System.out.println(TASK_NUMBER_HINT);
     }
 
+    /**
+     * Prints the keyword-search heading and explains how to use the original task numbers.
+     */
+    public void showFindHeader() {
+        System.out.println("Here are the matching tasks in your list:");
+        System.out.println(TASK_NUMBER_HINT);
+    }
+
+    /**
+     * Reports that no task description contains the search keyword.
+     */
+    public void showNoMatchingTasks() {
+        System.out.println("No matching tasks found.");
+    }
+
     public void showDateHeader(LocalDate date) {
         System.out.println("Here are the deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
         System.out.println(TASK_NUMBER_HINT);

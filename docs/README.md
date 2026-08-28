@@ -177,6 +177,21 @@ end date, including both boundary dates (even an end at midnight). Completed tas
 undated todos are excluded. The displayed numbers are the original list numbers, so they still work
 with `mark`, `unmark`, and `delete`. This command does not change or save the task list.
 
+## Finding tasks by description
+
+Use `find KEYWORD`, for example `find book`, to search task descriptions. Matching is a
+case-sensitive literal substring search: `book` matches `read book` and `bookshelf`, but
+not `Book`. All task types and completed tasks are included. Dates, task-type markers,
+and completion markers are not searched.
+
+Surrounding keyword whitespace is trimmed. Multiple words are treated as one exact phrase,
+so `find read book` searches for `read book`, not either word separately. Blank keywords
+produce `Invalid find format. Use: find KEYWORD`; no matches produce `No matching tasks found.`
+
+Results retain their original list numbers, just like date queries. For example, if task 1
+does not match, the first result might be numbered 2. Use these numbers with `mark`, `unmark`,
+or `delete`. Search does not change the task list or write to the save file.
+
 ## Marking tasks
 
 Use `mark` to mark a task as done.

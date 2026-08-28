@@ -14,7 +14,7 @@ public final class Parser {
 
     /** The supported actions; execution belongs to Friday rather than the parser. */
     public enum CommandType {
-        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK
+        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK, FIND
     }
 
     private Parser() {
@@ -31,29 +31,30 @@ public final class Parser {
         int firstSpace = command.indexOf(' ');
         String word = firstSpace == -1 ? command : command.substring(0, firstSpace);
         CommandType type = switch (word) {
-        case "bye" -> CommandType.BYE;
-        case "hello" -> CommandType.HELLO;
-        case "thanks" -> CommandType.THANKS;
-        case "help" -> CommandType.HELP;
-        case "list" -> CommandType.LIST;
-        case "todo" -> CommandType.TODO;
-        case "deadline" -> CommandType.DEADLINE;
-        case "event" -> CommandType.EVENT;
-        case "on" -> CommandType.ON;
-        case "delete" -> CommandType.DELETE;
-        case "mark" -> CommandType.MARK;
-        case "unmark" -> CommandType.UNMARK;
-        default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_MESSAGE);
+            case "bye" -> CommandType.BYE;
+            case "hello" -> CommandType.HELLO;
+            case "thanks" -> CommandType.THANKS;
+            case "help" -> CommandType.HELP;
+            case "list" -> CommandType.LIST;
+            case "todo" -> CommandType.TODO;
+            case "deadline" -> CommandType.DEADLINE;
+            case "event" -> CommandType.EVENT;
+            case "on" -> CommandType.ON;
+            case "find" -> CommandType.FIND;
+            case "delete" -> CommandType.DELETE;
+            case "mark" -> CommandType.MARK;
+            case "unmark" -> CommandType.UNMARK;
+            default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_MESSAGE);
         };
         switch (type) {
-        case BYE, HELLO, THANKS, HELP, LIST -> {
-            if (!command.equals(word)) {
-                throw new IllegalArgumentException(UNKNOWN_COMMAND_MESSAGE);
+            case BYE, HELLO, THANKS, HELP, LIST -> {
+                if (!command.equals(word)) {
+                    throw new IllegalArgumentException(UNKNOWN_COMMAND_MESSAGE);
+                }
             }
-        }
-        default -> {
-            // Argument validation happens in the corresponding parsing method.
-        }
+            default -> {
+                // Argument validation happens in the corresponding parsing method.
+            }
         }
         return type;
     }
@@ -66,35 +67,56 @@ public final class Parser {
      */
     public static Task parseTask(String command) {
         return switch (parseCommandType(command)) {
-        case TODO -> {
-            String description = parseCommandBody(command, "todo ");
-            if (description.isEmpty()) {
-                throw new IllegalArgumentException("Sir, description of a todo cannot be empty.");
+            case TODO -> {
+                String description = parseCommandBody(command, "todo ");
+                if (description.isEmpty()) {
+                    throw new IllegalArgumentException("Sir, description of a todo cannot be empty.");
+                }
+                yield new ToDo(description);
             }
-            yield new ToDo(description);
-        }
-        case DEADLINE -> {
-            String body = parseCommandBody(command, "deadline ");
-            String description = parseTextBefore(body, " /by ");
-            String by = parseTextAfter(body, " /by ");
-            if (description.isEmpty() || by.isEmpty()) {
-                throw new IllegalArgumentException("Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
+            case DEADLINE -> {
+                String body = parseCommandBody(command, "deadline ");
+                String description = parseTextBefore(body, " /by ");
+                String by = parseTextAfter(body, " /by ");
+                if (description.isEmpty() || by.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
+                }
+                yield new Deadline(description, by);
             }
-            yield new Deadline(description, by);
-        }
-        case EVENT -> {
-            String body = parseCommandBody(command, "event ");
-            String description = parseTextBefore(body, " /from ");
-            String fromAndTo = parseTextAfter(body, " /from ");
-            String from = parseTextBefore(fromAndTo, " /to ");
-            String to = parseTextAfter(fromAndTo, " /to ");
-            if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new IllegalArgumentException("Invalid event format. Use: event DESCRIPTION /from START /to END");
+            case EVENT -> {
+                String body = parseCommandBody(command, "event ");
+                String description = parseTextBefore(body, " /from ");
+                String fromAndTo = parseTextAfter(body, " /from ");
+                String from = parseTextBefore(fromAndTo, " /to ");
+                String to = parseTextAfter(fromAndTo, " /to ");
+                if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "Invalid event format. Use: event DESCRIPTION /from START /to END");
+                }
+                yield new Event(description, from, to);
             }
-            yield new Event(description, from, to);
-        }
-        default -> throw new IllegalArgumentException("This command does not add a task.");
+            default -> throw new IllegalArgumentException("This command does not add a task.");
         };
+    }
+
+    /**
+     * Extracts the literal search text from a find command, trimming its surrounding whitespace.
+     * Case and internal spaces are preserved so the entire text is matched as a substring.
+     *
+     * @param command complete command entered by the user.
+     * @return the nonblank search keyword or phrase.
+     * @throws IllegalArgumentException if this is not a find command or the keyword is blank.
+     */
+    public static String parseFindKeyword(String command) {
+        if (parseCommandType(command) != CommandType.FIND) {
+            throw new IllegalArgumentException("Invalid find format. Use: find KEYWORD");
+        }
+        String keyword = parseCommandBody(command, "find ").strip();
+        if (keyword.isBlank()) {
+            throw new IllegalArgumentException("Invalid find format. Use: find KEYWORD");
+        }
+        return keyword;
     }
 
     /** Parses an on command's ISO date and reports the existing command-specific error on failure. */
@@ -114,10 +136,10 @@ public final class Parser {
      */
     public static int parseTaskNumber(String command) {
         String errorMessage = switch (parseCommandType(command)) {
-        case MARK -> "Sir, Invalid mark format. Use: mark TASK_NUMBER";
-        case UNMARK -> "Sir, Invalid unmark format. Use: unmark TASK_NUMBER";
-        case DELETE -> "Sir, Invalid delete format. Use: delete TASK_NUMBER";
-        default -> throw new IllegalArgumentException("This command does not select a task number.");
+            case MARK -> "Sir, Invalid mark format. Use: mark TASK_NUMBER";
+            case UNMARK -> "Sir, Invalid unmark format. Use: unmark TASK_NUMBER";
+            case DELETE -> "Sir, Invalid delete format. Use: delete TASK_NUMBER";
+            default -> throw new IllegalArgumentException("This command does not select a task number.");
         };
         int firstSpace = command.indexOf(' ');
         String argument = firstSpace == -1 ? "" : command.substring(firstSpace + 1).trim();

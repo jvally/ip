@@ -41,46 +41,47 @@ public class Friday {
             try {
                 boolean changed = false;
                 switch (Parser.parseCommandType(command)) {
-                case BYE -> {
-                    ui.showGoodbye();
-                    return;
-                }
-                case HELLO -> ui.showGreeting();
-                case THANKS -> ui.showThanks();
-                case HELP -> ui.showHelp();
-                case TODO, DEADLINE, EVENT -> {
-                    Task task = Parser.parseTask(command);
-                    tasks.add(task);
-                    ui.showTaskAdded(task, tasks.size());
-                    changed = true;
-                }
-                case ON -> listTasksOn(tasks, Parser.parseDate(command), ui);
-                case LIST -> {
-                    ui.showTaskListHeader();
-                    for (int taskNumber = 1; taskNumber <= tasks.size(); taskNumber++) {
-                        ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
+                    case BYE -> {
+                        ui.showGoodbye();
+                        return;
                     }
-                }
-                case DELETE -> {
-                    int taskNumber = requireExistingTaskNumber(command, tasks);
-                    Task removedTask = tasks.delete(taskNumber);
-                    ui.showTaskDeleted(removedTask, tasks.size());
-                    changed = true;
-                }
-                case MARK -> {
-                    int taskNumber = requireExistingTaskNumber(command, tasks);
-                    changed = tasks.mark(taskNumber);
-                    ui.showTaskMarked(tasks.get(taskNumber));
-                }
-                case UNMARK -> {
-                    int taskNumber = requireExistingTaskNumber(command, tasks);
-                    changed = tasks.unmark(taskNumber);
-                    if (changed) {
-                        ui.showTaskUnmarked(tasks.get(taskNumber));
-                    } else {
-                        ui.showAlreadyUnmarked();
+                    case HELLO -> ui.showGreeting();
+                    case THANKS -> ui.showThanks();
+                    case HELP -> ui.showHelp();
+                    case TODO, DEADLINE, EVENT -> {
+                        Task task = Parser.parseTask(command);
+                        tasks.add(task);
+                        ui.showTaskAdded(task, tasks.size());
+                        changed = true;
                     }
-                }
+                    case ON -> listTasksOn(tasks, Parser.parseDate(command), ui);
+                    case FIND -> listMatchingTasks(tasks, Parser.parseFindKeyword(command), ui);
+                    case LIST -> {
+                        ui.showTaskListHeader();
+                        for (int taskNumber = 1; taskNumber <= tasks.size(); taskNumber++) {
+                            ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
+                        }
+                    }
+                    case DELETE -> {
+                        int taskNumber = requireExistingTaskNumber(command, tasks);
+                        Task removedTask = tasks.delete(taskNumber);
+                        ui.showTaskDeleted(removedTask, tasks.size());
+                        changed = true;
+                    }
+                    case MARK -> {
+                        int taskNumber = requireExistingTaskNumber(command, tasks);
+                        changed = tasks.mark(taskNumber);
+                        ui.showTaskMarked(tasks.get(taskNumber));
+                    }
+                    case UNMARK -> {
+                        int taskNumber = requireExistingTaskNumber(command, tasks);
+                        changed = tasks.unmark(taskNumber);
+                        if (changed) {
+                            ui.showTaskUnmarked(tasks.get(taskNumber));
+                        } else {
+                            ui.showAlreadyUnmarked();
+                        }
+                    }
                 }
                 if (changed) {
                     saveTasks(storage, tasks, savingEnabled, ui);
@@ -106,6 +107,24 @@ public class Friday {
         List<Integer> matches = tasks.findTaskNumbersOn(date);
         if (matches.isEmpty()) {
             ui.showNoTasksOnDate();
+        }
+        for (int taskNumber : matches) {
+            ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
+        }
+    }
+
+    /**
+     * Displays keyword matches using their original list numbers without saving or changing tasks.
+     *
+     * @param tasks complete task list to search.
+     * @param keyword validated search keyword or phrase.
+     * @param ui console presentation helper.
+     */
+    private static void listMatchingTasks(TaskList tasks, String keyword, Ui ui) {
+        ui.showFindHeader();
+        List<Integer> matches = tasks.findTaskNumbersContaining(keyword);
+        if (matches.isEmpty()) {
+            ui.showNoMatchingTasks();
         }
         for (int taskNumber : matches) {
             ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
