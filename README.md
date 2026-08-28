@@ -176,4 +176,16 @@ requires reviewing/updating relevant JUnit tests after every code change. This p
 important behavior rather than promising a measured line-coverage percentage. See the
 [user guide's testing section](docs/README.md#development-tests) for commands and priorities.
 
+## A-CodingStandard: Java and Git conventions
+
+Applied the SE-EDU basic and intermediate Java conventions to production code and JUnit tests:
+switch indentation, wrapped expressions and annotations, boolean and collection names, related
+constant prefixes, and descriptive Javadoc headers. Console messages and saved data are unchanged.
+
+The versioned project skills
+[seedu-java-coding-standard](.agents/skills/seedu-java-coding-standard/SKILL.md) and
+[seedu-git-standard](.agents/skills/seedu-git-standard/SKILL.md) link to the authoritative rules
+and provide review checklists. `AGENTS.md` and `CLAUDE.md` require them for future Java changes
+and commit messages. Existing JUnit and console tests remain the behavioral regression checks.
+
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
