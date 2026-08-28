@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClass = 'friday.Friday'
+}
+
+tasks.named('run', JavaExec) {
+    // Gradle otherwise supplies an empty input stream to the console chatbot.
+    standardInput = System.in
+    // Keep the existing data/friday.txt location independent of how Gradle is invoked.
+    workingDir = projectDir
+}

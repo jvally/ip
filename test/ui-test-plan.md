@@ -31,6 +31,17 @@ python3 test/run-unit-tests.py
 Both test runners use Python's platform-specific temporary directory and require `java` and `javac` on `PATH`.
 On Windows, use `python` or `py -3` if your Python installation does not provide `python3`.
 
+## Gradle build and launch verification (A-Gradle)
+
+With Java **25.0.3.fx-zulu** selected, run `./gradlew --version` and `./gradlew clean build`.
+Expect Gradle 9.6.1, the selected Java 25.0.3 JVM, and `BUILD SUCCESSFUL`.
+`test NO-SOURCE` is expected until A-JUnit; keep running the Java and UI regressions above.
+
+Also launch `./gradlew --quiet --console=plain run` in a checkout without saved tasks,
+feed the inputs from **Greeting and thanks output**, and compare its output to that case's
+expected output below. This verifies Gradle's main class and console input forwarding without
+creating task data. Existing case expectations remain the source of truth.
+
 ## Test Case: Add and list todos
 - Aim: Verify that `todo` adds ToDo tasks and that `list` shows the ToDo prefix.
 - Inputs:
