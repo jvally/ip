@@ -1,34 +1,22 @@
 #!/usr/bin/env python3
-"""Compile and run the dependency-free Java test classes using the active JDK.
+"""Keep the existing test command as a compatibility wrapper around Gradle's JUnit task.
 
-Select Java 25.0.3.fx-zulu before invoking this runner. All compiled files go
-into an automatically cleaned temporary directory chosen by the operating system.
+Select Java 25.0.3.fx-zulu first. Extra arguments are forwarded to the Gradle wrapper,
+for example --tests friday.parser.ParserTest or --rerun-tasks.
 """
 
 from pathlib import Path
+import os
 import subprocess
-import tempfile
+import sys
 
 
 def main():
-    """Run each *Test.java main method, stopping if compilation or any test fails."""
+    """Run the single JUnit suite and propagate Gradle's exit code to callers."""
     repo = Path(__file__).resolve().parents[1]
-    sources = sorted((repo / "src/main/java").rglob("*.java"))
-    tests = sorted((repo / "test").rglob("*Test.java"))
-    if not tests:
-        raise SystemExit("No Java test classes found.")
-    with tempfile.TemporaryDirectory(prefix="friday-unit-") as temporary:
-        build = Path(temporary) / "classes"
-        subprocess.run(
-            ["javac", "-d", str(build)] + [str(path) for path in sources + tests],
-            check=True,
-            cwd=repo,
-        )
-        for test in tests:
-            # Test folders mirror Java packages relative to the test source root.
-            class_name = ".".join(test.relative_to(repo / "test").with_suffix("").parts)
-            subprocess.run(["java", "-cp", str(build), class_name], check=True, cwd=repo)
+    wrapper = repo / ("gradlew.bat" if os.name == "nt" else "gradlew")
+    return subprocess.run([str(wrapper), "test", *sys.argv[1:]], cwd=repo).returncode
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -16,26 +16,28 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@block-save` blocks the destination with a nonempty directory after startup, to test a write failure.
 
 The session helper launches `friday.Friday`; it does not depend on a default-package entry point.
-Both runners discover Java sources in nested package folders under `src/main/java`.
-Java test classes mirror their package directories under `test`, which remains the test source root.
+The UI helper discovers Java sources in nested package folders under `src/main/java`.
+JUnit tests mirror their production packages under Gradle's standard `src/test/java` root.
 
 The helper does not supply expected output; all console expectations remain in this plan.
 
-Parser, task-list, storage, and date/time checks (including command syntax, task numbering, invalid records, and failed writes)
-can also be run with the same JDK from the project root:
+Parser, task-list, storage, and date/time JUnit checks run with the same JDK from the project root:
 
 ```bash
-python3 test/run-unit-tests.py
+./gradlew test
 ```
 
-Both test runners use Python's platform-specific temporary directory and require `java` and `javac` on `PATH`.
-On Windows, use `python` or `py -3` if your Python installation does not provide `python3`.
+`python3 test/run-unit-tests.py` delegates to this same Gradle task and forwards extra arguments.
+JUnit results appear under `build/reports/tests/test/`; storage tests use JUnit `@TempDir`.
+The UI runner uses Python's platform-specific temporary directory and requires `java` and `javac` on `PATH`.
+On Windows, use `gradlew.bat` for Gradle and `python` or `py -3` if `python3` is unavailable.
 
 ## Gradle build and launch verification (A-Gradle)
 
 With Java **25.0.3.fx-zulu** selected, run `./gradlew --version` and `./gradlew clean build`.
 Expect Gradle 9.6.1, the selected Java 25.0.3 JVM, and `BUILD SUCCESSFUL`.
-`test NO-SOURCE` is expected until A-JUnit; keep running the Java and UI regressions above.
+After A-JUnit, `test` must discover and run the JUnit suite (or report `UP-TO-DATE` when unchanged).
+Use `./gradlew test --rerun-tasks` to force a fresh run, and keep running the separate UI regressions above.
 
 Also launch `./gradlew --quiet --console=plain run` in a checkout without saved tasks,
 feed the inputs from **Greeting and thanks output**, and compare its output to that case's

@@ -12,6 +12,25 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Keep Jupiter, parameterized tests, and the platform launcher on compatible versions.
+    testImplementation platform('org.junit:junit-bom:5.14.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}
+
 application {
     mainClass = 'friday.Friday'
 }

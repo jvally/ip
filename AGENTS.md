@@ -32,6 +32,25 @@ Ensure that Java 25.0.3.fx-zulu is used when running the application or build ta
 
 Keep `test/ui-test-plan.md` as the source of truth for command-driven UI tests. After any code update that changes the console UI, update the plan if needed and run the `test-ui` skill before reporting completion.
 
+## JUnit testing
+
+Focus JUnit tests on roughly the **50% highest-value methods**, prioritizing complex,
+core, and critical business logic such as parsing, task mutations, date validation,
+and storage integrity. This is a risk-based method-selection target, not a claim of
+50% line or branch coverage and not a limit on useful tests.
+
+After **every code change**, review and update the relevant JUnit tests and reassess
+method priorities to maintain that target. Cover normal behavior, boundaries, invalid
+input, and important side effects or unchanged state after failures. Prefer behavioral
+assertions over tests that simply restate implementation details; test private helpers
+through public behavior. Keep tests deterministic and use JUnit `@TempDir` for file I/O.
+
+Put tests in `src/test/java`, mirroring the production package, with names such as
+`ParserTest` and `parseTask_missingDescription_throwsException`. Reuse and extend existing
+tests rather than keeping duplicate standalone suites. Run `./gradlew test` and the
+relevant UI cases with Java **25.0.3.fx-zulu** before reporting a change as verified.
+The console expectations remain in `test/ui-test-plan.md`.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
