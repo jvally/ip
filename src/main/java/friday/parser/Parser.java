@@ -18,7 +18,7 @@ public final class Parser {
      * The supported actions; execution belongs to Friday rather than the parser.
      */
     public enum CommandType {
-        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK
+        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK, FIND
     }
 
     private Parser() {
@@ -44,6 +44,7 @@ public final class Parser {
             case "deadline" -> CommandType.DEADLINE;
             case "event" -> CommandType.EVENT;
             case "on" -> CommandType.ON;
+            case "find" -> CommandType.FIND;
             case "delete" -> CommandType.DELETE;
             case "mark" -> CommandType.MARK;
             case "unmark" -> CommandType.UNMARK;
@@ -104,8 +105,27 @@ public final class Parser {
     }
 
     /**
-     * Parses an on command's ISO date and reports the existing command-specific error on failure.
+     * Extracts the literal search text from a find command, trimming its surrounding whitespace.
+     * Case and internal spaces are preserved so the entire text is matched as a substring.
+     *
+     * @param command complete command entered by the user.
+     * @return the nonblank search keyword or phrase.
+     * @throws IllegalArgumentException if this is not a find command or the keyword is blank.
      */
+    public static String parseFindKeyword(String command) {
+        if (parseCommandType(command) != CommandType.FIND) {
+            throw new IllegalArgumentException("Invalid find format. Use: find KEYWORD");
+        }
+        String keyword = parseCommandBody(command, "find ").strip();
+        if (keyword.isBlank()) {
+            throw new IllegalArgumentException("Invalid find format. Use: find KEYWORD");
+        }
+        return keyword;
+    }
+
+ /** 
+ * Parses an on command's ISO date and reports the existing command-specific error on failure. 
+ */
     public static LocalDate parseDate(String command) {
         try {
             return LocalDate.parse(parseCommandBody(command, "on "));

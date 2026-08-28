@@ -111,6 +111,21 @@ public class Ui {
     }
 
     /**
+     * Prints the keyword-search heading and explains how to use the original task numbers.
+     */
+    public void showFindHeader() {
+        System.out.println("Here are the matching tasks in your list:");
+        System.out.println(TASK_NUMBER_HINT);
+    }
+
+    /**
+     * Reports that no task description contains the search keyword.
+     */
+    public void showNoMatchingTasks() {
+        System.out.println("No matching tasks found.");
+    }
+  
+     /**
      * Prints the dated-task heading and original-task-number hint.
      */
     public void showDateHeader(LocalDate date) {
