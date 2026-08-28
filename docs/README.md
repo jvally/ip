@@ -4,26 +4,53 @@ Friday is a command-line chatbot for managing tasks.
 
 ## Setup and running
 
-Keep `src/main/java` marked as the source root in IntelliJ; `src`, `main`, and `java` are
-not Java packages. Select Java **25.0.3.fx-zulu** and run
-`src/main/java/friday/Friday.java`. Update any existing run configuration's main class to
-`friday.Friday` and keep the project root as its working directory so `data/friday.txt`
-continues to resolve to the same saved tasks.
+Use **Java 25.0.3.fx-zulu**. Gradle support is included through the committed wrapper,
+which downloads **Gradle 9.6.1** on first use; no global Gradle installation is needed.
+Java 25 requires Gradle 9.1 or newer, so do not substitute an older installed Gradle.
 
-Alternatively, on macOS with SDKMAN installed, run from the project root:
+From the project root on macOS/Linux with SDKMAN installed:
 
 ```bash
 sdk use java 25.0.3.fx-zulu
-mkdir -p build/classes
-find src/main/java -name '*.java' > build/sources.txt
-javac -d build/classes @build/sources.txt
-java -cp build/classes friday.Friday
+./gradlew --version
+./gradlew clean build
+./gradlew --quiet --console=plain run
 ```
 
-Compilation must include sources in subfolders; `src/main/java/*.java` no longer finds them.
-The `build` directory is ignored by Git. No task-data migration is needed.
+`--version` should show Gradle 9.6.1 and the selected Java 25.0.3 JVM. `clean build` should
+finish with `BUILD SUCCESSFUL`; `run` should show Friday's greeting and accept commands.
+Try `hello`, then `bye`. On Windows use `gradlew.bat` (or `.\gradlew.bat` in PowerShell)
+instead of `./gradlew`, and set `JAVA_HOME` to the required JDK before running it.
+The first download needs internet access; subsequent runs can reuse the cached distribution.
+
+In IntelliJ, import the project root using `build.gradle`, use the **Gradle wrapper**, and set
+both **Project SDK** and **Gradle JVM** to **25.0.3.fx-zulu**. Reload the Gradle project, then run
+**application > run**. For an existing project that will not import, close IntelliJ, back up and
+move aside `.idea` and `.iml` files, and reopen the root as a Gradle project, following
+[scenario 2 of the course tutorial](https://se-education.org/guides/tutorials/gradle.html).
+No IDE files are removed automatically.
+
+Keep `src/main/java` as the source root; `src`, `main`, and `java` are not Java packages.
+The entry point remains `friday.Friday`. Gradle's `run` task uses the project root as its
+working directory, so existing data remains at `data/friday.txt`; no migration is needed.
+Generated output is under the ignored `build` directory. `clean` removes that output, not task data.
+
+## Gradle troubleshooting
+
+- **Wrong Java version / unsupported class-file version:** check `java -version` and
+  `./gradlew --version`, select the required SDK, and set IntelliJ's Gradle JVM to match.
+  Stop stale daemons with `./gradlew --stop` and reload the project.
+- **Could not find the main class:** reload `build.gradle` and use `friday.Friday`, not `Duke`.
+- **Permission denied on `./gradlew`:** restore the executable bit with `chmod +x gradlew`.
+- **Download failure:** check internet/proxy access and retry. Do not disable the wrapper's
+  checksum verification to work around a failed or mismatched download.
+- **No tests run:** JUnit integration is deferred to A-JUnit. A successful Gradle build alone
+  is not evidence that the existing regression tests passed.
 
 ## Development tests
+
+Gradle `test` currently reports `NO-SOURCE`: the tests under `test/friday` are standalone
+Java programs, not JUnit tests. `build` does not run them. Continue running them explicitly:
 
 Use Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS).
 From the project root, run `python3 test/run-unit-tests.py` for the Java tests.

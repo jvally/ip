@@ -2,28 +2,40 @@
 
 This is a project template for a greenfield Java project. It's named after the Java mascot _Friday_. Given below are instructions on how to use it.
 
-## Setting up in Intellij
+## Setting up in IntelliJ IDEA
 
-Prerequisites: JDK **25.0.3.fx-zulu**, update Intellij to the most recent version.
+Prerequisites: **JDK 25.0.3.fx-zulu** and an IntelliJ IDEA version that supports Java 25.
+The committed Gradle wrapper downloads **Gradle 9.6.1**; no separate Gradle installation is needed.
 
-1. Open Intellij (if you are not in the welcome screen, click `File` > `Close Project` to close the existing project first)
-2. Open the project into Intellij as follows:
-   a. Click `Open`.
-   b. Select the project directory, and click `OK`.
-   c. If there are any further prompts, accept the defaults.
-3. Configure the project to use **JDK 25.0.3.fx-zulu** (not other versions) as explained in .<br>
-   In the same dialog, set the **Project language level** field to the option.
-4. After that, locate the `src/main/java/friday/Friday.java` file, right-click it, and
-   choose `Run Friday.main()` (if the code editor is showing compile errors, try restarting the IDE). 
-   If the setup is correct, you should see something like the below as the output:
-   ```
-     _____ ____  ___ ____    _ __   __
-|  ___|  _ \|_ _|  _ \  / \\ \ / /
-| |_  | |_) || || | | |/ _ \\ V /
-|  _| |  _ < | || |_| / ___ \| |  
-|_|   |_| \_\___|____/_/   \_\_|
-   ```
-//ascii art was generated using Codex 5.4-mini
+1. Open this project's root directory and import it as a Gradle project using `build.gradle`.
+2. Set **Project SDK** to **25.0.3.fx-zulu** and **Project language level** to **25**, without preview features.
+3. Under **Settings > Build, Execution, Deployment > Build Tools > Gradle**, select the project's
+   **Gradle wrapper** and set **Gradle JVM** to the same **25.0.3.fx-zulu** SDK. Reload the Gradle project.
+4. Run the Gradle **application > run** task, or use the terminal commands below. The entry point is
+   `friday.Friday`; `src/main/java` remains the source root. Task data stays in `data/friday.txt`
+   under the project root.
+
+If an existing IntelliJ project does not import Gradle correctly, close it, back up `.idea` and
+any `.iml` files, move those IDE configuration files aside, and reopen the root as a Gradle project.
+This follows [scenario 2 of the course tutorial](https://se-education.org/guides/tutorials/gradle.html).
+Do not delete your sources or `data` folder.
+
+From the project root on macOS/Linux:
+
+```bash
+sdk use java 25.0.3.fx-zulu
+./gradlew --version
+./gradlew clean build
+./gradlew --quiet --console=plain run
+```
+
+Type `hello` and then `bye` to check input and shutdown. On Windows, select the same JDK using
+`JAVA_HOME` and use `gradlew.bat` in place of `./gradlew` (or `.\gradlew.bat` in PowerShell).
+The first invocation needs internet access to download the pinned Gradle distribution.
+
+`build` compiles and packages the application. It does **not** run the existing main-method
+regression tests; continue using `python3 test/run-unit-tests.py` and the `test-ui` skill.
+JUnit integration is deferred to **A-JUnit**, so Gradle's `test` task currently reports `NO-SOURCE`.
 
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.
@@ -140,5 +152,13 @@ remains the application source root. No command syntax, console output, or save 
 | `friday.ui` | `Ui` |
 
 For launch and test commands, see [the user guide](docs/README.md#setup-and-running).
+
+## A-Gradle: Build and run
+
+Integrated the Duke `add-gradle-support` branch and adapted its wrapper-based build to Friday.
+Gradle 9.6.1 builds the Java 25 sources and launches `friday.Friday` with console input and the
+project working directory preserved. The wrapper download is pinned by SHA-256, and the
+project name is `friday` regardless of the checkout directory. JUnit dependencies and Shadow
+packaging are deferred to later increments; the existing regression runners remain unchanged.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
