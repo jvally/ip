@@ -25,9 +25,13 @@ import friday.task.Event;
 import friday.task.Task;
 import friday.task.ToDo;
 
-/** Tests persistence and failure recovery using fresh temporary files for every test invocation. */
+/**
+ * Tests persistence and failure recovery using fresh temporary files for every test invocation.
+ */
 class StorageTest {
-    /** JUnit owns and cleans this directory; tests never access the user's data/friday.txt. */
+    /**
+     * JUnit owns and cleans this directory; tests never access the user's data/friday.txt.
+     */
     @TempDir
     Path directory;
 
@@ -65,16 +69,16 @@ class StorageTest {
         tasks.get(0).markAsDone();
         tasks.get(2).markAsDone();
         storage.save(tasks);
-        List<Task> loaded = storage.load();
-        assertEquals(tasks.size(), loaded.size());
+        List<Task> loadedTasks = storage.load();
+        assertEquals(tasks.size(), loadedTasks.size());
         for (int i = 0; i < tasks.size(); i++) {
-            assertEquals(tasks.get(i).getClass(), loaded.get(i).getClass());
-            assertEquals(tasks.get(i).getDescription(), loaded.get(i).getDescription());
-            assertEquals(tasks.get(i).isDone(), loaded.get(i).isDone());
+            assertEquals(tasks.get(i).getClass(), loadedTasks.get(i).getClass());
+            assertEquals(tasks.get(i).getDescription(), loadedTasks.get(i).getDescription());
+            assertEquals(tasks.get(i).isDone(), loadedTasks.get(i).isDone());
         }
-        Deadline deadline = assertInstanceOf(Deadline.class, loaded.get(1));
+        Deadline deadline = assertInstanceOf(Deadline.class, loadedTasks.get(1));
         assertEquals(LocalDateTime.of(2019, 12, 2, 18, 0), deadline.getBy());
-        Event event = assertInstanceOf(Event.class, loaded.get(2));
+        Event event = assertInstanceOf(Event.class, loadedTasks.get(2));
         assertEquals(LocalDateTime.of(2019, 12, 2, 14, 0), event.getFrom());
         assertEquals(LocalDateTime.of(2019, 12, 3, 16, 0), event.getTo());
         assertEquals(3, Files.readAllLines(file).size(), "Escaped newlines must not split records.");
@@ -107,10 +111,10 @@ class StorageTest {
         second.markAsDone();
         storage.save(List.of(first, second));
         assertEquals(List.of("T|0|first", "T|1|second"), Files.readAllLines(file));
-        List<Task> loaded = storage.load();
-        assertEquals(2, loaded.size());
-        assertFalse(loaded.get(0).isDone());
-        assertTrue(loaded.get(1).isDone());
+        List<Task> loadedTasks = storage.load();
+        assertEquals(2, loadedTasks.size());
+        assertFalse(loadedTasks.get(0).isDone());
+        assertTrue(loadedTasks.get(1).isDone());
         storage.save(List.of());
         assertEquals("", Files.readString(file));
         assertTrue(storage.load().isEmpty());
@@ -119,28 +123,28 @@ class StorageTest {
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"nonsense", "Q|0|unknown", "T|2|bad status", "T|true|bad status",
-        "T|0|", "T|0|   ", "T|0|extra|field", "D|0|missing date", "D|0|empty date|",
-        "E|0|missing end|start", "E|0|event||end", "E|0|event|start|end|extra",
-        "T|0|bad\\q", "T|0|trailing\\", "D|0|old deadline|Sunday",
-        "D|0|impossible date|2019-02-29", "D|0|bad time|2019-12-02T24:00",
-        "E|0|old event|Mon 2pm|4pm", "E|0|backwards|2019-12-03|2019-12-02",
-        "E|0|bad end|2019-12-02|2019-02-29"})
+            "T|0|", "T|0|   ", "T|0|extra|field", "D|0|missing date", "D|0|empty date|",
+            "E|0|missing end|start", "E|0|event||end", "E|0|event|start|end|extra",
+            "T|0|bad\\q", "T|0|trailing\\", "D|0|old deadline|Sunday",
+            "D|0|impossible date|2019-02-29", "D|0|bad time|2019-12-02T24:00",
+            "E|0|old event|Mon 2pm|4pm", "E|0|backwards|2019-12-03|2019-12-02",
+            "E|0|bad end|2019-12-02|2019-02-29"})
     void load_invalidSecondRecord_rejectsWholeFileAndPreservesBytes(String invalid) throws IOException {
         Path file = directory.resolve("friday.txt");
         Files.writeString(file, "T|0|valid first record\n" + invalid + "\n");
-        byte[] original = Files.readAllBytes(file);
+        byte[] originalBytes = Files.readAllBytes(file);
         IOException error = assertThrows(IOException.class, () -> new Storage(file).load());
         assertEquals("Invalid task record on line 2.", error.getMessage());
-        assertArrayEquals(original, Files.readAllBytes(file));
+        assertArrayEquals(originalBytes, Files.readAllBytes(file));
     }
 
     @Test
     void load_invalidUtf8_throwsWithoutChangingBytes() throws IOException {
         Path file = directory.resolve("friday.txt");
-        byte[] invalid = {(byte) 0xC3, (byte) 0x28};
-        Files.write(file, invalid);
+        byte[] invalidBytes = {(byte) 0xC3, (byte) 0x28};
+        Files.write(file, invalidBytes);
         assertThrows(IOException.class, () -> new Storage(file).load());
-        assertArrayEquals(invalid, Files.readAllBytes(file));
+        assertArrayEquals(invalidBytes, Files.readAllBytes(file));
     }
 
     @Test
@@ -187,10 +191,10 @@ class StorageTest {
         Path file = directory.resolve("friday.txt");
         Storage storage = new Storage(file);
         storage.save(List.of(new ToDo("keep this task")));
-        byte[] original = Files.readAllBytes(file);
+        byte[] originalBytes = Files.readAllBytes(file);
         assertThrows(IllegalArgumentException.class,
                 () -> storage.save(List.of(new ToDo("partial write"), new Task("unsupported"))));
-        assertArrayEquals(original, Files.readAllBytes(file));
+        assertArrayEquals(originalBytes, Files.readAllBytes(file));
         assertOnlySavePathRemains();
         storage.save(List.of(new ToDo("retry")));
         assertEquals(List.of("T|0|retry"), Files.readAllLines(file));
@@ -203,16 +207,18 @@ class StorageTest {
         Files.writeString(file, "D|1|return book|2019-12-02\n"
                 + "E|0|meeting|2/12/2019 1800|2019-12-02 20:00\n");
         Storage storage = new Storage(file);
-        List<Task> loaded = storage.load();
-        Deadline deadline = assertInstanceOf(Deadline.class, loaded.get(0));
+        List<Task> loadedTasks = storage.load();
+        Deadline deadline = assertInstanceOf(Deadline.class, loadedTasks.get(0));
         assertEquals(LocalDateTime.of(2019, 12, 2, 0, 0), deadline.getBy());
         assertTrue(deadline.isDone());
-        storage.save(loaded);
+        storage.save(loadedTasks);
         assertEquals(List.of("D|1|return book|2019-12-02T00:00",
                 "E|0|meeting|2019-12-02T18:00|2019-12-02T20:00"), Files.readAllLines(file));
     }
 
-    /** A failed save must not leak its partial temporary snapshot into the data folder. */
+    /**
+     * Checks that a failed save leaves no partial temporary snapshot in the data folder.
+     */
     private void assertOnlySavePathRemains() throws IOException {
         try (var files = Files.list(directory)) {
             assertEquals(List.of("friday.txt"), files.map(path -> path.getFileName().toString()).toList());

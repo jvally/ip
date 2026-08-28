@@ -20,12 +20,14 @@ import friday.task.Deadline;
 import friday.task.Event;
 import friday.task.ToDo;
 
-/** Tests command boundaries, task construction, and argument validation independently of the UI. */
+/**
+ * Tests command boundaries, task construction, and argument validation independently of the UI.
+ */
 class ParserTest {
     @ParameterizedTest
     @CsvSource({"bye,BYE", "hello,HELLO", "thanks,THANKS", "help,HELP", "list,LIST",
-        "todo,TODO", "deadline,DEADLINE", "event,EVENT", "on,ON", "delete,DELETE",
-        "mark,MARK", "unmark,UNMARK", "todo   read book,TODO"})
+            "todo,TODO", "deadline,DEADLINE", "event,EVENT", "on,ON", "delete,DELETE",
+            "mark,MARK", "unmark,UNMARK", "todo   read book,TODO"})
     void parseCommandType_supportedCommand_returnsExpectedType(String input, Parser.CommandType expected) {
         assertEquals(expected, Parser.parseCommandType(input));
     }
@@ -33,8 +35,8 @@ class ParserTest {
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"blah", "TODO read book", " todo read book", "todo\tread book",
-        "todoLater read book", "deadlineX book", "eventually meeting", "onward", "marking 1",
-        "unmarked 1", "deleted 1", "bye now", "hello ", "thanks extra", "help now", "list "})
+            "todoLater read book", "deadlineX book", "eventually meeting", "onward", "marking 1",
+            "unmarked 1", "deleted 1", "bye now", "hello ", "thanks extra", "help now", "list "})
     void parseCommandType_unknownOrMalformedCommand_throwsException(String command) {
         assertError(() -> Parser.parseCommandType(command), "Sir, I don't know what you are saying :-(");
     }
@@ -73,7 +75,7 @@ class ParserTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"deadline", "deadline book", "deadline /by 2019-12-02",
-        "deadline book /by ", "deadline book/by 2019-12-02"})
+            "deadline book /by ", "deadline book/by 2019-12-02"})
     void parseTask_malformedDeadline_throwsHelpfulException(String command) {
         assertError(() -> Parser.parseTask(command),
                 "Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
@@ -81,8 +83,8 @@ class ParserTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"event", "event meeting /from 2019-12-02",
-        "event /from 2019-12-02 /to 2019-12-03", "event meeting /from /to 2019-12-03",
-        "event meeting /from 2019-12-02 /to ", "event meeting /to 2019-12-03 /from 2019-12-02"})
+            "event /from 2019-12-02 /to 2019-12-03", "event meeting /from /to 2019-12-03",
+            "event meeting /from 2019-12-02 /to ", "event meeting /to 2019-12-03 /from 2019-12-02"})
     void parseTask_malformedEvent_throwsHelpfulException(String command) {
         assertError(() -> Parser.parseTask(command),
                 "Invalid event format. Use: event DESCRIPTION /from START /to END");
@@ -122,7 +124,7 @@ class ParserTest {
         for (String argument : List.of("1", "+1", "01", "  1  ")) {
             assertEquals(1, Parser.parseTaskNumber(word + " " + argument), argument);
         }
-        for (int number : new int[]{Integer.MIN_VALUE, -2, 0, Integer.MAX_VALUE}) {
+        for (int number : new int[] {Integer.MIN_VALUE, -2, 0, Integer.MAX_VALUE}) {
             assertEquals(number, Parser.parseTaskNumber(word + " " + number));
         }
     }
@@ -139,12 +141,14 @@ class ParserTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"on", "on   ", "on Sunday", "on 2019-02-29", "on 2/12/2019",
-        "on 2019-12-02 18:00", "on 2019-1-2"})
+            "on 2019-12-02 18:00", "on 2019-1-2"})
     void parseDate_missingOrInvalidDate_throwsHelpfulException(String command) {
         assertError(() -> Parser.parseDate(command), "Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).");
     }
 
-    /** Error messages are part of the existing console contract, not just exception types. */
+    /**
+     * Checks the exception message as part of the existing console contract.
+     */
     private static void assertError(Executable operation, String message) {
         assertEquals(message, assertThrows(IllegalArgumentException.class, operation).getMessage());
     }
