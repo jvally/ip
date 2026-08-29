@@ -1,6 +1,6 @@
 # Friday User Guide
 
-Friday is a command-line chatbot for managing tasks.
+Friday is a JavaFX chatbot for managing tasks. Its chat window accepts the same task commands as the legacy console UI.
 
 ## Setup and running
 
@@ -18,8 +18,8 @@ sdk use java 25.0.3.fx-zulu
 ```
 
 `--version` should show Gradle 9.6.1 and the selected Java 25.0.3 JVM. `clean build` should
-finish with `BUILD SUCCESSFUL`; `run` should show Friday's greeting and accept commands.
-Try `hello`, then `bye`. On Windows use `gradlew.bat` (or `.\gradlew.bat` in PowerShell)
+finish with `BUILD SUCCESSFUL`; `run` opens Friday's chat window. Enter a command and press **Enter**
+or select **Send**; try `hello`, then `bye`. On Windows use `gradlew.bat` (or `.\gradlew.bat` in PowerShell)
 instead of `./gradlew`, and set `JAVA_HOME` to the required JDK before running it.
 The first download needs internet access; subsequent runs can reuse the cached distribution.
 
@@ -31,8 +31,9 @@ move aside `.idea` and `.iml` files, and reopen the root as a Gradle project, fo
 No IDE files are removed automatically.
 
 Keep `src/main/java` as the source root; `src`, `main`, and `java` are not Java packages.
-The entry point remains `friday.Friday`. Gradle's `run` task uses the project root as its
-working directory, so existing data remains at `data/friday.txt`; no migration is needed.
+Gradle launches `friday.Launcher`, which starts the JavaFX `friday.Main` application. The separate
+`friday.Friday` entry point remains available for the command-driven console regression runner. Gradle's `run`
+task uses the project root as its working directory, so existing data remains at `data/friday.txt`; no migration is needed.
 Generated output is under the ignored `build` directory. `clean` removes that output, not task data.
 
 ## Gradle troubleshooting
@@ -40,7 +41,7 @@ Generated output is under the ignored `build` directory. `clean` removes that ou
 - **Wrong Java version / unsupported class-file version:** check `java -version` and
   `./gradlew --version`, select the required SDK, and set IntelliJ's Gradle JVM to match.
   Stop stale daemons with `./gradlew --stop` and reload the project.
-- **Could not find the main class:** reload `build.gradle` and use `friday.Friday`, not `Duke`.
+- **Could not find the main class:** reload `build.gradle` and use `friday.Launcher`, not `Duke`.
 - **Permission denied on `./gradlew`:** restore the executable bit with `chmod +x gradlew`.
 - **Download failure:** check internet/proxy access and retry. Do not disable the wrapper's
   checksum verification to work around a failed or mismatched download.
@@ -101,7 +102,8 @@ do not call the same production logic being tested.
 
 ## Quick start
 
-Type a command and press Enter. Friday supports todos, deadlines, events, and a few helper commands.
+Type a command in the GUI text field, then press **Enter** or select **Send**. Friday supports todos, deadlines,
+events, searches, and a few helper commands. The chat shows your command on the right and Friday's response on the left.
 
 ## Adding todos
 

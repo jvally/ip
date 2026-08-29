@@ -14,8 +14,8 @@ The committed Gradle wrapper downloads **Gradle 9.6.1**; no separate Gradle inst
 2. Set **Project SDK** to **25.0.3.fx-zulu** and **Project language level** to **25**, without preview features.
 3. Under **Settings > Build, Execution, Deployment > Build Tools > Gradle**, select the project's
    **Gradle wrapper** and set **Gradle JVM** to the same **25.0.3.fx-zulu** SDK. Reload the Gradle project.
-4. Run the Gradle **application > run** task, or use the terminal commands below. The entry point is
-   `friday.Friday`; `src/main/java` remains the source root. Task data stays in `data/friday.txt`
+4. Run the Gradle **application > run** task, or use the terminal commands below. The JavaFX entry point is
+   `friday.Launcher` (which starts `friday.Main`); `src/main/java` remains the source root. Task data stays in `data/friday.txt`
    under the project root.
 
 If an existing IntelliJ project does not import Gradle correctly, close it, back up `.idea` and
@@ -32,7 +32,7 @@ sdk use java 25.0.3.fx-zulu
 ./gradlew --quiet --console=plain run
 ```
 
-Type `hello` and then `bye` to check input and shutdown. On Windows, select the same JDK using
+Use the chat window to enter `hello` and then `bye` to check input and shutdown. On Windows, select the same JDK using
 `JAVA_HOME` and use `gradlew.bat` in place of `./gradlew` (or `.\gradlew.bat` in PowerShell).
 The first invocation needs internet access to download the pinned Gradle distribution.
 
@@ -211,5 +211,14 @@ Added `find KEYWORD` to search task descriptions using case-sensitive literal su
 Results include completed tasks and retain their original list numbers for subsequent commands.
 The parser rejects blank keywords, and the UI reports empty results without modifying or saving
 the list. JUnit and console regressions cover parsing, matching, numbering, and read-only behavior.
+
+## Level-10: GUI
+
+Friday now has a JavaFX chat interface built with FXML, reusable dialog boxes, event handlers for both **Enter** and
+**Send**, and the required `Launcher` class. The GUI sends every command to the existing Friday engine, so all task,
+date, search, persistence, and error-handling behavior remains available. The application ships with original generated
+avatar artwork in `src/main/resources/images/avatars.png`; JavaFX dependencies are configured for Windows, macOS, and
+Linux. `FridayTest` covers the GUI-facing response API, while the console regression plan continues to verify exact
+legacy output.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
