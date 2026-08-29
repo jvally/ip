@@ -146,9 +146,33 @@ class ParserTest {
         assertError(() -> Parser.parseDate(command), "Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).");
     }
 
-    /**
-     * Checks the exception message as part of the existing console contract.
-     */
+    @ParameterizedTest
+    @ValueSource(strings = {"find", "find book", "find   read book  "})
+    void parseCommandType_findCommand_returnsFind(String command) {
+        assertEquals(Parser.CommandType.FIND, Parser.parseCommandType(command));
+    }
+
+    @Test
+    void parseFindKeyword_surroundingWhitespace_preservesCaseAndInternalSpaces() {
+        assertEquals("Read  book", Parser.parseFindKeyword("find   Read  book  "));
+        assertEquals(".*", Parser.parseFindKeyword("find .*"));
+        assertEquals("book", Parser.parseFindKeyword("find \u2003book\u2003"));
+        assertEquals("读书", Parser.parseFindKeyword("find 读书"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"find", "find   ", "find \t", "find \u2003", "list", "todo book"})
+    void parseFindKeyword_missingKeywordOrWrongCommand_throwsUsageError(String command) {
+        assertError(() -> Parser.parseFindKeyword(command), "Invalid find format. Use: find KEYWORD");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"findbook", "FIND book", " find book", "find\tbook"})
+    void parseCommandType_malformedFind_rejectsUnknownCommand(String command) {
+        assertError(() -> Parser.parseCommandType(command), "Sir, I don't know what you are saying :-(");
+    }
+
+    /** Checks exception messages as part of the existing console contract. */
     private static void assertError(Executable operation, String message) {
         assertEquals(message, assertThrows(IllegalArgumentException.class, operation).getMessage());
     }

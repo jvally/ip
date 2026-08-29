@@ -57,6 +57,7 @@ public class Friday {
                         hasChanged = true;
                     }
                     case ON -> listTasksOn(tasks, Parser.parseDate(command), ui);
+                    case FIND -> listMatchingTasks(tasks, Parser.parseFindKeyword(command), ui);
                     case LIST -> {
                         ui.showTaskListHeader();
                         for (int taskNumber = 1; taskNumber <= tasks.size(); taskNumber++) {
@@ -119,8 +120,24 @@ public class Friday {
     }
 
     /**
-     * Reports storage failures without terminating the command loop or discarding session tasks.
+     * Displays keyword matches using their original list numbers without saving or changing tasks.
+     *
+     * @param tasks complete task list to search.
+     * @param keyword validated search keyword or phrase.
+     * @param ui console presentation helper.
      */
+    private static void listMatchingTasks(TaskList tasks, String keyword, Ui ui) {
+        ui.showFindHeader();
+        List<Integer> matches = tasks.findTaskNumbersContaining(keyword);
+        if (matches.isEmpty()) {
+            ui.showNoMatchingTasks();
+        }
+        for (int taskNumber : matches) {
+            ui.showNumberedTask(taskNumber, tasks.get(taskNumber));
+        }
+    }
+
+    /** Reports storage failures without terminating the command loop or discarding session tasks. */
     private static void saveTasks(Storage storage, TaskList tasks, boolean isSavingEnabled, Ui ui) {
         if (!isSavingEnabled) {
             ui.showSavingDisabled();

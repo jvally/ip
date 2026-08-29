@@ -128,6 +128,27 @@ public class TaskList {
     }
 
     /**
+     * Finds descriptions containing the keyword using a case-sensitive, literal substring match.
+     * Includes completed tasks without changing their order or completion status.
+     *
+     * @param keyword nonblank search text, already trimmed by the parser.
+     * @return matching tasks' original one-based numbers, in list order.
+     * @throws IllegalArgumentException if the keyword is blank.
+     */
+    public List<Integer> findTaskNumbersContaining(String keyword) {
+        if (keyword.isBlank()) {
+            throw new IllegalArgumentException("The search keyword cannot be blank.");
+        }
+        List<Integer> matches = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getDescription().contains(keyword)) {
+                matches.add(i + 1);
+            }
+        }
+        return matches;
+    }
+
+    /**
      * Returns an unmodifiable copy of the current list for storage.
      * Membership and order are copied; the mutable task objects themselves are shared.
      *

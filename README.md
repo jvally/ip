@@ -2,6 +2,9 @@
 
 This is a project template for a greenfield Java project. It's named after the Java mascot _Friday_. Given below are instructions on how to use it.
 
+AI Declaration:
+Codex 5.6 Sol Medium was used to create majority of the code generated amongst the file 
+including updating the readme , test files, gradle and agents.md file
 ## Setting up in IntelliJ IDEA
 
 Prerequisites: **JDK 25.0.3.fx-zulu** and an IntelliJ IDEA version that supports Java 25.
@@ -202,5 +205,11 @@ contracts, applies the standard's punctuation, and keeps both increment summarie
 formatting before branching for later feature work would reduce this overlap. Reversing the
 merge order alone would still leave overlapping edits; shorter-lived branches or a shared
 formatting baseline would help more.
+## Level-9: Find
+
+Added `find KEYWORD` to search task descriptions using case-sensitive literal substring matching.
+Results include completed tasks and retain their original list numbers for subsequent commands.
+The parser rejects blank keywords, and the UI reports empty results without modifying or saving
+the list. JUnit and console regressions cover parsing, matching, numbering, and read-only behavior.
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
