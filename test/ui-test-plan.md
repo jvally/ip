@@ -1140,3 +1140,163 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test Case: Find descriptions and retain task numbers
+- Aim: Include all task types and completed tasks, preserve original numbers, and allow marking a result.
+- Inputs:
+```text
+@file T|0|buy bread
+@file T|1|read book
+@file D|1|return book|2019-12-02T00:00
+@file E|0|book club|2019-12-02T14:00|2019-12-02T16:00
+find book
+mark 4
+@restart
+find book
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+2.[T][X] read book
+3.[D][X] return book (by: Dec 02 2019)
+4.[E][ ] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
+____________________________________________________________
+Nice! I've marked this task as done:
+  [E][X] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+2.[T][X] read book
+3.[D][X] return book (by: Dec 02 2019)
+4.[E][X] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Find literal phrases and case-sensitive substrings
+- Aim: Trim surrounding whitespace, preserve case and internal spaces, and ignore display-only date fields.
+- Inputs:
+```text
+@file T|0|read book
+@file T|0|bookshelf
+@file T|0|Read Book
+@file T|0|literal .* 读书
+@file D|0|return notes|2019-12-02T00:00
+find   read book
+find Book
+find book
+find .*
+find 读书
+find Dec
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] read book
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+3.[T][ ] Read Book
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] read book
+2.[T][ ] bookshelf
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+4.[T][ ] literal .* 读书
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+4.[T][ ] literal .* 读书
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+No matching tasks found.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Find empty list and invalid keywords
+- Aim: Report empty results and malformed find commands without terminating the command loop.
+- Inputs:
+```text
+find book
+find
+find
+findbook
+FIND book
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+No matching tasks found.
+____________________________________________________________
+Invalid find format. Use: find KEYWORD
+____________________________________________________________
+Invalid find format. Use: find KEYWORD
+____________________________________________________________
+Sir, I don't know what you are saying :-(
+____________________________________________________________
+Sir, I don't know what you are saying :-(
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Find does not attempt to save
+- Aim: Search remains usable with a blocked save destination and produces no save warning.
+- Inputs:
+```text
+@file T|0|read book
+@block-save
+find book
+find missing
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] read book
+____________________________________________________________
+Here are the matching tasks in your list:
+Use the number shown here with mark/unmark.
+No matching tasks found.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```

@@ -17,6 +17,21 @@ repositories {
 }
 
 dependencies {
+    // Keep all classifiers so the GUI runs on Windows, macOS, and Linux.
+    String javaFxVersion = '17.0.7'
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:win"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
+
     // Keep Jupiter, parameterized tests, and the platform launcher on compatible versions.
     testImplementation platform('org.junit:junit-bom:5.14.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -32,7 +47,7 @@ tasks.named('test', Test) {
 }
 
 application {
-    mainClass = 'friday.Friday'
+    mainClass = 'friday.Launcher'
 }
 
 tasks.named('run', JavaExec) {
