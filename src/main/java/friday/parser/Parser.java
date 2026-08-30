@@ -123,9 +123,7 @@ public final class Parser {
         return keyword;
     }
 
- /** 
- * Parses an on command's ISO date and reports the existing command-specific error on failure. 
- */
+    /** Parses an on command's ISO date and reports the existing command-specific error on failure. */
     public static LocalDate parseDate(String command) {
         try {
             return LocalDate.parse(parseCommandBody(command, "on "));

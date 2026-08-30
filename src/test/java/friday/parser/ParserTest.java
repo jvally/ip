@@ -172,7 +172,7 @@ class ParserTest {
         assertError(() -> Parser.parseCommandType(command), "Sir, I don't know what you are saying :-(");
     }
 
-    /** Error messages are part of the existing console contract, not just exception types. */
+    /** Checks exception messages as part of the existing console contract. */
     private static void assertError(Executable operation, String message) {
         assertEquals(message, assertThrows(IllegalArgumentException.class, operation).getMessage());
     }
