@@ -124,7 +124,6 @@ public class Ui {
     public void showNoMatchingTasks() {
         System.out.println("No matching tasks found.");
     }
-
     /** Prints the dated-task heading and original-task-number hint. */
     public void showDateHeader(LocalDate date) {
         System.out.println("Here are the deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
