@@ -72,7 +72,10 @@ public class Storage {
         try {
             try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile, StandardCharsets.UTF_8)) {
                 for (Task task : tasks) {
-                    writer.write(formatTask(task));
+                    String record = formatTask(task);
+                    assert !record.contains("\n") && !record.contains("\r")
+                            : "Each encoded task must occupy exactly one storage record.";
+                    writer.write(record);
                     writer.newLine();
                 }
             }
@@ -130,6 +133,8 @@ public class Storage {
         if (fields.get(1).equals("1")) {
             task.markAsDone();
         }
+        assert task.isDone() == fields.get(1).equals("1")
+                : "A decoded task's completion status must match its stored status field.";
         return task;
     }
 
