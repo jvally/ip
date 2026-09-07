@@ -42,10 +42,17 @@ Expect Gradle 9.6.1, the selected Java 25.0.3 JVM, and `BUILD SUCCESSFUL`.
 After A-JUnit, `test` must discover and run the JUnit suite (or report `UP-TO-DATE` when unchanged).
 Use `./gradlew test --rerun-tasks` to force a fresh run, and keep running the separate UI regressions above.
 
-Also launch `./gradlew --quiet --console=plain run` in a checkout without saved tasks,
-feed the inputs from **Greeting and thanks output**, and compare its output to that case's
-expected output below. This verifies Gradle's main class and console input forwarding without
-creating task data. Existing case expectations remain the source of truth.
+`./gradlew --quiet --console=plain run` launches the JavaFX chat window. Enter `hello`, then `bye`
+in that window for a manual GUI smoke check. Exact console comparisons use the `Program command`
+above, which launches `friday.Friday`. The shared response API is also covered by `FridayTest`;
+console regression results do not claim native GUI interaction coverage.
+
+## D-Contacts acceptance verification
+
+The contact cases below cover lifecycle/restarts, literal search, invalid commands, escaped text,
+and independent storage recovery. [The acceptance report](d-contacts-verification.md) maps the
+agreed specification to JUnit and console evidence. The test runner's fixture directives are
+test-only; they are not supported chatbot commands.
 
 ## Test Case: Add and list todos
 - Aim: Verify that `todo` adds ToDo tasks and that `list` shows the ToDo prefix.

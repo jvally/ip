@@ -135,6 +135,47 @@ Control characters and unknown field prefixes are rejected. To correct a contact
 Contacts appear in insertion order. Search matches a literal substring in any individual field,
 ignoring case, and preserves the original contact numbers. Contact numbers are independent of task
 numbers; deleting one contact renumbers later contacts. Missing phone/email details display as `-`.
+Internal spaces remain significant: `Alice Tan` and `Alice  Tan` are different names, and searches
+do not merge their spaces. Field prefixes are whitespace-delimited tokens beginning with `/`;
+unknown prefixes are errors. A slash inside a word, such as `Alice/Bob`, is ordinary text.
+
+For an empty contact list, adding Alice with both details produces this response:
+
+```text
+____________________________________________________________
+Got it. I've added this contact:
+  Alice Tan (phone: 91234567, email: alice@example.com)
+Now you have 1 contact in the list.
+```
+
+After adding Bob from the example above, `contact find BOB@` returns his original number:
+
+```text
+____________________________________________________________
+Here are the matching contacts in your list:
+Use the number shown here with contact delete.
+2.Bob (phone: -, email: bob@example.com)
+```
+
+Use `contact delete 2` to remove Bob. An empty list reports `No contacts saved.`; a search
+without matches reports `No matching contacts found.` Neither operation writes to the save file.
+
+| Invalid example | Reason and correction |
+| --- | --- |
+| `contact add Alice` | Supply `/phone PHONE`, `/email EMAIL`, or both. |
+| `contact add Alice /phone 91234567 /email` | Omit an unused field instead of leaving its value blank. |
+| `contact add Alice /phone +6591234567` | Use `91234567`, without the country code. |
+| `contact add Alice /email alice@` | Use an address such as `alice@example.com`. |
+| `contact add Alice /phone 91234567 /phone 81234567` | Supply each prefix only once. |
+| `contact add ALICE TAN /phone 81234567` after adding Alice Tan | Choose a distinct name; changing case does not make it unique. |
+| `contact find` | Supply a nonblank search keyword or phrase. |
+| `contact delete 0`, `contact delete 1 2` | Supply one existing positive contact number. |
+| `contact list extra`, `contact edit 1` | Use a supported command; editing is not provided. |
+
+Invalid commands do not change contacts or either save file. Add-command errors are checked in
+this order: command structure, phone syntax, email syntax, then duplicate name.
+
+### Contact storage and recovery
 
 Contacts save automatically to the separate UTF-8 file `data/contacts.txt`; no task-file migration is
 needed. Records have the form `C|NAME|PHONE|EMAIL`, with an empty optional field for a missing detail.
@@ -142,6 +183,27 @@ Literal pipes and backslashes are escaped as `\|` and `\\`. A missing or empty f
 Invalid records or duplicate names reject the whole file: Friday warns and disables contact saving
 until you repair the file and restart. Contact changes remain in memory in that session. Task saving
 is independent. Ordinary contact write failures retain memory and retry on the next contact mutation.
+
+Example records, including missing optional fields:
+
+```text
+C|Alice Tan|91234567|alice@example.com
+C|Bob||bob@example.com
+C|Carol|81234567|
+```
+
+Names containing `|` or `\` are encoded with `\|` or `\\`; for example, the name `Alice | Tan`
+is stored as `Alice \| Tan`. Unknown escapes, extra/missing fields, invalid values, or duplicate
+names make the entire contact file unreadable. Friday never loads a partial contact list.
+
+If loading fails, back up `data/contacts.txt`, repair its records (or move it aside to start an
+empty list), then restart Friday. While saving is disabled, new contacts and deletions exist only
+in memory and will not survive restart. Repairing the file without restarting does not re-enable saving.
+
+If an ordinary save fails, check the destination and folder permissions. The current session retains
+your changes; the next successful contact addition or deletion saves its complete contact list.
+Listing and searching do not retry writes. Do not close Friday before saving if you need those changes.
+Snapshots are written to a temporary file before replacement; task records are not rewritten by contact commands.
 
 ## Quick start
 
