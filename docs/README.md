@@ -100,6 +100,17 @@ application loop remain covered by the UI plan rather than duplicating every out
 in JUnit. Extend the existing test class when behavior changes, and use expected values that
 do not call the same production logic being tested.
 
+The first D-Contacts increment adds model/storage tests before contact commands are connected:
+
+| Test class | Prioritized behavior | Bugs the tests aim to catch |
+| --- | --- | --- |
+| `ContactTest` | Constructor validation and field matching | Invalid phone/email details, control characters, lost text, incorrect search matching |
+| `ContactListTest` | Add, delete, search, initialization, snapshots | Duplicate names, wrong contact numbers, state changes after failure, aliased collections |
+| `ContactStorageTest` | Load and save through public APIs | Lost optional fields/escapes, corrupt or duplicate records, overwritten data, leaked temporary files |
+
+These tests extend the existing risk-based method priorities. Contact command and response tests
+will be added with the next increment; contact management is not available in the chat interface yet.
+
 ## Quick start
 
 Type a command in the GUI text field, then press **Enter** or select **Send**. Friday supports todos, deadlines,

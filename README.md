@@ -55,6 +55,15 @@ After the workflow is committed and pushed, open the repository's **Actions** ta
 prompts you to do so for the fork. If pushing over HTTPS with a classic PAT, the token needs
 the `workflow` scope to update workflow files; do not put the PAT in the workflow or repository.
 
+## D-Contacts extension progress
+
+The first increment adds an independent contact model and storage layer. Contacts have a
+case-insensitively unique name and a Singapore phone number, email address, or both. Storage
+uses escaped UTF-8 records and replaces complete snapshots, preserving existing files when
+loading or saving fails. JUnit tests cover validation, numbering, search, and storage integrity.
+Contact commands and automatic startup/save integration will follow in the next increment;
+this increment does not expose contact management in the chat interface yet.
+
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.
 
