@@ -71,35 +71,9 @@ public final class Parser {
      */
     public static Task parseTask(String command) {
         return switch (parseCommandType(command)) {
-            case TODO -> {
-                String description = parseCommandBody(command, "todo ");
-                if (description.isEmpty()) {
-                    throw new IllegalArgumentException("Sir, description of a todo cannot be empty.");
-                }
-                yield new ToDo(description);
-            }
-            case DEADLINE -> {
-                String body = parseCommandBody(command, "deadline ");
-                String description = parseTextBefore(body, " /by ");
-                String by = parseTextAfter(body, " /by ");
-                if (description.isEmpty() || by.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
-                }
-                yield new Deadline(description, by);
-            }
-            case EVENT -> {
-                String body = parseCommandBody(command, "event ");
-                String description = parseTextBefore(body, " /from ");
-                String fromAndTo = parseTextAfter(body, " /from ");
-                String from = parseTextBefore(fromAndTo, " /to ");
-                String to = parseTextAfter(fromAndTo, " /to ");
-                if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                    throw new IllegalArgumentException(
-                            "Invalid event format. Use: event DESCRIPTION /from START /to END");
-                }
-                yield new Event(description, from, to);
-            }
+            case TODO -> parseTodo(command);
+            case DEADLINE -> parseDeadline(command);
+            case EVENT -> parseEvent(command);
             default -> throw new IllegalArgumentException("This command does not add a task.");
         };
     }
@@ -157,6 +131,47 @@ public final class Parser {
             throw new IllegalArgumentException(errorMessage);
         }
         return taskNumber;
+    }
+
+    /**
+     * Parses and validates the fields of a todo command.
+     */
+    private static ToDo parseTodo(String command) {
+        String description = parseCommandBody(command, "todo ");
+        if (description.isEmpty()) {
+            throw new IllegalArgumentException("Sir, description of a todo cannot be empty.");
+        }
+        return new ToDo(description);
+    }
+
+    /**
+     * Parses and validates the fields of a deadline command.
+     */
+    private static Deadline parseDeadline(String command) {
+        String body = parseCommandBody(command, "deadline ");
+        String description = parseTextBefore(body, " /by ");
+        String by = parseTextAfter(body, " /by ");
+        if (description.isEmpty() || by.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE");
+        }
+        return new Deadline(description, by);
+    }
+
+    /**
+     * Parses and validates the fields of an event command.
+     */
+    private static Event parseEvent(String command) {
+        String body = parseCommandBody(command, "event ");
+        String description = parseTextBefore(body, " /from ");
+        String fromAndTo = parseTextAfter(body, " /from ");
+        String from = parseTextBefore(fromAndTo, " /to ");
+        String to = parseTextAfter(fromAndTo, " /to ");
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Invalid event format. Use: event DESCRIPTION /from START /to END");
+        }
+        return new Event(description, from, to);
     }
 
     /**

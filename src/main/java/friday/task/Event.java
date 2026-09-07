@@ -20,6 +20,8 @@ public class Event extends Task {
         if (this.to.isBefore(this.from)) {
             throw new IllegalArgumentException("An event cannot end before it starts.");
         }
+        assert !this.to.isBefore(this.from)
+                : "A constructed event must not end before it starts.";
     }
 
     /**

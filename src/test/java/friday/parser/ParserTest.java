@@ -103,9 +103,11 @@ class ParserTest {
                 "An event cannot end before it starts.");
     }
 
-    @Test
-    void parseTask_nonAddingCommand_throwsException() {
-        assertError(() -> Parser.parseTask("list"), "This command does not add a task.");
+    @ParameterizedTest
+    @ValueSource(strings = {"bye", "hello", "thanks", "help", "list", "on 2024-02-29",
+            "find book", "delete 1", "mark 1", "unmark 1"})
+    void parseTask_nonAddingCommand_throwsException(String command) {
+        assertError(() -> Parser.parseTask(command), "This command does not add a task.");
     }
 
     @ParameterizedTest

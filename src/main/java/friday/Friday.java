@@ -106,8 +106,11 @@ public class Friday {
             case THANKS -> ui.showThanks();
             case HELP -> ui.showHelp();
             case TODO, DEADLINE, EVENT -> {
+                int taskCountBeforeAdd = tasks.size();
                 Task task = Parser.parseTask(command);
                 tasks.add(task);
+                assert tasks.size() == taskCountBeforeAdd + 1
+                        : "Adding a task must increase the task count by one.";
                 ui.showTaskAdded(task, tasks.size());
                 hasChanged = true;
             }
@@ -116,7 +119,10 @@ public class Friday {
             case LIST -> showTaskList();
             case DELETE -> {
                 int taskNumber = requireExistingTaskNumber(command);
+                int taskCountBeforeDelete = tasks.size();
                 Task removedTask = tasks.delete(taskNumber);
+                assert tasks.size() == taskCountBeforeDelete - 1
+                        : "Deleting an existing task must decrease the task count by one.";
                 ui.showTaskDeleted(removedTask, tasks.size());
                 hasChanged = true;
             }

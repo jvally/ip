@@ -165,6 +165,9 @@ public class TaskList {
         if (!isValidTaskNumber(taskNumber)) {
             throw new IndexOutOfBoundsException("Invalid task number: " + taskNumber);
         }
-        return taskNumber - 1;
+        int index = taskNumber - 1;
+        assert index >= 0 && index < tasks.size()
+                : "A valid one-based task number must map to an existing zero-based index.";
+        return index;
     }
 }
