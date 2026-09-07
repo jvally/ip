@@ -8,44 +8,72 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
+import friday.contact.Contact;
+import friday.contact.ContactList;
+import friday.parser.ContactParser;
 import friday.parser.Parser;
+import friday.storage.ContactStorage;
 import friday.storage.Storage;
 import friday.task.Task;
 import friday.task.TaskList;
 import friday.ui.Ui;
 
-/** Friday's command engine. It owns task state and storage while exposing text responses for any UI. */
+/** Friday's command engine. It owns task and contact state while exposing text responses for any UI. */
 public class Friday {
     private static final String INVALID_TASK_NUMBER_MESSAGE = "Sir, The task number is invalid.";
     private static final Path DATA_FILE = Path.of("data", "friday.txt");
 
     private final Storage storage;
+    private final ContactStorage contactStorage;
     private final Ui ui;
     private TaskList tasks;
+    private ContactList contacts;
+    private boolean isContactSavingEnabled;
+    private boolean hasContactLoadingError;
     private boolean isSavingEnabled;
     private boolean hasLoadingError;
     private boolean hasExited;
 
-    /** Loads Friday's default task data file. */
+    /** Loads Friday's default task and contact data files. */
     public Friday() {
         this(DATA_FILE);
     }
 
     /**
-     * Loads tasks from the supplied path, keeping the session usable if saved data cannot be read.
+     * Loads tasks from the supplied path and contacts from its sibling contacts.txt file.
+     * Keeps the session usable if either saved collection cannot be read.
      *
      * @param dataFile location of Friday's persistent task file.
      */
     public Friday(Path dataFile) {
+        this(dataFile, dataFile.resolveSibling("contacts.txt"));
+    }
+
+    /**
+     * Loads independent task and contact files, isolating failures in either collection.
+     *
+     * @param dataFile location of the task file.
+     * @param contactFile location of the contact file.
+     */
+    public Friday(Path dataFile, Path contactFile) {
         storage = new Storage(dataFile);
+        contactStorage = new ContactStorage(contactFile);
         ui = new Ui();
         tasks = new TaskList();
         isSavingEnabled = true;
+        contacts = new ContactList();
+        isContactSavingEnabled = true;
         try {
             tasks = new TaskList(storage.load());
         } catch (IOException | SecurityException e) {
             isSavingEnabled = false;
             hasLoadingError = true;
+        }
+        try {
+            contacts = new ContactList(contactStorage.load());
+        } catch (IOException | SecurityException e) {
+            isContactSavingEnabled = false;
+            hasContactLoadingError = true;
         }
     }
 
@@ -68,6 +96,9 @@ public class Friday {
             ui.showWelcome();
             if (hasLoadingError) {
                 ui.showLoadingError();
+            }
+            if (hasContactLoadingError) {
+                ui.showContactLoadingError();
             }
             ui.showLine();
         });
@@ -105,6 +136,7 @@ public class Friday {
             case HELLO -> ui.showGreeting();
             case THANKS -> ui.showThanks();
             case HELP -> ui.showHelp();
+            case CONTACT -> processContactCommand(command);
             case TODO, DEADLINE, EVENT -> {
                 int taskCountBeforeAdd = tasks.size();
                 Task task = Parser.parseTask(command);
@@ -146,6 +178,57 @@ public class Friday {
             }
         } catch (IllegalArgumentException e) {
             ui.showError(e.getMessage());
+        }
+    }
+
+    /** Executes contact operations and saves only after a successful contact mutation. */
+    private void processContactCommand(String command) {
+        switch (ContactParser.parseCommandType(command)) {
+            case ADD -> {
+                Contact contact = ContactParser.parseContact(command);
+                contacts.add(contact);
+                ui.showContactAdded(contact, contacts.size());
+                saveContacts();
+            }
+            case LIST -> {
+                if (contacts.size() == 0) {
+                    ui.showError("No contacts saved.");
+                    return;
+                }
+                ui.showContactListHeader(false);
+                for (int number = 1; number <= contacts.size(); number++) {
+                    ui.showNumberedContact(number, contacts.get(number));
+                }
+            }
+            case FIND -> {
+                List<Integer> matches = contacts.findContactNumbersContaining(ContactParser.parseFindKeyword(command));
+                if (matches.isEmpty()) {
+                    ui.showError("No matching contacts found.");
+                    return;
+                }
+                ui.showContactListHeader(true);
+                for (int number : matches) {
+                    ui.showNumberedContact(number, contacts.get(number));
+                }
+            }
+            case DELETE -> {
+                Contact removed = contacts.delete(ContactParser.parseContactNumber(command));
+                ui.showContactDeleted(removed, contacts.size());
+                saveContacts();
+            }
+        }
+    }
+
+    /** Keeps contact recovery independent from task saving and retries after ordinary write failures. */
+    private void saveContacts() {
+        if (!isContactSavingEnabled) {
+            ui.showContactSavingDisabled();
+            return;
+        }
+        try {
+            contactStorage.save(contacts.toList());
+        } catch (IOException | SecurityException e) {
+            ui.showContactSavingError();
         }
     }
 

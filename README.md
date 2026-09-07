@@ -61,8 +61,9 @@ The first increment adds an independent contact model and storage layer. Contact
 case-insensitively unique name and a Singapore phone number, email address, or both. Storage
 uses escaped UTF-8 records and replaces complete snapshots, preserving existing files when
 loading or saving fails. JUnit tests cover validation, numbering, search, and storage integrity.
-Contact commands and automatic startup/save integration will follow in the next increment;
-this increment does not expose contact management in the chat interface yet.
+The second increment connects `contact add`, `contact list`, `contact find`, and `contact delete`
+to both the GUI and console. Contacts load from `data/contacts.txt` and save after each mutation;
+contact recovery is independent of task recovery. The `help` command includes contact syntax.
 
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.

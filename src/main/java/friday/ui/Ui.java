@@ -3,6 +3,7 @@ package friday.ui;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import friday.contact.Contact;
 import friday.task.Task;
 import friday.task.TaskDateTime;
 
@@ -93,6 +94,12 @@ public class Ui {
     public void showHelp() {
         System.out.println("Sure. Here you go:");
         System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
+        System.out.println("Contacts:");
+        System.out.println("  contact add NAME /phone PHONE [/email EMAIL]");
+        System.out.println("  contact add NAME /email EMAIL");
+        System.out.println("  contact list");
+        System.out.println("  contact find KEYWORD");
+        System.out.println("  contact delete NUMBER");
     }
 
     /**
@@ -207,6 +214,55 @@ public class Ui {
     public void showSavingError() {
         System.out.println("Warning: I couldn't save data/friday.txt. "
                 + "Your changes are only in memory; check the folder and file permissions.");
+    }
+
+    /** Shows a contact listing heading and the original-number deletion hint. */
+    public void showContactListHeader(boolean isSearch) {
+        System.out.println(isSearch ? "Here are the matching contacts in your list:"
+                : "Here are the contacts in your list:");
+        System.out.println("Use the number shown here with contact delete.");
+    }
+
+    /** Displays a contact with its original one-based list number. */
+    public void showNumberedContact(int number, Contact contact) {
+        System.out.println(number + "." + contact);
+    }
+
+    /** Confirms addition and displays the resulting contact count. */
+    public void showContactAdded(Contact contact, int count) {
+        System.out.println("Got it. I've added this contact:");
+        System.out.println("  " + contact);
+        showContactCount(count);
+    }
+
+    /** Confirms deletion and displays the remaining contact count. */
+    public void showContactDeleted(Contact contact, int count) {
+        System.out.println("Noted. I've removed this contact:");
+        System.out.println("  " + contact);
+        showContactCount(count);
+    }
+
+    /** Warns that the original contact file is protected after a loading failure. */
+    public void showContactLoadingError() {
+        System.out.println("Warning: I couldn't load data/contacts.txt. Check the file and restart; "
+                + "contact saving is disabled to protect existing data.");
+    }
+
+    /** Explains that contact changes cannot persist until the damaged file is repaired. */
+    public void showContactSavingDisabled() {
+        System.out.println("Warning: This contact change is only in memory; contact saving is disabled "
+                + "until you fix the file and restart.");
+    }
+
+    /** Reports a contact write failure while preserving the in-memory session. */
+    public void showContactSavingError() {
+        System.out.println("Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; "
+                + "check the folder and file permissions.");
+    }
+
+    /** Selects singular or plural contact-count feedback. */
+    private void showContactCount(int count) {
+        System.out.println("Now you have " + count + " contact" + (count == 1 ? "" : "s") + " in the list.");
     }
 
     private void showTask(Task task) {

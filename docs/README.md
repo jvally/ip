@@ -100,16 +100,48 @@ application loop remain covered by the UI plan rather than duplicating every out
 in JUnit. Extend the existing test class when behavior changes, and use expected values that
 do not call the same production logic being tested.
 
-The first D-Contacts increment adds model/storage tests before contact commands are connected:
+The D-Contacts increments add focused model, storage, parser, and response tests:
 
 | Test class | Prioritized behavior | Bugs the tests aim to catch |
 | --- | --- | --- |
 | `ContactTest` | Constructor validation and field matching | Invalid phone/email details, control characters, lost text, incorrect search matching |
 | `ContactListTest` | Add, delete, search, initialization, snapshots | Duplicate names, wrong contact numbers, state changes after failure, aliased collections |
 | `ContactStorageTest` | Load and save through public APIs | Lost optional fields/escapes, corrupt or duplicate records, overwritten data, leaked temporary files |
+| `ContactParserTest` | Subcommands, fields, search text, contact numbers | Incorrect field boundaries, duplicate prefixes, wrong validation order, integer overflow |
+| `FridayTest` | Contact responses, restart persistence, independent recovery | Incorrect messages, accidental saves, cross-collection failures, lost in-memory changes |
 
-These tests extend the existing risk-based method priorities. Contact command and response tests
-will be added with the next increment; contact management is not available in the chat interface yet.
+These tests extend the existing risk-based method priorities. Contact UI cases in the console plan
+also check exact output, escaped text, restarts, and read/write failures.
+
+## Managing contacts
+
+Use the same commands in the GUI chat or console:
+
+```text
+contact add Alice Tan /phone 91234567 /email alice@example.com
+contact add Bob /email bob@example.com
+contact list
+contact find EXAMPLE
+contact delete 1
+```
+
+Require a name and at least one of `/phone` or `/email`. Names are unique ignoring case after
+trimming surrounding whitespace. The name comes before the fields; fields may appear in either
+order, once each, and cannot be empty. Command words and prefixes are lowercase. Singapore phone
+numbers contain exactly eight digits starting with 6, 8, or 9, without separators or `+65`.
+Email addresses require one `@`, no spaces, and a dotted domain; Friday does not verify delivery.
+Control characters and unknown field prefixes are rejected. To correct a contact, delete and add it again.
+
+Contacts appear in insertion order. Search matches a literal substring in any individual field,
+ignoring case, and preserves the original contact numbers. Contact numbers are independent of task
+numbers; deleting one contact renumbers later contacts. Missing phone/email details display as `-`.
+
+Contacts save automatically to the separate UTF-8 file `data/contacts.txt`; no task-file migration is
+needed. Records have the form `C|NAME|PHONE|EMAIL`, with an empty optional field for a missing detail.
+Literal pipes and backslashes are escaped as `\|` and `\\`. A missing or empty file starts an empty list.
+Invalid records or duplicate names reject the whole file: Friday warns and disables contact saving
+until you repair the file and restart. Contact changes remain in memory in that session. Task saving
+is independent. Ordinary contact write failures retain memory and retry on the next contact mutation.
 
 ## Quick start
 
