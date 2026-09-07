@@ -42,6 +42,19 @@ conventions under `src/test/java`, mirroring the production packages. The existi
 `python3 test/run-unit-tests.py` now delegates to the same Gradle test task.
 Run the separate `test-ui` skill for console regressions defined in `test/ui-test-plan.md`.
 
+## Continuous integration
+
+GitHub Actions runs [Java CI](.github/workflows/gradle.yml) on every push and pull request,
+using Linux, macOS, and Windows with Zulu **JDK 25.0.3 with JavaFX**. The workflow validates
+the Gradle wrapper, then runs `./gradlew --no-daemon --console=plain check`, which compiles
+the project and runs the JUnit suite. Console UI regression tests remain a separate local check.
+The workflow is adapted from the [SE-EDU Duke template](https://github.com/se-edu/duke/blob/full-template/.github/workflows/gradle.yml).
+
+After the workflow is committed and pushed, open the repository's **Actions** tab and select
+**Java CI** to inspect each platform's results and failed-step logs. Enable Actions if GitHub
+prompts you to do so for the fork. If pushing over HTTPS with a classic PAT, the token needs
+the `workflow` scope to update workflow files; do not put the PAT in the workflow or repository.
+
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.
 
