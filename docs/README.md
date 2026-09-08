@@ -115,7 +115,19 @@ also check exact output, escaped text, restarts, and read/write failures.
 
 ## Managing contacts
 
-Use the same commands in the GUI chat or console:
+Use the same commands in the GUI chat or console. In the formats below, `NAME` and `KEYWORD` are
+nonblank text, `PHONE` is a Singapore mobile number, `EMAIL` is an email address, and `NUMBER` is
+an existing positive contact number. Square brackets mean an optional part; do not type the brackets.
+
+| Command | Accepted format | Result |
+| --- | --- | --- |
+| Add | `contact add NAME /phone PHONE [/email EMAIL]` | Adds a contact with a phone number, optionally with an email address. |
+| Add | `contact add NAME /email EMAIL [/phone PHONE]` | Adds a contact with an email address, optionally with a phone number. |
+| List | `contact list` | Shows all contacts in insertion order. |
+| Find | `contact find KEYWORD` | Shows contacts containing the literal keyword in a name, phone number, or email address. |
+| Delete | `contact delete NUMBER` | Removes the numbered contact and renumbers later contacts. |
+
+For example:
 
 ```text
 contact add Alice Tan /phone 91234567 /email alice@example.com
