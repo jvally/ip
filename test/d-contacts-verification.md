@@ -12,15 +12,16 @@ From the repository root, using Java **25.0.3.fx-zulu**:
 ```bash
 sdk use java 25.0.3.fx-zulu
 ./gradlew --no-daemon --console=plain clean build test check
-python3 .codex/skills/test-ui/scripts/run-ui-tests.py test/ui-test-plan.md
+./gradlew test --tests friday.ConsoleUiRegressionTest
 git diff --check
 ```
 
-Final local results: **313 JUnit tests passed**, with zero failures, errors, or skipped tests;
-**all 46 console UI cases passed**. The clean build compiled production and test sources,
+Final local results: **359 JUnit tests passed**, with zero failures, errors, or skipped tests;
+this includes **all 46 console UI cases**. The clean build compiled production and test sources,
 ran tests, and built the JAR and distribution archives. Gradle `check` and whitespace checks passed.
 JUnit HTML results are generated at `build/reports/tests/test/index.html`, with XML under
-`build/test-results/test/`. The UI skill prints a full transcript for each case and stops on a mismatch.
+`build/test-results/test/`. The console regression test reports the failing named case and its expected
+and actual output when a comparison fails.
 
 ## Acceptance evidence
 

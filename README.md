@@ -38,9 +38,9 @@ The first invocation needs internet access to download the pinned Gradle distrib
 
 `build` compiles, runs the JUnit tests, and packages the application. Run `./gradlew test`
 for JUnit alone; the report is `build/reports/tests/test/index.html`. Tests follow Gradle's
-conventions under `src/test/java`, mirroring the production packages. The existing command
-`python3 test/run-unit-tests.py` now delegates to the same Gradle test task.
-Run the separate `test-ui` skill for console regressions defined in `test/ui-test-plan.md`.
+conventions under `src/test/java`, mirroring the production packages. Console regressions are
+also JUnit tests: `friday.ConsoleUiRegressionTest` reads the cases in `test/ui-test-plan.md`.
+Run `./gradlew test --tests friday.ConsoleUiRegressionTest` to execute those cases alone.
 
 ## Continuous integration
 

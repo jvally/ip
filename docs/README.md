@@ -74,10 +74,9 @@ its gutter icon after you reload the Gradle project. Names follow
 checks that invalid input produces the expected exception. Parameterized tests repeat a
 behavior check over separate named inputs. Storage tests use a fresh `@TempDir` for isolation.
 
-The old `python3 test/run-unit-tests.py` command remains available as a thin wrapper around
-`gradlew test`; extra arguments such as `--tests friday.storage.StorageTest` are forwarded.
-There is no duplicate standalone Java suite to maintain. The console test runner remains
-separate: use the `test-ui` skill and `test/ui-test-plan.md` for exact user-visible behavior.
+There is no duplicate standalone test runner to maintain. The console regression test reads
+`test/ui-test-plan.md` and runs through Gradle: use
+`./gradlew test --tests friday.ConsoleUiRegressionTest` for exact user-visible behavior.
 
 ### Coverage priorities
 

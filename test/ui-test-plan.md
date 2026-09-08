@@ -3,12 +3,17 @@
 This file is the source of truth for command-driven UI regression tests.
 Update it whenever the console UI changes.
 
-Program command: `python3 test/run-ui-session.py`
+Run console regression tests with:
 
-Run the test-ui skill with Java 25.0.3.fx-zulu selected using `sdk use java 25.0.3.fx-zulu`.
-The session helper compiles and runs each case in its own temporary directory, so tests never
-read or overwrite real task data. The original cases also test startup without a data folder.
-The following test-only directives in Inputs are consumed by the helper, not sent to Friday:
+```bash
+./gradlew test --tests friday.ConsoleUiRegressionTest
+```
+
+Select Java 25.0.3.fx-zulu first using `sdk use java 25.0.3.fx-zulu`. The JUnit regression test
+reads every case in this file, starts Friday in its own temporary directory, and compares its output
+exactly. It never reads or overwrites real task data. The original cases also test startup without a
+data folder.
+The following test-only directives in Inputs are consumed by the JUnit runner, not sent to Friday:
 
 - `@restart` ends the current input stream (EOF) and starts Friday again with the same data folder.
 - `@file RECORD` supplies a line of the initial save file before startup.
@@ -18,11 +23,10 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@contact-directory` creates a directory instead of the contact file.
 - `@block-contact-save` blocks the contact destination after startup to test a write failure.
 
-The session helper launches `friday.Friday`; it does not depend on a default-package entry point.
-The UI helper discovers Java sources in nested package folders under `src/main/java`.
+The JUnit runner launches `friday.Friday`; it does not depend on a default-package entry point.
 JUnit tests mirror their production packages under Gradle's standard `src/test/java` root.
 
-The helper does not supply expected output; all console expectations remain in this plan.
+The runner does not supply expected output; all console expectations remain in this plan.
 
 Parser, task-list, storage, and date/time JUnit checks run with the same JDK from the project root:
 
@@ -30,10 +34,9 @@ Parser, task-list, storage, and date/time JUnit checks run with the same JDK fro
 ./gradlew test
 ```
 
-`python3 test/run-unit-tests.py` delegates to this same Gradle task and forwards extra arguments.
 JUnit results appear under `build/reports/tests/test/`; storage tests use JUnit `@TempDir`.
-The UI runner uses Python's platform-specific temporary directory and requires `java` and `javac` on `PATH`.
-On Windows, use `gradlew.bat` for Gradle and `python` or `py -3` if `python3` is unavailable.
+The UI runner uses JUnit's platform-specific temporary directory and the selected Java runtime.
+On Windows, use `gradlew.bat` for Gradle.
 
 ## Gradle build and launch verification (A-Gradle)
 
