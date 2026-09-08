@@ -18,7 +18,7 @@ public final class Parser {
      * The supported actions; execution belongs to Friday rather than the parser.
      */
     public enum CommandType {
-        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK, FIND
+        BYE, HELLO, THANKS, HELP, LIST, TODO, DEADLINE, EVENT, ON, DELETE, MARK, UNMARK, FIND, CONTACT
     }
 
     private Parser() {
@@ -48,6 +48,7 @@ public final class Parser {
             case "delete" -> CommandType.DELETE;
             case "mark" -> CommandType.MARK;
             case "unmark" -> CommandType.UNMARK;
+            case "contact" -> CommandType.CONTACT;
             default -> throw new IllegalArgumentException(UNKNOWN_COMMAND_MESSAGE);
         };
         switch (type) {

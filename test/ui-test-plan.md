@@ -14,6 +14,9 @@ The following test-only directives in Inputs are consumed by the helper, not sen
 - `@file RECORD` supplies a line of the initial save file before startup.
 - `@directory` creates a directory instead of the save file, to test a read failure.
 - `@block-save` blocks the destination with a nonempty directory after startup, to test a write failure.
+- `@contact-file RECORD` supplies an initial contact record before startup.
+- `@contact-directory` creates a directory instead of the contact file.
+- `@block-contact-save` blocks the contact destination after startup to test a write failure.
 
 The session helper launches `friday.Friday`; it does not depend on a default-package entry point.
 The UI helper discovers Java sources in nested package folders under `src/main/java`.
@@ -39,10 +42,17 @@ Expect Gradle 9.6.1, the selected Java 25.0.3 JVM, and `BUILD SUCCESSFUL`.
 After A-JUnit, `test` must discover and run the JUnit suite (or report `UP-TO-DATE` when unchanged).
 Use `./gradlew test --rerun-tasks` to force a fresh run, and keep running the separate UI regressions above.
 
-Also launch `./gradlew --quiet --console=plain run` in a checkout without saved tasks,
-feed the inputs from **Greeting and thanks output**, and compare its output to that case's
-expected output below. This verifies Gradle's main class and console input forwarding without
-creating task data. Existing case expectations remain the source of truth.
+`./gradlew --quiet --console=plain run` launches the JavaFX chat window. Enter `hello`, then `bye`
+in that window for a manual GUI smoke check. Exact console comparisons use the `Program command`
+above, which launches `friday.Friday`. The shared response API is also covered by `FridayTest`;
+console regression results do not claim native GUI interaction coverage.
+
+## D-Contacts acceptance verification
+
+The contact cases below cover lifecycle/restarts, literal search, invalid commands, escaped text,
+and independent storage recovery. [The acceptance report](d-contacts-verification.md) maps the
+agreed specification to JUnit and console evidence. The test runner's fixture directives are
+test-only; they are not supported chatbot commands.
 
 ## Test Case: Add and list todos
 - Aim: Verify that `todo` adds ToDo tasks and that `list` shows the ToDo prefix.
@@ -450,7 +460,7 @@ ____________________________________________________________
 ```
 
 ## Test Case: Help command
-- Aim: Verify that `help` prints the project link.
+- Aim: Verify that `help` prints the project link and contact command syntax.
 - Inputs:
 ```text
 help
@@ -465,6 +475,12 @@ ____________________________________________________________
 ____________________________________________________________
 Sure. Here you go:
 https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html
+Contacts:
+  contact add NAME /phone PHONE [/email EMAIL]
+  contact add NAME /email EMAIL
+  contact list
+  contact find KEYWORD
+  contact delete NUMBER
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
@@ -1296,6 +1312,382 @@ ____________________________________________________________
 Here are the matching tasks in your list:
 Use the number shown here with mark/unmark.
 No matching tasks found.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact lifecycle and restart
+- Aim: Verify all contact detail combinations, numbering, search, deletion, and restart persistence.
+- Inputs:
+```text
+contact list
+contact add Alice Tan /phone 91234567 /email Alice@example.com
+contact add Bob /email bob@example.com
+contact add Carol /phone 81234567
+contact find EXAMPLE
+contact delete 2
+@restart
+contact list
+contact find 8123
+contact delete 1
+contact delete 1
+contact list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+No contacts saved.
+____________________________________________________________
+Got it. I've added this contact:
+  Alice Tan (phone: 91234567, email: Alice@example.com)
+Now you have 1 contact in the list.
+____________________________________________________________
+Got it. I've added this contact:
+  Bob (phone: -, email: bob@example.com)
+Now you have 2 contacts in the list.
+____________________________________________________________
+Got it. I've added this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 3 contacts in the list.
+____________________________________________________________
+Here are the matching contacts in your list:
+Use the number shown here with contact delete.
+1.Alice Tan (phone: 91234567, email: Alice@example.com)
+2.Bob (phone: -, email: bob@example.com)
+____________________________________________________________
+Noted. I've removed this contact:
+  Bob (phone: -, email: bob@example.com)
+Now you have 2 contacts in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Alice Tan (phone: 91234567, email: Alice@example.com)
+2.Carol (phone: 81234567, email: -)
+____________________________________________________________
+Here are the matching contacts in your list:
+Use the number shown here with contact delete.
+2.Carol (phone: 81234567, email: -)
+____________________________________________________________
+Noted. I've removed this contact:
+  Alice Tan (phone: 91234567, email: Alice@example.com)
+Now you have 1 contact in the list.
+____________________________________________________________
+Noted. I've removed this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 0 contacts in the list.
+____________________________________________________________
+No contacts saved.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact invalid inputs preserve state
+- Aim: Verify exact errors and unchanged contacts after invalid operations.
+- Inputs:
+```text
+contact
+contact edit Alice
+contact list extra
+contact add
+contact add Alice /phone
+contact add Alice /phone 91234567 /phone 81234567
+contact add Alice /address home
+contact add Alice /phone 12345678
+contact add Alice /email alice@
+contact add Alice /phone 91234567
+contact add ALICE /email other@example.com
+contact find
+contact delete 0
+contact delete 2
+contact delete 2147483648
+contact list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Invalid contact command. Use: contact add, contact list, contact find, or contact delete.
+____________________________________________________________
+Invalid contact command. Use: contact add, contact list, contact find, or contact delete.
+____________________________________________________________
+Invalid contact command. Use: contact add, contact list, contact find, or contact delete.
+____________________________________________________________
+Invalid contact add format. Use: contact add NAME /phone PHONE [/email EMAIL] or contact add NAME /email EMAIL.
+____________________________________________________________
+Invalid contact add format. Use: contact add NAME /phone PHONE [/email EMAIL] or contact add NAME /email EMAIL.
+____________________________________________________________
+Invalid contact add format. Use: contact add NAME /phone PHONE [/email EMAIL] or contact add NAME /email EMAIL.
+____________________________________________________________
+Invalid contact add format. Use: contact add NAME /phone PHONE [/email EMAIL] or contact add NAME /email EMAIL.
+____________________________________________________________
+Invalid phone number. Use 8 digits starting with 6, 8, or 9.
+____________________________________________________________
+Invalid email address. Use a format like alice@example.com.
+____________________________________________________________
+Got it. I've added this contact:
+  Alice (phone: 91234567, email: -)
+Now you have 1 contact in the list.
+____________________________________________________________
+A contact with this name already exists.
+____________________________________________________________
+Invalid contact find format. Use: contact find KEYWORD
+____________________________________________________________
+Sir, The contact number is invalid.
+____________________________________________________________
+Sir, The contact number is invalid.
+____________________________________________________________
+Sir, The contact number is invalid.
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Alice (phone: 91234567, email: -)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact searches are literal and read only
+- Aim: Retain original numbers and avoid saving for searches, listing, or duplicate rejection.
+- Inputs:
+```text
+@contact-file C|Alice  Tan|91234567|
+@contact-file C|Bob||bob@example.com
+@block-contact-save
+contact find alice
+contact find Alice Tan
+contact find .*
+contact find BOB@
+contact list
+contact add ALICE  TAN /phone 81234567
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching contacts in your list:
+Use the number shown here with contact delete.
+1.Alice  Tan (phone: 91234567, email: -)
+____________________________________________________________
+No matching contacts found.
+____________________________________________________________
+No matching contacts found.
+____________________________________________________________
+Here are the matching contacts in your list:
+Use the number shown here with contact delete.
+2.Bob (phone: -, email: bob@example.com)
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Alice  Tan (phone: 91234567, email: -)
+2.Bob (phone: -, email: bob@example.com)
+____________________________________________________________
+A contact with this name already exists.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Corrupt contacts do not block task saving
+- Aim: Reject a partial contact file, keep contact mutations in memory, and save tasks independently.
+- Inputs:
+```text
+@contact-file C|Alice|91234567|
+@contact-file broken
+contact list
+contact add Carol /phone 81234567
+todo still saved
+@restart
+contact list
+list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+No contacts saved.
+____________________________________________________________
+Got it. I've added this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 1 contact in the list.
+Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] still saved
+Now you have 1 task in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+No contacts saved.
+____________________________________________________________
+Here are the tasks in your list:
+Use the number shown here with mark/unmark.
+1.[T][ ] still saved
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact read failure
+- Aim: Handle a directory at the contact save path while retaining a usable in-memory contact session.
+- Inputs:
+```text
+@contact-directory
+contact add Carol /phone 81234567
+contact delete 1
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 1 contact in the list.
+Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
+____________________________________________________________
+Noted. I've removed this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 0 contacts in the list.
+Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact write failure keeps session usable
+- Aim: Warn on failed contact writes and preserve in-memory changes for listing and deletion.
+- Inputs:
+```text
+@block-contact-save
+contact add Carol /phone 81234567
+contact list
+contact delete 1
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 1 contact in the list.
+Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Carol (phone: 81234567, email: -)
+____________________________________________________________
+Noted. I've removed this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 0 contacts in the list.
+Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; check the folder and file permissions.
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Corrupt tasks do not block contact saving
+- Aim: Persist contacts despite a damaged task file and verify them after restart.
+- Inputs:
+```text
+@file broken
+contact add Carol /phone 81234567
+@restart
+contact list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this contact:
+  Carol (phone: 81234567, email: -)
+Now you have 1 contact in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
+____________________________________________________________
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Carol (phone: 81234567, email: -)
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test Case: Contact escaped text and field order
+- Aim: Preserve pipes, backslashes, Unicode, and reverse-order fields across restarts.
+- Inputs:
+```text
+contact add Alice | \ 陈 /phone 91234567
+contact add Bob /email bob@example.com /phone 81234567
+@restart
+contact list
+bye
+```
+- Expected output:
+```text
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this contact:
+  Alice | \ 陈 (phone: 91234567, email: -)
+Now you have 1 contact in the list.
+____________________________________________________________
+Got it. I've added this contact:
+  Bob (phone: 81234567, email: bob@example.com)
+Now you have 2 contacts in the list.
+____________________________________________________________
+Hello! I'm Friday.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the contacts in your list:
+Use the number shown here with contact delete.
+1.Alice | \ 陈 (phone: 91234567, email: -)
+2.Bob (phone: 81234567, email: bob@example.com)
 ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________

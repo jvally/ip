@@ -55,6 +55,19 @@ After the workflow is committed and pushed, open the repository's **Actions** ta
 prompts you to do so for the fork. If pushing over HTTPS with a classic PAT, the token needs
 the `workflow` scope to update workflow files; do not put the PAT in the workflow or repository.
 
+## D-Contacts extension
+
+Friday supports `contact add`, `contact list`, `contact find`, and `contact delete` in the GUI
+and console. Each contact has a case-insensitively unique name and a Singapore phone number,
+email address, or both. Search checks all fields and retains the original contact numbers.
+Contacts save automatically to `data/contacts.txt`, independently of task data and recovery.
+Use `help` for syntax or see the [contact user guide](docs/README.md#managing-contacts).
+
+The extension was developed in model/storage, command integration, and documentation/verification
+increments on `codex/d-contacts`. See the [acceptance report](test/d-contacts-verification.md)
+for the checked behaviors and verification limits. The final feature commit is intended to carry
+the lightweight course tag `BCD-Extension`.
+
 ## Markdown files in this project
 Declaration: I am using AI in the capacity of AL-5 as specified by the course and specifically using Codex 5.4-mini.
 
