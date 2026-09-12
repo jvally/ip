@@ -145,8 +145,9 @@ class ConsoleUiRegressionTest {
     /** Starts Friday using the test runtime classpath and the selected Java runtime. */
     private Process startFriday(Path workingDirectory) throws IOException {
         Path javaCommand = Path.of(System.getProperty("java.home"), "bin", executableName());
-        return new ProcessBuilder(javaCommand.toString(), "-cp", System.getProperty("java.class.path"),
-                "friday.Friday")
+        // Match the UTF-8 pipe reader even when Windows uses a different native output encoding.
+        return new ProcessBuilder(javaCommand.toString(), "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8",
+                "-cp", System.getProperty("java.class.path"), "friday.Friday")
                 .directory(workingDirectory.toFile())
                 .redirectErrorStream(true)
                 .start();

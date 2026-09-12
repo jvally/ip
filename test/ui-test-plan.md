@@ -13,6 +13,8 @@ Select Java 25.0.3.fx-zulu first using `sdk use java 25.0.3.fx-zulu`. The JUnit 
 reads every case in this file, starts Friday in its own temporary directory, and compares its output
 exactly. It never reads or overwrites real task data. The original cases also test startup without a
 data folder.
+The runner starts each child JVM with UTF-8 standard output and error to match its UTF-8 pipe reader,
+including on Windows. The special-character and contact cases verify Unicode survives output and restart.
 The following test-only directives in Inputs are consumed by the JUnit runner, not sent to Friday:
 
 - `@restart` ends the current input stream (EOF) and starts Friday again with the same data folder.
