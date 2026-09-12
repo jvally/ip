@@ -243,9 +243,22 @@ the list. JUnit and console regressions cover parsing, matching, numbering, and 
 
 Friday now has a JavaFX chat interface built with FXML, reusable dialog boxes, event handlers for both **Enter** and
 **Send**, and the required `Launcher` class. The GUI sends every command to the existing Friday engine, so all task,
-date, search, persistence, and error-handling behavior remains available. The application ships with original generated
-avatar artwork in `src/main/resources/images/avatars.png`; JavaFX dependencies are configured for Windows, macOS, and
-Linux. `FridayTest` covers the GUI-facing response API, while the console regression plan continues to verify exact
+date, search, persistence, and error-handling behavior remains available. JavaFX dependencies are configured for
+Windows, macOS, and Linux. The original avatar sprite has since been replaced by the GUI polish described below. `FridayTest` covers the GUI-facing response API, while the console regression plan continues to verify exact
 legacy output.
+
+## GUI polish: Stark-inspired Friday
+
+A compact navy, cyan, and gold interface pairs the supplied Iron Spider portrait with a generated FRIDAY AI core.
+Small right-aligned command bubbles and wider assistant panels give long replies room to wrap. Invalid commands
+have labeled red error panels; persistence problems have amber warning panels. Empty search results stay neutral.
+The window starts at 480 × 640 and can resize down to 360 × 440, keeping the composer visible. Enter and Send
+submit commands, manual history scrolling remains available, and both controls disable after `bye`.
+
+The immutable `Response` API carries explicit severity while existing string responses and console output remain
+compatible. See the [GUI guide](docs/README.md#using-the-gui), [artwork provenance](docs/images/artwork.md), and
+[verification report](test/gui-polish-verification.md).
+
+![Friday with a compact command and highlighted error](docs/images/friday-default.png)
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.

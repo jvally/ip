@@ -221,6 +221,26 @@ Snapshots are written to a temporary file before replacement; task records are n
 Type a command in the GUI text field, then press **Enter** or select **Send**. Friday supports todos, deadlines,
 events, searches, and a few helper commands. The chat shows your command on the right and Friday's response on the left.
 
+## Using the GUI
+
+Friday uses a Stark-inspired dark theme with an Iron Spider user avatar and a FRIDAY AI-core avatar.
+Your commands appear in compact bubbles on the right; assistant replies use wider panels on the left.
+
+- **Command error** panels use a red border and tint. Read the explanation, correct your command, and submit again.
+- **Warning** panels use amber styling for storage problems. A successful task change can still carry a warning
+  when it exists only in memory. Follow the existing file-recovery instructions before closing Friday.
+- Empty lists and searches are ordinary replies, not errors.
+- Resize the window as needed, down to 360 × 440 pixels. Replies wrap, and the input area stays at the bottom.
+- Scroll upward to read older messages. Submitting a new command scrolls to the latest reply.
+- Press **Enter** or click **Send**; focus returns to the input for the next command. Blank input does nothing.
+- After `bye`, input and Send are disabled. Close and reopen Friday to begin another session.
+
+![Compact commands and clear errors](images/friday-default.png)
+
+![Long replies at the minimum window size](images/friday-minimum.png)
+
+See [artwork provenance](images/artwork.md) for the supplied Iron Spider image and generated AI-core credit.
+
 ## Adding todos
 
 Use `todo` for tasks with no date or time.

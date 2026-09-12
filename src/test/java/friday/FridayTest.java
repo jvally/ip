@@ -191,6 +191,68 @@ class FridayTest {
                 + "  contact find KEYWORD\n  contact delete NUMBER\n", friday.getResponse("help"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"unknown", "todo", "mark 99", "deadline work /by invalid",
+            "contact add", "contact delete 1"})
+    void getCommandResponse_invalidInput_reportsErrorAndRecovers(String command) {
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        String before = friday.getResponse("list");
+        assertEquals(Response.Severity.ERROR, friday.getCommandResponse(command).severity());
+        Response recovered = friday.getCommandResponse("list");
+        assertEquals(Response.Severity.NORMAL, recovered.severity());
+        assertEquals(before, recovered.text());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"list", "find missing", "contact list", "contact find missing", "help",
+            "todo Warning: error is just task text"})
+    void getCommandResponse_normalOutput_doesNotInferSeverityFromText(String command) {
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        assertEquals(Response.Severity.NORMAL, friday.getCommandResponse(command).severity());
+    }
+
+    @Test
+    void getCommandResponse_structuredAndStringApis_preserveOutputAndExecuteOnce() {
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        assertEquals(friday.getWelcomeMessage(), friday.getWelcomeResponse().text());
+        assertEquals(Response.Severity.NORMAL, friday.getWelcomeResponse().severity());
+        Response added = friday.getCommandResponse("todo one task");
+        assertTrue(added.text().contains("Now you have 1 task"));
+        assertEquals(friday.getResponse("list"), friday.getCommandResponse("list").text());
+        assertFalse(friday.getResponse("list").contains("2.[T]"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"friday.txt", "contacts.txt"})
+    void getWelcomeResponse_corruptStorage_warnsAndProtectsOriginal(String fileName) throws IOException {
+        Path file = temporaryDirectory.resolve(fileName);
+        Files.writeString(file, "corrupt record");
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        assertEquals(Response.Severity.WARNING, friday.getWelcomeResponse().severity());
+        String command = fileName.equals("friday.txt") ? "todo new task" : "contact add Alice /phone 91234567";
+        assertEquals(Response.Severity.WARNING, friday.getCommandResponse(command).severity());
+        assertEquals("corrupt record", Files.readString(file));
+        assertEquals(Response.Severity.NORMAL, friday.getCommandResponse("list").severity());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"friday.txt", "contacts.txt"})
+    void getCommandResponse_saveFailure_warnsAndRetries(String fileName) throws IOException {
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        Path file = temporaryDirectory.resolve(fileName);
+        Files.createDirectory(file);
+        Path blocker = file.resolve("blocker");
+        Files.writeString(blocker, "keep");
+        String first = fileName.equals("friday.txt") ? "todo first" : "contact add Alice /phone 91234567";
+        String second = fileName.equals("friday.txt") ? "todo second" : "contact add Bob /phone 81234567";
+        assertEquals(Response.Severity.WARNING, friday.getCommandResponse(first).severity());
+        assertEquals("keep", Files.readString(blocker));
+        Files.delete(blocker);
+        Files.delete(file);
+        assertEquals(Response.Severity.NORMAL, friday.getCommandResponse(second).severity());
+        assertEquals(2, Files.readAllLines(file).size());
+    }
+
     /** Compares the GUI-facing response while accommodating native Windows line endings. */
     private static void assertResponse(String body, String actual) {
         assertEquals(SEPARATOR + body, actual.replace("\r\n", "\n"));

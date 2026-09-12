@@ -33,6 +33,7 @@ public class Friday {
     private boolean isSavingEnabled;
     private boolean hasLoadingError;
     private boolean hasExited;
+    private Response.Severity responseSeverity = Response.Severity.NORMAL;
 
     /** Loads Friday's default task and contact data files. */
     public Friday() {
@@ -92,12 +93,19 @@ public class Friday {
      * @return the welcome response for a user interface.
      */
     public synchronized String getWelcomeMessage() {
-        return captureOutput(() -> {
+        return getWelcomeResponse().text();
+    }
+
+    /** Returns the welcome text with warning metadata when saved data could not be loaded. */
+    public synchronized Response getWelcomeResponse() {
+        return captureResponse(() -> {
             ui.showWelcome();
             if (hasLoadingError) {
+                responseSeverity = Response.Severity.WARNING;
                 ui.showLoadingError();
             }
             if (hasContactLoadingError) {
+                responseSeverity = Response.Severity.WARNING;
                 ui.showContactLoadingError();
             }
             ui.showLine();
@@ -111,7 +119,17 @@ public class Friday {
      * @return Friday's response to the command.
      */
     public synchronized String getResponse(String command) {
-        return captureOutput(() -> processCommand(command));
+        return getCommandResponse(command).text();
+    }
+
+    /**
+     * Processes a command once and returns text plus presentation metadata.
+     *
+     * @param command command text supplied by the user.
+     * @return the command output and its severity.
+     */
+    public synchronized Response getCommandResponse(String command) {
+        return captureResponse(() -> processCommand(command));
     }
 
     /**
@@ -177,6 +195,7 @@ public class Friday {
                 saveTasks();
             }
         } catch (IllegalArgumentException e) {
+            responseSeverity = Response.Severity.ERROR;
             ui.showError(e.getMessage());
         }
     }
@@ -222,18 +241,21 @@ public class Friday {
     /** Keeps contact recovery independent from task saving and retries after ordinary write failures. */
     private void saveContacts() {
         if (!isContactSavingEnabled) {
+            responseSeverity = Response.Severity.WARNING;
             ui.showContactSavingDisabled();
             return;
         }
         try {
             contactStorage.save(contacts.toList());
         } catch (IOException | SecurityException e) {
+            responseSeverity = Response.Severity.WARNING;
             ui.showContactSavingError();
         }
     }
 
     /** Captures the existing console UI output so it can be rendered in a GUI without duplicating messages. */
-    private String captureOutput(Runnable action) {
+    private Response captureResponse(Runnable action) {
+        responseSeverity = Response.Severity.NORMAL;
         PrintStream originalOutput = System.out;
         ByteArrayOutputStream capturedOutput = new ByteArrayOutputStream();
         try (PrintStream responseOutput = new PrintStream(capturedOutput, true, StandardCharsets.UTF_8)) {
@@ -242,7 +264,7 @@ public class Friday {
         } finally {
             System.setOut(originalOutput);
         }
-        return capturedOutput.toString(StandardCharsets.UTF_8);
+        return new Response(capturedOutput.toString(StandardCharsets.UTF_8), responseSeverity);
     }
 
     /** Checks parsed task numbers against the current list; the parser does not depend on list state. */
@@ -289,12 +311,14 @@ public class Friday {
     /** Reports storage failures without terminating the command session or discarding in-memory tasks. */
     private void saveTasks() {
         if (!isSavingEnabled) {
+            responseSeverity = Response.Severity.WARNING;
             ui.showSavingDisabled();
             return;
         }
         try {
             storage.save(tasks.toList());
         } catch (IOException | SecurityException e) {
+            responseSeverity = Response.Severity.WARNING;
             ui.showSavingError();
         }
     }
