@@ -1,6 +1,6 @@
-# Friday project template
+# FRIDAY
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Friday_. Given below are instructions on how to use it.
+FRIDAY is your mission assistant for tasks and contacts: calm, capable, and occasionally dryly witty.
 
 AI Declaration:
 Codex 5.6 Sol Medium was used to create majority of the code generated amongst the file 
@@ -262,3 +262,18 @@ compatible. See the [GUI guide](docs/README.md#using-the-gui), [artwork provenan
 ![Friday with a compact command and highlighted error](docs/images/friday-default.png)
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## A-Personality: FRIDAY Mission Assistant
+
+FRIDAY now uses a consistent mission-control identity in its console and GUI. Replies are compact:
+“Task logged. Here's the next objective:” acknowledges additions, and “Objective complete. Nicely handled:”
+confirms completion. `hello` and `thanks` return short dialogue instead of large ASCII boxes.
+
+The window is titled **FRIDAY | Mission Control**. The navy, cyan, and gold theme retains the Iron Spider
+user portrait and AI-core avatar. `help` lists all commands and supported date formats; errors retain
+clear validation details and storage warnings explain recovery and changes held only in memory.
+
+![FRIDAY mission assistant](docs/images/friday-default.png)
+
+See the [user guide](docs/README.md#a-personality-friday-mission-assistant),
+[artwork provenance](docs/images/artwork.md), and [verification report](test/a-personality-verification.md).

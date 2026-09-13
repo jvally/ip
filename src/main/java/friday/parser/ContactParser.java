@@ -105,7 +105,7 @@ public final class ContactParser {
             }
             return contactNumber;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Sir, The contact number is invalid.");
+            throw new IllegalArgumentException("The contact number is invalid.");
         }
     }
 

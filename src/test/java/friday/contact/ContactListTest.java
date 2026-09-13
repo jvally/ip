@@ -54,7 +54,7 @@ class ContactListTest {
     void delete_invalidNumber_preservesContents(int number) {
         Contact alice = new Contact("Alice", "91234567", "");
         ContactList contacts = new ContactList(List.of(alice));
-        assertEquals("Sir, The contact number is invalid.", assertThrows(IllegalArgumentException.class,
+        assertEquals("The contact number is invalid.", assertThrows(IllegalArgumentException.class,
                 () -> contacts.delete(number)).getMessage());
         assertThrows(IllegalArgumentException.class, () -> contacts.get(number));
         assertEquals(List.of(alice), contacts.toList());

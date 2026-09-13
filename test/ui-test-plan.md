@@ -71,24 +71,23 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] buy bread
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
 2.[T][ ] buy bread
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -102,13 +101,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sir, description of a todo cannot be empty.
+The description of a todo cannot be empty.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -122,13 +120,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sir, I don't know what you are saying :-(
+Command not recognized. Type help for available commands.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -146,32 +143,31 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] return book (by: Dec 01 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
-Noted. I've removed this task:
+Task removed from your agenda:
   [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
 2.[D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -186,19 +182,18 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] return book (by: Dec 01 2019)
 Now you have 1 task in the list.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -212,13 +207,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid deadline format. Use: deadline DESCRIPTION /by DEADLINE
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -233,19 +227,18 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 1 task in the list.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[E][ ] project meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -259,13 +252,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid event format. Use: event DESCRIPTION /from START /to END
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -282,25 +274,24 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [T][X] borrow book
 ____________________________________________________________
-OK, I've marked this task as not done yet:
+Task reopened. Back on the radar:
   [T][ ] borrow book
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] borrow book
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -314,13 +305,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sir, Invalid mark format. Use: mark TASK_NUMBER
+Invalid mark format. Use: mark TASK_NUMBER
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -335,17 +325,16 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Sir, The task number is invalid.
+The task number is invalid.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -359,13 +348,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sir, Invalid delete format. Use: delete TASK_NUMBER
+Invalid delete format. Use: delete TASK_NUMBER
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -380,17 +368,16 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
 This task is already not marked as done.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -404,13 +391,12 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sir, Invalid unmark format. Use: unmark TASK_NUMBER
+Invalid unmark format. Use: unmark TASK_NUMBER
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -425,17 +411,16 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Sir, The task number is invalid.
+The task number is invalid.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -450,22 +435,21 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] borrow book
 Now you have 1 task in the list.
 ____________________________________________________________
-Sir, The task number is invalid.
+The task number is invalid.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
 ## Test Case: Help command
-- Aim: Verify that `help` prints the project link and contact command syntax.
+- Aim: Verify that `help` lists every supported command and the accepted date formats.
 - Inputs:
 ```text
 help
@@ -474,20 +458,30 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Sure. Here you go:
-https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html
+Command briefing:
+Tasks:
+  todo DESCRIPTION
+  deadline DESCRIPTION /by DEADLINE
+  event DESCRIPTION /from START /to END
+  list
+  find KEYWORD
+  on yyyy-MM-dd
+  mark TASK_NUMBER
+  unmark TASK_NUMBER
+  delete TASK_NUMBER
+Dates: yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm
 Contacts:
   contact add NAME /phone PHONE [/email EMAIL]
   contact add NAME /email EMAIL
   contact list
   contact find KEYWORD
   contact delete NUMBER
+Session: hello | thanks | help | bye
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -514,67 +508,63 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] read book
 Now you have 1 task in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] return book (by: Dec 01 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [D][X] return book (by: Dec 01 2019)
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
 2.[D][X] return book (by: Dec 01 2019)
 3.[E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-OK, I've marked this task as not done yet:
+Task reopened. Back on the radar:
   [D][ ] return book (by: Dec 01 2019)
 ____________________________________________________________
-Noted. I've removed this task:
+Task removed from your agenda:
   [T][ ] read book
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[D][ ] return book (by: Dec 01 2019)
 2.[E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Noted. I've removed this task:
+Task removed from your agenda:
   [E][ ] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 Now you have 1 task in the list.
 ____________________________________________________________
-Noted. I've removed this task:
+Task removed from your agenda:
   [D][ ] return book (by: Dec 01 2019)
 Now you have 0 tasks in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -591,17 +581,16 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][X] read book
 2.[D][X] return book (by: Dec 01 2019)
 3.[E][X] meeting (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -617,23 +606,21 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] café | C:\notes
 Now you have 1 task in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] café | C:\notes
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -652,28 +639,26 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] session only
 Now you have 1 task in the list.
 Warning: This change is only in memory; saving is disabled until you fix the file and restart.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -688,15 +673,14 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -712,20 +696,19 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] session only
 Now you have 1 task in the list.
 Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] session only
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -742,28 +725,26 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] return book (by: Dec 02 2019, 18:00)
 Now you have 1 task in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] submit report (by: Dec 02 2019, 09:30)
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[D][ ] return book (by: Dec 02 2019, 18:00)
 2.[D][ ] submit report (by: Dec 02 2019, 09:30)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -782,8 +763,7 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
@@ -796,10 +776,10 @@ Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/1
 ____________________________________________________________
 Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -816,8 +796,7 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/12/2019 1800).
@@ -826,10 +805,10 @@ Invalid date/time. Use yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm (e.g., 2/1
 ____________________________________________________________
 An event cannot end before it starts.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -847,33 +826,31 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [D][ ] leap day (by: Feb 29 2024, 18:00)
 Now you have 1 task in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [E][ ] conference (from: Feb 29 2024 to: Mar 01 2024)
 Now you have 2 tasks in the list.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [E][ ] reminder (from: Feb 29 2024, 18:00 to: Feb 29 2024, 18:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[D][ ] leap day (by: Feb 29 2024, 18:00)
 2.[E][ ] conference (from: Feb 29 2024 to: Mar 01 2024)
 3.[E][ ] reminder (from: Feb 29 2024, 18:00 to: Feb 29 2024, 18:00)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -892,28 +869,26 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] session only
 Now you have 1 task in the list.
 Warning: This change is only in memory; saving is disabled until you fix the file and restart.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -937,40 +912,38 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the deadlines and events on Dec 02 2019:
+Scheduled deadlines and events on Dec 02 2019:
 Use the number shown here with mark/unmark.
 2.[D][ ] return book (by: Dec 02 2019, 18:00)
 3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [D][X] return book (by: Dec 02 2019, 18:00)
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the deadlines and events on Dec 02 2019:
+Scheduled deadlines and events on Dec 02 2019:
 Use the number shown here with mark/unmark.
 2.[D][X] return book (by: Dec 02 2019, 18:00)
 3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
 ____________________________________________________________
-Here are the deadlines and events on Dec 01 2019:
+Scheduled deadlines and events on Dec 01 2019:
 Use the number shown here with mark/unmark.
 3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
 ____________________________________________________________
-Here are the deadlines and events on Dec 03 2019:
+Scheduled deadlines and events on Dec 03 2019:
 Use the number shown here with mark/unmark.
 3.[E][X] conference (from: Dec 01 2019, 10:00 to: Dec 03 2019)
 ____________________________________________________________
-Here are the deadlines and events on Dec 04 2019:
+Scheduled deadlines and events on Dec 04 2019:
 Use the number shown here with mark/unmark.
 4.[D][ ] later task (by: Dec 04 2019)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -986,23 +959,22 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the deadlines and events on Dec 02 2019:
+Scheduled deadlines and events on Dec 02 2019:
 Use the number shown here with mark/unmark.
-No deadlines or events on this date.
+Schedule clear. No deadlines or events on this date.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] buy bread
 Now you have 1 task in the list.
 ____________________________________________________________
-Here are the deadlines and events on Dec 02 2019:
+Scheduled deadlines and events on Dec 02 2019:
 Use the number shown here with mark/unmark.
-No deadlines or events on this date.
+Schedule clear. No deadlines or events on this date.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1020,8 +992,7 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
@@ -1034,7 +1005,7 @@ Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
 ____________________________________________________________
 Invalid date. Use: on yyyy-MM-dd (e.g., on 2019-12-02).
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1055,29 +1026,28 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [T][X] finished task
 ____________________________________________________________
 This task is already not marked as done.
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [T][X] pending task
 Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
 ____________________________________________________________
-OK, I've marked this task as not done yet:
+Task reopened. Back on the radar:
   [T][ ] finished task
 Warning: I couldn't save data/friday.txt. Your changes are only in memory; check the folder and file permissions.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] finished task
 2.[T][X] pending task
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1099,35 +1069,34 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] read book
 Now you have 1 task in the list.
 ____________________________________________________________
-Sir, Invalid mark format. Use: mark TASK_NUMBER
+Invalid mark format. Use: mark TASK_NUMBER
 ____________________________________________________________
-Sir, Invalid mark format. Use: mark TASK_NUMBER
+Invalid mark format. Use: mark TASK_NUMBER
 ____________________________________________________________
-Sir, The task number is invalid.
+The task number is invalid.
 ____________________________________________________________
-Sir, Invalid delete format. Use: delete TASK_NUMBER
+Invalid delete format. Use: delete TASK_NUMBER
 ____________________________________________________________
-Sir, The task number is invalid.
+The task number is invalid.
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [T][X] read book
 ____________________________________________________________
-OK, I've marked this task as not done yet:
+Task reopened. Back on the radar:
   [T][ ] read book
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1142,23 +1111,14 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
- ________________________________
-|                                |
-|  Good day to you sir!          |
-|________________________________|
-
+At your service. What's the next task?
 ____________________________________________________________
- ________________________
-|                        |
-|  Thanks!               |
-|________________________|
-
+Anytime. Organization is rather my specialty.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1179,30 +1139,28 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 2.[T][X] read book
 3.[D][X] return book (by: Dec 02 2019)
 4.[E][ ] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Nice! I've marked this task as done:
+Objective complete. Nicely handled:
   [E][X] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 2.[T][X] read book
 3.[D][X] return book (by: Dec 02 2019)
 4.[E][X] book club (from: Dec 02 2019, 14:00 to: Dec 02 2019, 16:00)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1226,36 +1184,35 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 3.[T][ ] Read Book
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
 2.[T][ ] bookshelf
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 4.[T][ ] literal .* 读书
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 4.[T][ ] literal .* 读书
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
-No matching tasks found.
+Task scan complete. No matches found.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1273,23 +1230,22 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
-No matching tasks found.
+Task scan complete. No matches found.
 ____________________________________________________________
 Invalid find format. Use: find KEYWORD
 ____________________________________________________________
 Invalid find format. Use: find KEYWORD
 ____________________________________________________________
-Sir, I don't know what you are saying :-(
+Command not recognized. Type help for available commands.
 ____________________________________________________________
-Sir, I don't know what you are saying :-(
+Command not recognized. Type help for available commands.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1306,19 +1262,18 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
 1.[T][ ] read book
 ____________________________________________________________
-Here are the matching tasks in your list:
+Task scan complete. Here's what matches:
 Use the number shown here with mark/unmark.
-No matching tasks found.
+Task scan complete. No matches found.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1343,57 +1298,55 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-No contacts saved.
+Your contact directory is empty.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Alice Tan (phone: 91234567, email: Alice@example.com)
 Now you have 1 contact in the list.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Bob (phone: -, email: bob@example.com)
 Now you have 2 contacts in the list.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Carol (phone: 81234567, email: -)
 Now you have 3 contacts in the list.
 ____________________________________________________________
-Here are the matching contacts in your list:
+Contact scan complete. Here's what matches:
 Use the number shown here with contact delete.
 1.Alice Tan (phone: 91234567, email: Alice@example.com)
 2.Bob (phone: -, email: bob@example.com)
 ____________________________________________________________
-Noted. I've removed this contact:
+Contact removed from your directory:
   Bob (phone: -, email: bob@example.com)
 Now you have 2 contacts in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Alice Tan (phone: 91234567, email: Alice@example.com)
 2.Carol (phone: 81234567, email: -)
 ____________________________________________________________
-Here are the matching contacts in your list:
+Contact scan complete. Here's what matches:
 Use the number shown here with contact delete.
 2.Carol (phone: 81234567, email: -)
 ____________________________________________________________
-Noted. I've removed this contact:
+Contact removed from your directory:
   Alice Tan (phone: 91234567, email: Alice@example.com)
 Now you have 1 contact in the list.
 ____________________________________________________________
-Noted. I've removed this contact:
+Contact removed from your directory:
   Carol (phone: 81234567, email: -)
 Now you have 0 contacts in the list.
 ____________________________________________________________
-No contacts saved.
+Your contact directory is empty.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1422,8 +1375,7 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
 Invalid contact command. Use: contact add, contact list, contact find, or contact delete.
@@ -1444,7 +1396,7 @@ Invalid phone number. Use 8 digits starting with 6, 8, or 9.
 ____________________________________________________________
 Invalid email address. Use a format like alice@example.com.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Alice (phone: 91234567, email: -)
 Now you have 1 contact in the list.
 ____________________________________________________________
@@ -1452,17 +1404,17 @@ A contact with this name already exists.
 ____________________________________________________________
 Invalid contact find format. Use: contact find KEYWORD
 ____________________________________________________________
-Sir, The contact number is invalid.
+The contact number is invalid.
 ____________________________________________________________
-Sir, The contact number is invalid.
+The contact number is invalid.
 ____________________________________________________________
-Sir, The contact number is invalid.
+The contact number is invalid.
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Alice (phone: 91234567, email: -)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1484,30 +1436,29 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching contacts in your list:
+Contact scan complete. Here's what matches:
 Use the number shown here with contact delete.
 1.Alice  Tan (phone: 91234567, email: -)
 ____________________________________________________________
-No matching contacts found.
+Contact scan complete. No matches found.
 ____________________________________________________________
-No matching contacts found.
+Contact scan complete. No matches found.
 ____________________________________________________________
-Here are the matching contacts in your list:
+Contact scan complete. Here's what matches:
 Use the number shown here with contact delete.
 2.Bob (phone: -, email: bob@example.com)
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Alice  Tan (phone: 91234567, email: -)
 2.Bob (phone: -, email: bob@example.com)
 ____________________________________________________________
 A contact with this name already exists.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1528,34 +1479,32 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-No contacts saved.
+Your contact directory is empty.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Carol (phone: 81234567, email: -)
 Now you have 1 contact in the list.
 Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
 ____________________________________________________________
-Got it. I've added this task:
+Task logged. Here's the next objective:
   [T][ ] still saved
 Now you have 1 task in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-No contacts saved.
+Your contact directory is empty.
 ____________________________________________________________
-Here are the tasks in your list:
+Your task briefing:
 Use the number shown here with mark/unmark.
 1.[T][ ] still saved
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1571,22 +1520,21 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/contacts.txt. Check the file and restart; contact saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Carol (phone: 81234567, email: -)
 Now you have 1 contact in the list.
 Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
 ____________________________________________________________
-Noted. I've removed this contact:
+Contact removed from your directory:
   Carol (phone: 81234567, email: -)
 Now you have 0 contacts in the list.
 Warning: This contact change is only in memory; contact saving is disabled until you fix the file and restart.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1603,25 +1551,24 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Carol (phone: 81234567, email: -)
 Now you have 1 contact in the list.
 Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; check the folder and file permissions.
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Carol (phone: 81234567, email: -)
 ____________________________________________________________
-Noted. I've removed this contact:
+Contact removed from your directory:
   Carol (phone: 81234567, email: -)
 Now you have 0 contacts in the list.
 Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; check the folder and file permissions.
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1638,25 +1585,23 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Carol (phone: 81234567, email: -)
 Now you have 1 contact in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 Warning: I couldn't load data/friday.txt. Check the file and restart; saving is disabled to protect existing data.
 ____________________________________________________________
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Carol (phone: 81234567, email: -)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```
 
@@ -1673,27 +1618,25 @@ bye
 - Expected output:
 ```text
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Alice | \ 陈 (phone: 91234567, email: -)
 Now you have 1 contact in the list.
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Bob (phone: 81234567, email: bob@example.com)
 Now you have 2 contacts in the list.
 ____________________________________________________________
-Hello! I'm Friday.
-What can I do for you?
+FRIDAY online. Let's keep your day under control.
 ____________________________________________________________
 ____________________________________________________________
-Here are the contacts in your list:
+Your contact directory:
 Use the number shown here with contact delete.
 1.Alice | \ 陈 (phone: 91234567, email: -)
 2.Bob (phone: 81234567, email: bob@example.com)
 ____________________________________________________________
-Bye. Hope to see you again soon!
+FRIDAY signing off. I'll be here when you return.
 ____________________________________________________________
 ```

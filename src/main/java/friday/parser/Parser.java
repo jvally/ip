@@ -12,7 +12,7 @@ import friday.task.ToDo;
  * Interprets command text and validates arguments without reading input or changing the task list.
  */
 public final class Parser {
-    private static final String UNKNOWN_COMMAND_MESSAGE = "Sir, I don't know what you are saying :-(";
+    private static final String UNKNOWN_COMMAND_MESSAGE = "Command not recognized. Type help for available commands.";
 
     /**
      * The supported actions; execution belongs to Friday rather than the parser.
@@ -115,9 +115,9 @@ public final class Parser {
      */
     public static int parseTaskNumber(String command) {
         String errorMessage = switch (parseCommandType(command)) {
-            case MARK -> "Sir, Invalid mark format. Use: mark TASK_NUMBER";
-            case UNMARK -> "Sir, Invalid unmark format. Use: unmark TASK_NUMBER";
-            case DELETE -> "Sir, Invalid delete format. Use: delete TASK_NUMBER";
+            case MARK -> "Invalid mark format. Use: mark TASK_NUMBER";
+            case UNMARK -> "Invalid unmark format. Use: unmark TASK_NUMBER";
+            case DELETE -> "Invalid delete format. Use: delete TASK_NUMBER";
             default -> throw new IllegalArgumentException("This command does not select a task number.");
         };
         int firstSpace = command.indexOf(' ');
@@ -140,7 +140,7 @@ public final class Parser {
     private static ToDo parseTodo(String command) {
         String description = parseCommandBody(command, "todo ");
         if (description.isEmpty()) {
-            throw new IllegalArgumentException("Sir, description of a todo cannot be empty.");
+            throw new IllegalArgumentException("The description of a todo cannot be empty.");
         }
         return new ToDo(description);
     }

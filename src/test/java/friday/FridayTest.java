@@ -27,7 +27,7 @@ class FridayTest {
         String addResponse = friday.getResponse("todo read GUI tutorial");
         String listResponse = friday.getResponse("list");
 
-        assertTrue(addResponse.contains("I've added this task"));
+        assertTrue(addResponse.contains("Task logged."));
         assertTrue(listResponse.contains("1.[T][ ] read GUI tutorial"));
         assertTrue(temporaryDirectory.resolve("friday.txt").toFile().isFile());
     }
@@ -39,7 +39,7 @@ class FridayTest {
         String errorResponse = friday.getResponse("unknown");
         String addResponse = friday.getResponse("todo recover after error");
 
-        assertTrue(errorResponse.contains("I don't know what you are saying"));
+        assertTrue(errorResponse.contains("Command not recognized."));
         assertTrue(addResponse.contains("recover after error"));
         assertFalse(friday.hasExited());
     }
@@ -50,7 +50,7 @@ class FridayTest {
 
         String response = friday.getResponse("bye");
 
-        assertTrue(response.contains("Bye. Hope to see you again soon!"));
+        assertTrue(response.contains("FRIDAY signing off. I'll be here when you return."));
         assertTrue(friday.hasExited());
     }
 
@@ -58,27 +58,27 @@ class FridayTest {
     void getResponse_contactLifecycle_returnsExactResponsesAndPersistsDeletion() throws IOException {
         Path taskFile = temporaryDirectory.resolve("friday.txt");
         Friday friday = new Friday(taskFile);
-        assertResponse("No contacts saved.\n", friday.getResponse("contact list"));
-        assertResponse("No matching contacts found.\n", friday.getResponse("contact find Alice"));
-        assertResponse("Got it. I've added this contact:\n"
+        assertResponse("Your contact directory is empty.\n", friday.getResponse("contact list"));
+        assertResponse("Contact scan complete. No matches found.\n", friday.getResponse("contact find Alice"));
+        assertResponse("Contact logged. Here's the entry:\n"
                 + "  Alice (phone: 91234567, email: alice@example.com)\n"
                 + "Now you have 1 contact in the list.\n",
                 friday.getResponse("contact add Alice /phone 91234567 /email alice@example.com"));
-        assertResponse("Got it. I've added this contact:\n"
+        assertResponse("Contact logged. Here's the entry:\n"
                 + "  Bob (phone: -, email: bob@example.com)\n"
                 + "Now you have 2 contacts in the list.\n",
                 friday.getResponse("contact add Bob /email bob@example.com"));
-        assertResponse("Here are the matching contacts in your list:\n"
+        assertResponse("Contact scan complete. Here's what matches:\n"
                 + "Use the number shown here with contact delete.\n"
                 + "2.Bob (phone: -, email: bob@example.com)\n", friday.getResponse("contact find BOB@"));
-        assertResponse("Noted. I've removed this contact:\n"
+        assertResponse("Contact removed from your directory:\n"
                 + "  Alice (phone: 91234567, email: alice@example.com)\n"
                 + "Now you have 1 contact in the list.\n", friday.getResponse("contact delete 1"));
         Friday restarted = new Friday(taskFile);
-        assertResponse("Here are the contacts in your list:\n"
+        assertResponse("Your contact directory:\n"
                 + "Use the number shown here with contact delete.\n"
                 + "1.Bob (phone: -, email: bob@example.com)\n", restarted.getResponse("contact list"));
-        assertResponse("Noted. I've removed this contact:\n"
+        assertResponse("Contact removed from your directory:\n"
                 + "  Bob (phone: -, email: bob@example.com)\n"
                 + "Now you have 0 contacts in the list.\n", restarted.getResponse("contact delete 1"));
         assertEquals("", Files.readString(temporaryDirectory.resolve("contacts.txt")));
@@ -124,12 +124,12 @@ class FridayTest {
         Files.writeString(file, "C|Alice|91234567|\ninvalid\n");
         byte[] original = Files.readAllBytes(file);
         Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
-        assertEquals(SEPARATOR + "Hello! I'm Friday.\nWhat can I do for you?\n"
+        assertEquals(SEPARATOR + "FRIDAY online. Let's keep your day under control.\n"
                 + "Warning: I couldn't load data/contacts.txt. Check the file and restart; "
                 + "contact saving is disabled to protect existing data.\n" + SEPARATOR,
                 friday.getWelcomeMessage().replace("\r\n", "\n"));
-        assertResponse("No contacts saved.\n", friday.getResponse("contact list"));
-        assertResponse("Got it. I've added this contact:\n  Bob (phone: 81234567, email: -)\n"
+        assertResponse("Your contact directory is empty.\n", friday.getResponse("contact list"));
+        assertResponse("Contact logged. Here's the entry:\n  Bob (phone: 81234567, email: -)\n"
                 + "Now you have 1 contact in the list.\n"
                 + "Warning: This contact change is only in memory; contact saving is disabled "
                 + "until you fix the file and restart.\n", friday.getResponse("contact add Bob /phone 81234567"));
@@ -158,7 +158,7 @@ class FridayTest {
         Files.createDirectory(contactFile);
         Path blocker = contactFile.resolve("blocker");
         Files.writeString(blocker, "keep");
-        assertResponse("Got it. I've added this contact:\n  Alice (phone: 91234567, email: -)\n"
+        assertResponse("Contact logged. Here's the entry:\n  Alice (phone: 91234567, email: -)\n"
                 + "Now you have 1 contact in the list.\n"
                 + "Warning: I couldn't save data/contacts.txt. Your contact changes are only in memory; "
                 + "check the folder and file permissions.\n", friday.getResponse("contact add Alice /phone 91234567"));
@@ -182,13 +182,38 @@ class FridayTest {
     }
 
     @Test
-    void getResponse_help_includesContactSyntax() {
+    void getResponse_help_includesEveryCommandAndDateFormat() {
         Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
-        assertResponse("Sure. Here you go:\n"
-                + "https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html\n"
-                + "Contacts:\n  contact add NAME /phone PHONE [/email EMAIL]\n"
-                + "  contact add NAME /email EMAIL\n  contact list\n"
-                + "  contact find KEYWORD\n  contact delete NUMBER\n", friday.getResponse("help"));
+        assertResponse("""
+                Command briefing:
+                Tasks:
+                  todo DESCRIPTION
+                  deadline DESCRIPTION /by DEADLINE
+                  event DESCRIPTION /from START /to END
+                  list
+                  find KEYWORD
+                  on yyyy-MM-dd
+                  mark TASK_NUMBER
+                  unmark TASK_NUMBER
+                  delete TASK_NUMBER
+                Dates: yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm
+                Contacts:
+                  contact add NAME /phone PHONE [/email EMAIL]
+                  contact add NAME /email EMAIL
+                  contact list
+                  contact find KEYWORD
+                  contact delete NUMBER
+                Session: hello | thanks | help | bye
+                """, friday.getResponse("help"));
+    }
+
+    @Test
+    void getResponse_personalityCommands_useConsistentVoice() {
+        Friday friday = new Friday(temporaryDirectory.resolve("friday.txt"));
+        assertEquals(SEPARATOR + "FRIDAY online. Let's keep your day under control.\n" + SEPARATOR,
+                friday.getWelcomeMessage().replace("\r\n", "\n"));
+        assertResponse("At your service. What's the next task?\n", friday.getResponse("hello"));
+        assertResponse("Anytime. Organization is rather my specialty.\n", friday.getResponse("thanks"));
     }
 
     @ParameterizedTest

@@ -161,7 +161,7 @@ class MainWindowTest {
         loader.<MainWindow>getController().setFriday(friday);
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
-        stage.setTitle("Friday");
+        stage.setTitle("FRIDAY | Mission Control");
         stage.setWidth(480);
         stage.setHeight(640);
         stage.setMinWidth(360);

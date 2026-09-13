@@ -1,6 +1,6 @@
-# Friday User Guide
+# FRIDAY User Guide
 
-Friday is a JavaFX chatbot for managing tasks. Its chat window accepts the same task commands as the legacy console UI.
+FRIDAY is a JavaFX mission assistant for managing tasks and contacts. Its chat window accepts the same task commands as the legacy console UI.
 
 ## Setup and running
 
@@ -154,7 +154,7 @@ For an empty contact list, adding Alice with both details produces this response
 
 ```text
 ____________________________________________________________
-Got it. I've added this contact:
+Contact logged. Here's the entry:
   Alice Tan (phone: 91234567, email: alice@example.com)
 Now you have 1 contact in the list.
 ```
@@ -163,13 +163,13 @@ After adding Bob from the example above, `contact find BOB@` returns his origina
 
 ```text
 ____________________________________________________________
-Here are the matching contacts in your list:
+Contact scan complete. Here's what matches:
 Use the number shown here with contact delete.
 2.Bob (phone: -, email: bob@example.com)
 ```
 
-Use `contact delete 2` to remove Bob. An empty list reports `No contacts saved.`; a search
-without matches reports `No matching contacts found.` Neither operation writes to the save file.
+Use `contact delete 2` to remove Bob. An empty list reports `Your contact directory is empty.`; a search
+without matches reports `Contact scan complete. No matches found.` Neither operation writes to the save file.
 
 | Invalid example | Reason and correction |
 | --- | --- |
@@ -324,7 +324,7 @@ and completion markers are not searched.
 
 Surrounding keyword whitespace is trimmed. Multiple words are treated as one exact phrase,
 so `find read book` searches for `read book`, not either word separately. Blank keywords
-produce `Invalid find format. Use: find KEYWORD`; no matches produce `No matching tasks found.`
+produce `Invalid find format. Use: find KEYWORD`; no matches produce `Task scan complete. No matches found.`
 
 Results retain their original list numbers, just like date queries. For example, if task 1
 does not match, the first result might be numbered 2. Use these numbers with `mark`, `unmark`,
@@ -387,14 +387,32 @@ If a save fails, Friday warns you and keeps the session running. Fix the folder 
 the next task-list change retries saving the full list. Successful saves write a temporary snapshot before
 replacing the old file, using an atomic move when the filesystem supports it.
 
-## Friendly commands
+## A-Personality: FRIDAY Mission Assistant
 
-Friday also responds to a few personality commands:
+FRIDAY is calm, capable, and occasionally dryly witty. The **FRIDAY | Mission Control** window pairs
+this voice with navy surfaces, cyan highlights, restrained gold details, and compact existing avatars.
+The header reads “Mission control for your tasks and contacts”.
 
-- `hello`
-- `thanks`
-- `help`
-- `bye`
+| Interaction | FRIDAY's reply |
+| --- | --- |
+| Startup | FRIDAY online. Let's keep your day under control. |
+| `hello` | At your service. What's the next task? |
+| `thanks` | Anytime. Organization is rather my specialty. |
+| Add a task | Task logged. Here's the next objective: |
+| `mark 1` | Objective complete. Nicely handled: |
+| `unmark 1` | Task reopened. Back on the radar: |
+| `delete 1` | Task removed from your agenda: |
+| `bye` | FRIDAY signing off. I'll be here when you return. |
+
+`help` displays a command briefing covering tasks, contacts, searches, dates, and session commands.
+Task and contact numbers and command syntax retain their usual meaning. Unknown commands suggest
+`help`; other validation errors retain their specific correction details. Storage warnings continue
+to identify recovery steps and when changes exist only in memory.
+
+![FRIDAY mission assistant](images/friday-default.png)
+
+The [artwork provenance](images/artwork.md) still applies; this personality update uses original
+wording and the existing portraits, with no additional external project ideas or artwork.
 
 ## Error handling
 

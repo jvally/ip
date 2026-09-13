@@ -11,20 +11,6 @@ import friday.task.TaskDateTime;
  * Handles console input and presentation without parsing commands or changing tasks.
  */
 public class Ui {
-    private static final String ART_GOOD_DAY = """
-            ________________________________
-           |                                |
-           |  Good day to you sir!          |
-           |________________________________|
-            """;
-
-    private static final String ART_THANKS = """
-            ________________________
-           |                        |
-           |  Thanks!               |
-           |________________________|
-            """;
-
     private static final String SEPARATOR = "____________________________________________________________";
     private static final String TASK_NUMBER_HINT = "Use the number shown here with mark/unmark.";
     private final Scanner scanner;
@@ -62,44 +48,56 @@ public class Ui {
      */
     public void showWelcome() {
         showLine();
-        System.out.println("Hello! I'm Friday.");
-        System.out.println("What can I do for you?");
+        System.out.println("FRIDAY online. Let's keep your day under control.");
     }
 
     /**
      * Prints the farewell message and closing separator.
      */
     public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("FRIDAY signing off. I'll be here when you return.");
         showLine();
     }
 
     /**
-     * Prints the greeting artwork.
+     * Prints FRIDAY's ready-for-work greeting.
      */
     public void showGreeting() {
-        System.out.println(ART_GOOD_DAY);
+        System.out.println("At your service. What's the next task?");
     }
 
     /**
-     * Prints the acknowledgment artwork.
+     * Prints FRIDAY's concise acknowledgment.
      */
     public void showThanks() {
-        System.out.println(ART_THANKS);
+        System.out.println("Anytime. Organization is rather my specialty.");
     }
 
     /**
-     * Prints the link to the course project instructions.
+     * Prints the supported commands and their argument formats.
      */
     public void showHelp() {
-        System.out.println("Sure. Here you go:");
-        System.out.println("https://nus-cs2103-ay2627-s1.github.io/website/schedule/week2/project.html");
-        System.out.println("Contacts:");
-        System.out.println("  contact add NAME /phone PHONE [/email EMAIL]");
-        System.out.println("  contact add NAME /email EMAIL");
-        System.out.println("  contact list");
-        System.out.println("  contact find KEYWORD");
-        System.out.println("  contact delete NUMBER");
+        System.out.println("""
+                Command briefing:
+                Tasks:
+                  todo DESCRIPTION
+                  deadline DESCRIPTION /by DEADLINE
+                  event DESCRIPTION /from START /to END
+                  list
+                  find KEYWORD
+                  on yyyy-MM-dd
+                  mark TASK_NUMBER
+                  unmark TASK_NUMBER
+                  delete TASK_NUMBER
+                Dates: yyyy-MM-dd, yyyy-MM-dd HH:mm, or d/M/yyyy HHmm
+                Contacts:
+                  contact add NAME /phone PHONE [/email EMAIL]
+                  contact add NAME /email EMAIL
+                  contact list
+                  contact find KEYWORD
+                  contact delete NUMBER
+                Session: hello | thanks | help | bye
+                """.stripTrailing());
     }
 
     /**
@@ -113,7 +111,7 @@ public class Ui {
      * Prints the task-list heading and task-number hint.
      */
     public void showTaskListHeader() {
-        System.out.println("Here are the tasks in your list:");
+        System.out.println("Your task briefing:");
         System.out.println(TASK_NUMBER_HINT);
     }
 
@@ -121,7 +119,7 @@ public class Ui {
      * Prints the keyword-search heading and explains how to use the original task numbers.
      */
     public void showFindHeader() {
-        System.out.println("Here are the matching tasks in your list:");
+        System.out.println("Task scan complete. Here's what matches:");
         System.out.println(TASK_NUMBER_HINT);
     }
 
@@ -129,11 +127,11 @@ public class Ui {
      * Reports that no task description contains the search keyword.
      */
     public void showNoMatchingTasks() {
-        System.out.println("No matching tasks found.");
+        System.out.println("Task scan complete. No matches found.");
     }
     /** Prints the dated-task heading and original-task-number hint. */
     public void showDateHeader(LocalDate date) {
-        System.out.println("Here are the deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
+        System.out.println("Scheduled deadlines and events on " + TaskDateTime.format(date.atStartOfDay()) + ":");
         System.out.println(TASK_NUMBER_HINT);
     }
 
@@ -148,14 +146,14 @@ public class Ui {
      * Reports that no deadlines or events match the requested date.
      */
     public void showNoTasksOnDate() {
-        System.out.println("No deadlines or events on this date.");
+        System.out.println("Schedule clear. No deadlines or events on this date.");
     }
 
     /**
      * Displays the added task and the resulting task count.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println("Got it. I've added this task:");
+        System.out.println("Task logged. Here's the next objective:");
         showTask(task);
         showTaskCount(taskCount);
     }
@@ -164,7 +162,7 @@ public class Ui {
      * Displays the removed task and the remaining task count.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println("Noted. I've removed this task:");
+        System.out.println("Task removed from your agenda:");
         showTask(task);
         showTaskCount(taskCount);
     }
@@ -173,7 +171,7 @@ public class Ui {
      * Displays confirmation that the supplied task is done.
      */
     public void showTaskMarked(Task task) {
-        System.out.println("Nice! I've marked this task as done:");
+        System.out.println("Objective complete. Nicely handled:");
         showTask(task);
     }
 
@@ -181,7 +179,7 @@ public class Ui {
      * Displays confirmation that the supplied task is not done.
      */
     public void showTaskUnmarked(Task task) {
-        System.out.println("OK, I've marked this task as not done yet:");
+        System.out.println("Task reopened. Back on the radar:");
         showTask(task);
     }
 
@@ -218,8 +216,8 @@ public class Ui {
 
     /** Shows a contact listing heading and the original-number deletion hint. */
     public void showContactListHeader(boolean isSearch) {
-        System.out.println(isSearch ? "Here are the matching contacts in your list:"
-                : "Here are the contacts in your list:");
+        System.out.println(isSearch ? "Contact scan complete. Here's what matches:"
+                : "Your contact directory:");
         System.out.println("Use the number shown here with contact delete.");
     }
 
@@ -230,14 +228,14 @@ public class Ui {
 
     /** Confirms addition and displays the resulting contact count. */
     public void showContactAdded(Contact contact, int count) {
-        System.out.println("Got it. I've added this contact:");
+        System.out.println("Contact logged. Here's the entry:");
         System.out.println("  " + contact);
         showContactCount(count);
     }
 
     /** Confirms deletion and displays the remaining contact count. */
     public void showContactDeleted(Contact contact, int count) {
-        System.out.println("Noted. I've removed this contact:");
+        System.out.println("Contact removed from your directory:");
         System.out.println("  " + contact);
         showContactCount(count);
     }

@@ -20,7 +20,7 @@ import friday.ui.Ui;
 
 /** Friday's command engine. It owns task and contact state while exposing text responses for any UI. */
 public class Friday {
-    private static final String INVALID_TASK_NUMBER_MESSAGE = "Sir, The task number is invalid.";
+    private static final String INVALID_TASK_NUMBER_MESSAGE = "The task number is invalid.";
     private static final Path DATA_FILE = Path.of("data", "friday.txt");
 
     private final Storage storage;
@@ -211,7 +211,7 @@ public class Friday {
             }
             case LIST -> {
                 if (contacts.size() == 0) {
-                    ui.showError("No contacts saved.");
+                    ui.showError("Your contact directory is empty.");
                     return;
                 }
                 ui.showContactListHeader(false);
@@ -222,7 +222,7 @@ public class Friday {
             case FIND -> {
                 List<Integer> matches = contacts.findContactNumbersContaining(ContactParser.parseFindKeyword(command));
                 if (matches.isEmpty()) {
-                    ui.showError("No matching contacts found.");
+                    ui.showError("Contact scan complete. No matches found.");
                     return;
                 }
                 ui.showContactListHeader(true);
