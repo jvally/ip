@@ -36,5 +36,11 @@ Updated guide screenshots:
 - [Storage warnings](../docs/images/friday-warning.png)
 
 The exit-state snapshot remains available at `build/gui-review/ended.png`.
-Native GUI checks were performed on macOS only. Windows, macOS, and Ubuntu CI will be checked after
-commit approval and the agreed push. No command syntax, persistence format, or response API changed.
+Native GUI checks were performed on macOS only. No command syntax, persistence format, or response API changed.
+
+## Delivery status
+
+Implementation commit `c3e6bd0` was pushed to `origin/codex/a-personality` after user review.
+The merge into `master` was not performed because its tool approval was declined. The lightweight
+`A-Personality` tag has not been created. Cross-platform CI results for this increment have not yet
+been verified; the local test results above do not claim Windows or Linux execution.
