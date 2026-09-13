@@ -69,7 +69,7 @@ public final class ContactList {
     /** Validates contact numbers before converting to a zero-based index. */
     private int toIndex(int contactNumber) {
         if (contactNumber < 1 || contactNumber > contacts.size()) {
-            throw new IllegalArgumentException("Sir, The contact number is invalid.");
+            throw new IllegalArgumentException("The contact number is invalid.");
         }
         return contactNumber - 1;
     }

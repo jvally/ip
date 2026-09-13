@@ -13,8 +13,8 @@
             fx:controller="friday.ui.MainWindow">
     <top>
         <VBox styleClass="header" spacing="3.0">
-            <Label text="F R I D A Y" styleClass="brand" />
-            <Label text="Your personal task assistant" styleClass="subtitle" />
+            <Label text="FRIDAY" styleClass="brand" />
+            <Label text="Mission control for your tasks and contacts" styleClass="subtitle" wrapText="true" />
         </VBox>
     </top>
     <center>

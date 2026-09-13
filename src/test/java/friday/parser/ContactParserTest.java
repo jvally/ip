@@ -82,7 +82,7 @@ class ContactParserTest {
     @ParameterizedTest
     @ValueSource(strings = {"", "0", "-1", "+1", "1.0", "one", "1 2", "2147483648", "９"})
     void parseContactNumber_invalidInteger_rejectsWithNumberError(String number) {
-        assertEquals("Sir, The contact number is invalid.", assertThrows(IllegalArgumentException.class,
+        assertEquals("The contact number is invalid.", assertThrows(IllegalArgumentException.class,
                 () -> ContactParser.parseContactNumber("contact delete " + number)).getMessage());
     }
 

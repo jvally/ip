@@ -51,7 +51,7 @@ public class MainWindow {
         if (friday.hasExited()) {
             userInput.setDisable(true);
             sendButton.setDisable(true);
-            inputHint.setText("Session ended · Reopen Friday to continue");
+            inputHint.setText("Session ended · Reopen FRIDAY to continue");
         } else {
             userInput.requestFocus();
         }

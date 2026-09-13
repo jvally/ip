@@ -19,7 +19,7 @@ public class Main extends Application {
         BorderPane root = loader.load();
         loader.<friday.ui.MainWindow>getController().setFriday(friday);
         Scene scene = new Scene(root);
-        stage.setTitle("Friday");
+        stage.setTitle("FRIDAY | Mission Control");
         stage.setMinWidth(360);
         stage.setMinHeight(440);
         stage.setResizable(true);

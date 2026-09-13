@@ -38,7 +38,7 @@ class ParserTest {
             "todoLater read book", "deadlineX book", "eventually meeting", "onward", "marking 1",
             "unmarked 1", "deleted 1", "bye now", "hello ", "thanks extra", "help now", "list "})
     void parseCommandType_unknownOrMalformedCommand_throwsException(String command) {
-        assertError(() -> Parser.parseCommandType(command), "Sir, I don't know what you are saying :-(");
+        assertError(() -> Parser.parseCommandType(command), "Command not recognized. Type help for available commands.");
     }
 
     @Test
@@ -70,7 +70,7 @@ class ParserTest {
     @ParameterizedTest
     @ValueSource(strings = {"todo", "todo   "})
     void parseTask_missingTodoDescription_throwsHelpfulException(String command) {
-        assertError(() -> Parser.parseTask(command), "Sir, description of a todo cannot be empty.");
+        assertError(() -> Parser.parseTask(command), "The description of a todo cannot be empty.");
     }
 
     @ParameterizedTest
@@ -113,7 +113,7 @@ class ParserTest {
     @ParameterizedTest
     @ValueSource(strings = {"mark", "unmark", "delete"})
     void parseTaskNumber_invalidSyntax_throwsCommandSpecificError(String word) {
-        String message = "Sir, Invalid " + word + " format. Use: " + word + " TASK_NUMBER";
+        String message = "Invalid " + word + " format. Use: " + word + " TASK_NUMBER";
         assertError(() -> Parser.parseTaskNumber(word), message);
         for (String argument : List.of("", "   ", "abc", "1 2", "1.0", "2147483648", "-2147483649", "-1")) {
             assertError(() -> Parser.parseTaskNumber(word + " " + argument), message);
@@ -171,7 +171,7 @@ class ParserTest {
     @ParameterizedTest
     @ValueSource(strings = {"findbook", "FIND book", " find book", "find\tbook"})
     void parseCommandType_malformedFind_rejectsUnknownCommand(String command) {
-        assertError(() -> Parser.parseCommandType(command), "Sir, I don't know what you are saying :-(");
+        assertError(() -> Parser.parseCommandType(command), "Command not recognized. Type help for available commands.");
     }
 
     /** Checks exception messages as part of the existing console contract. */
