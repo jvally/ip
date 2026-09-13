@@ -145,52 +145,7 @@ public class Friday {
     private void processCommand(String command) {
         ui.showLine();
         try {
-            boolean hasChanged = false;
-            switch (Parser.parseCommandType(command)) {
-            case BYE -> {
-                ui.showGoodbye();
-                hasExited = true;
-            }
-            case HELLO -> ui.showGreeting();
-            case THANKS -> ui.showThanks();
-            case HELP -> ui.showHelp();
-            case CONTACT -> processContactCommand(command);
-            case TODO, DEADLINE, EVENT -> {
-                int taskCountBeforeAdd = tasks.size();
-                Task task = Parser.parseTask(command);
-                tasks.add(task);
-                assert tasks.size() == taskCountBeforeAdd + 1
-                        : "Adding a task must increase the task count by one.";
-                ui.showTaskAdded(task, tasks.size());
-                hasChanged = true;
-            }
-            case ON -> listTasksOn(Parser.parseDate(command));
-            case FIND -> listMatchingTasks(Parser.parseFindKeyword(command));
-            case LIST -> showTaskList();
-            case DELETE -> {
-                int taskNumber = requireExistingTaskNumber(command);
-                int taskCountBeforeDelete = tasks.size();
-                Task removedTask = tasks.delete(taskNumber);
-                assert tasks.size() == taskCountBeforeDelete - 1
-                        : "Deleting an existing task must decrease the task count by one.";
-                ui.showTaskDeleted(removedTask, tasks.size());
-                hasChanged = true;
-            }
-            case MARK -> {
-                int taskNumber = requireExistingTaskNumber(command);
-                hasChanged = tasks.mark(taskNumber);
-                ui.showTaskMarked(tasks.get(taskNumber));
-            }
-            case UNMARK -> {
-                int taskNumber = requireExistingTaskNumber(command);
-                hasChanged = tasks.unmark(taskNumber);
-                if (hasChanged) {
-                    ui.showTaskUnmarked(tasks.get(taskNumber));
-                } else {
-                    ui.showAlreadyUnmarked();
-                }
-            }
-            }
+            boolean hasChanged = dispatchCommand(command);
             if (hasChanged) {
                 saveTasks();
             }
@@ -198,6 +153,81 @@ public class Friday {
             responseSeverity = Response.Severity.ERROR;
             ui.showError(e.getMessage());
         }
+    }
+
+    /** Routes a command and reports whether task storage needs updating. */
+    private boolean dispatchCommand(String command) {
+        switch (Parser.parseCommandType(command)) {
+            case BYE -> endSession();
+            case HELLO -> ui.showGreeting();
+            case THANKS -> ui.showThanks();
+            case HELP -> ui.showHelp();
+            case CONTACT -> processContactCommand(command);
+            case TODO, DEADLINE, EVENT -> {
+                return addTask(command);
+            }
+            case DELETE -> {
+                return deleteTask(command);
+            }
+            case MARK -> {
+                return markTask(command);
+            }
+            case UNMARK -> {
+                return unmarkTask(command);
+            }
+            case ON -> listTasksOn(Parser.parseDate(command));
+            case FIND -> listMatchingTasks(Parser.parseFindKeyword(command));
+            case LIST -> showTaskList();
+        }
+        return false;
+    }
+
+    /** Shows the farewell and marks the session as ended. */
+    private void endSession() {
+        ui.showGoodbye();
+        hasExited = true;
+    }
+
+    /** Adds and presents a validated task, reporting that persistence is needed. */
+    private boolean addTask(String command) {
+        int taskCountBeforeAdd = tasks.size();
+        Task task = Parser.parseTask(command);
+        tasks.add(task);
+        assert tasks.size() == taskCountBeforeAdd + 1
+                : "Adding a task must increase the task count by one.";
+        ui.showTaskAdded(task, tasks.size());
+        return true;
+    }
+
+    /** Deletes and presents an existing task, reporting that persistence is needed. */
+    private boolean deleteTask(String command) {
+        int taskNumber = requireExistingTaskNumber(command);
+        int taskCountBeforeDelete = tasks.size();
+        Task removedTask = tasks.delete(taskNumber);
+        assert tasks.size() == taskCountBeforeDelete - 1
+                : "Deleting an existing task must decrease the task count by one.";
+        ui.showTaskDeleted(removedTask, tasks.size());
+        return true;
+    }
+
+    /** Marks a task complete and reports whether its status changed. */
+    private boolean markTask(String command) {
+        int taskNumber = requireExistingTaskNumber(command);
+        boolean hasChanged = tasks.mark(taskNumber);
+        ui.showTaskMarked(tasks.get(taskNumber));
+        return hasChanged;
+    }
+
+    /** Reopens a task and distinguishes a change from an already-incomplete task. */
+    private boolean unmarkTask(String command) {
+        int taskNumber = requireExistingTaskNumber(command);
+        boolean hasChanged = tasks.unmark(taskNumber);
+        if (hasChanged) {
+            ui.showTaskUnmarked(tasks.get(taskNumber));
+        } else {
+            ui.showAlreadyUnmarked();
+        }
+        return hasChanged;
     }
 
     /** Executes contact operations and saves only after a successful contact mutation. */

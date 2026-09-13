@@ -278,6 +278,27 @@ class FridayTest {
         assertEquals(2, Files.readAllLines(file).size());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"mark 1", "unmark 1"})
+    void getCommandResponse_unchangedTaskStatus_doesNotRetryBlockedSave(String command) throws IOException {
+        Path file = temporaryDirectory.resolve("friday.txt");
+        Friday friday = new Friday(file);
+        friday.getResponse("todo keep task");
+        friday.getResponse(command);
+        String before = friday.getResponse("list");
+        Files.delete(file);
+        Files.createDirectory(file);
+        Path blocker = file.resolve("blocker");
+        Files.writeString(blocker, "keep");
+
+        Response response = friday.getCommandResponse(command);
+
+        assertEquals(Response.Severity.NORMAL, response.severity());
+        assertFalse(response.text().contains("Warning:"));
+        assertEquals(before, friday.getResponse("list"));
+        assertEquals("keep", Files.readString(blocker));
+    }
+
     /** Compares the GUI-facing response while accommodating native Windows line endings. */
     private static void assertResponse(String body, String actual) {
         assertEquals(SEPARATOR + body, actual.replace("\r\n", "\n"));
