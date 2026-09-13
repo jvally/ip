@@ -76,6 +76,15 @@ class ConsoleUiRegressionTest {
 
     /** Sets up directives, runs Friday once, and returns all console output from that session. */
     private String runSession(Path workingDirectory, List<String> lines) throws IOException, InterruptedException {
+        SessionFixture fixture = prepareSession(workingDirectory, lines);
+        Process process = startFriday(workingDirectory);
+        String output = exchangeCommands(process, fixture);
+        verifyExit(process);
+        return output;
+    }
+
+    /** Applies startup fixtures and separates test directives from actual commands. */
+    private SessionFixture prepareSession(Path workingDirectory, List<String> lines) throws IOException {
         Path dataFile = workingDirectory.resolve("data/friday.txt");
         Path contactFile = workingDirectory.resolve("data/contacts.txt");
         List<String> taskRecords = new ArrayList<>();
@@ -106,24 +115,45 @@ class ConsoleUiRegressionTest {
         writeRecords(dataFile, taskRecords);
         writeRecords(contactFile, contactRecords);
 
-        Process process = startFriday(workingDirectory);
+        return new SessionFixture(dataFile, contactFile, List.copyOf(commands),
+                shouldBlockTaskSave, shouldBlockContactSave);
+    }
+
+    /** Sends commands after any startup synchronization and collects the session output. */
+    private String exchangeCommands(Process process, SessionFixture fixture) throws IOException {
         StringBuilder output = new StringBuilder();
         try (BufferedReader reader = process.inputReader(StandardCharsets.UTF_8);
                 Writer writer = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8)) {
-            if (shouldBlockTaskSave || shouldBlockContactSave) {
-                readStartupOutput(reader, output);
-                blockSaveDestination(dataFile, shouldBlockTaskSave);
-                blockSaveDestination(contactFile, shouldBlockContactSave);
-            }
-            writer.write(String.join("\n", commands));
-            writer.write("\n");
-            writer.flush();
-            writer.close();
+            prepareSaveFailures(reader, output, fixture);
+            sendCommands(writer, fixture.commands());
             output.append(reader.lines().collect(java.util.stream.Collectors.joining("\n")));
             if (!output.isEmpty()) {
                 output.append("\n");
             }
         }
+        return output.toString();
+    }
+
+    /** Waits for startup before blocking save paths, leaving loading behavior unchanged. */
+    private void prepareSaveFailures(BufferedReader reader, StringBuilder output, SessionFixture fixture)
+            throws IOException {
+        if (fixture.shouldBlockTaskSave() || fixture.shouldBlockContactSave()) {
+            readStartupOutput(reader, output);
+            blockSaveDestination(fixture.dataFile(), fixture.shouldBlockTaskSave());
+            blockSaveDestination(fixture.contactFile(), fixture.shouldBlockContactSave());
+        }
+    }
+
+    /** Sends the session input and closes stdin so EOF-only sessions can finish. */
+    private void sendCommands(Writer writer, List<String> commands) throws IOException {
+        writer.write(String.join("\n", commands));
+        writer.write("\n");
+        writer.flush();
+        writer.close();
+    }
+
+    /** Checks process completion and reports abnormal exits. */
+    private void verifyExit(Process process) throws IOException, InterruptedException {
         if (!process.waitFor(15, TimeUnit.SECONDS)) {
             process.destroyForcibly();
             throw new IOException("Friday did not finish within 15 seconds.");
@@ -131,7 +161,6 @@ class ConsoleUiRegressionTest {
         if (process.exitValue() != 0) {
             throw new IOException("Friday exited with status " + process.exitValue() + ".");
         }
-        return output.toString();
     }
 
     /** Writes fixture records only when the test case supplies at least one record. */
@@ -188,6 +217,11 @@ class ConsoleUiRegressionTest {
     /** Normalizes platform line endings and ignores one trailing newline. */
     private String normalize(String text) {
         return text.replace("\r\n", "\n").replaceFirst("\\n$", "");
+    }
+
+    /** Carries prepared fixture paths, commands, and deferred save-failure instructions. */
+    private record SessionFixture(Path dataFile, Path contactFile, List<String> commands,
+            boolean shouldBlockTaskSave, boolean shouldBlockContactSave) {
     }
 
     /** Stores one named console test case parsed from the Markdown plan. */
