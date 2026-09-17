@@ -2,6 +2,18 @@
 
 FRIDAY is a JavaFX mission assistant for managing tasks and contacts. Its chat window accepts the same task commands as the legacy console UI.
 
+## Quick start
+
+1. Install **Java 25.0.3.fx-zulu** and open the project root in IntelliJ as a Gradle project.
+2. Select **application > run** in IntelliJ, or run `./gradlew --quiet --console=plain run` from the project root.
+3. In the chat window, enter `hello`, `todo buy groceries`, `list`, and `help`.
+
+FRIDAY saves task changes automatically. Use the number shown by `list` with `mark`, `unmark`, and `delete`.
+Enter `bye` when you are finished; close and reopen FRIDAY to begin another session.
+
+See [First conversation](#first-conversation) for a guided example, or jump to the
+[Command reference](#command-reference).
+
 ## Setup and running
 
 Use **Java 25.0.3.fx-zulu**. Gradle support is included through the committed wrapper,
@@ -49,72 +61,10 @@ Generated output is under the ignored `build` directory. `clean` removes that ou
   `@ParameterizedTest` methods. Reload the Gradle project and run `./gradlew test --rerun-tasks`.
   A fresh run must discover tests; `NO-SOURCE` is not the expected result after A-JUnit.
 
-## Development tests
+## For developers
 
-Select Java **25.0.3.fx-zulu** (`sdk use java 25.0.3.fx-zulu` on macOS), then run from the
-project root:
-
-```bash
-./gradlew test
-./gradlew test --tests friday.parser.ParserTest
-./gradlew desktopTest
-./gradlew clean build
-```
-
-`test` runs JUnit Jupiter 5.14.4. `build` includes the same tests before packaging.
-`desktopTest` explicitly enables the JavaFX desktop acceptance checks, including command-error
-presentation and storage-warning recovery; it requires a graphical desktop session. It is kept
-separate so normal CI can run on headless machines.
-Use `--rerun-tasks` to execute tests again even when Gradle considers their outputs current.
-The first run needs internet access for JUnit dependencies. HTML results are written to
-`build/reports/tests/test/index.html` and XML results to `build/test-results/test/`.
-A failed assertion or unexpected exception causes the Gradle command to fail.
-On Windows, use `gradlew.bat` or `.\gradlew.bat` instead of `./gradlew`.
-
-Test files follow the normal Gradle layout: for example, `friday.parser.Parser` has
-`src/test/java/friday/parser/ParserTest.java`. IntelliJ can run a test method or class using
-its gutter icon after you reload the Gradle project. Names follow
-`methodUnderTest_scenario_expectedBehavior`. `assertEquals` checks a result; `assertThrows`
-checks that invalid input produces the expected exception. Parameterized tests repeat a
-behavior check over separate named inputs. Storage tests use a fresh `@TempDir` for isolation.
-
-There is no duplicate standalone test runner to maintain. The console regression test reads
-`test/ui-test-plan.md` and runs through Gradle: use
-`./gradlew test --tests friday.ConsoleUiRegressionTest` for exact user-visible behavior.
-
-### Coverage priorities
-
-The target is the roughly **50% highest-value methods**, selected by complexity and impact.
-It is not a measured 50% line/branch-coverage threshold or a cap on useful tests. After every
-code change, review/update the related JUnit tests and reassess these priorities, as required
-by `AGENTS.md` and referenced by `CLAUDE.md`.
-
-| Test class | Prioritized behavior | Bugs the tests aim to catch |
-| --- | --- | --- |
-| `ParserTest` | `parseCommandType`, `parseTask`, `parseTaskNumber`, `parseDate` | Wrong command boundaries, lost task fields, malformed arguments, overflow, incorrect errors |
-| `TaskListTest` | Construction, add/get/delete, number validation, mark/unmark, date filtering, `toList` | Off-by-one selection, wrong renumbering, redundant saves, unintended mutation and aliasing |
-| `TaskDateTimeTest` | `parse`, `format` | Invalid dates silently accepted, leap-year errors, lost time, locale-dependent output |
-| `EventTest` | Constructor and `occursOn` | Backwards intervals and excluded start/end dates, including an end at midnight |
-| `DeadlineTest` | Constructor and `occursOn` | Wrong parsed deadline, matching the wrong day, completion status affecting date lookup |
-| `StorageTest` | `load`, `save` and their private helpers through those APIs | Lost fields/status, bad escaping, corrupt/partial files, leaked temporary files, failed recovery |
-
-Simple accessors are checked through these behaviors where useful. Console printing and the
-application loop remain covered by the UI plan rather than duplicating every output assertion
-in JUnit. Extend the existing test class when behavior changes, and use expected values that
-do not call the same production logic being tested.
-
-The D-Contacts increments add focused model, storage, parser, and response tests:
-
-| Test class | Prioritized behavior | Bugs the tests aim to catch |
-| --- | --- | --- |
-| `ContactTest` | Constructor validation and field matching | Invalid phone/email details, control characters, lost text, incorrect search matching |
-| `ContactListTest` | Add, delete, search, initialization, snapshots | Duplicate names, wrong contact numbers, state changes after failure, aliased collections |
-| `ContactStorageTest` | Load and save through public APIs | Lost optional fields/escapes, corrupt or duplicate records, overwritten data, leaked temporary files |
-| `ContactParserTest` | Subcommands, fields, search text, contact numbers | Incorrect field boundaries, duplicate prefixes, wrong validation order, integer overflow |
-| `FridayTest` | Contact responses, restart persistence, independent recovery | Incorrect messages, accidental saves, cross-collection failures, lost in-memory changes |
-
-These tests extend the existing risk-based method priorities. Contact UI cases in the console plan
-also check exact output, escaped text, restarts, and read/write failures.
+Run `./gradlew test` for automated checks and `./gradlew desktopTest` for opt-in JavaFX checks.
+Detailed setup, test, and CI guidance is in the repository [README](../README.md).
 
 ## Managing contacts
 
@@ -220,7 +170,7 @@ your changes; the next successful contact addition or deletion saves its complet
 Listing and searching do not retry writes. Do not close FRIDAY before saving if you need those changes.
 Snapshots are written to a temporary file before replacement; task records are not rewritten by contact commands.
 
-## Quick start
+## First conversation
 
 Type a command in the GUI text field, then press **Enter** or select **Send**. FRIDAY supports todos, deadlines,
 events, searches, and a few helper commands. The chat shows your command on the right and FRIDAY's response on the left.
