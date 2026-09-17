@@ -231,7 +231,7 @@ Later improvements can supersede the behavior recorded at earlier milestones.
 
 ### A-BetterGui: Compact and readable conversation
 
-- **What we did:** Added navy, cyan, and gold styling, compact Iron Spider and AI-core avatars,
+- **What we did:** Added navy, cyan, and gold styling, compact original user and AI-core avatars,
   asymmetric message panels, explicit error/warning severity, responsive wrapping, and resizing.
   Kept input visible, restored focus after sending, and disabled controls after `bye`.
 - **Verification:** Desktop checks and screenshots cover default/minimum/enlarged windows, long content,

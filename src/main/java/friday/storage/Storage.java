@@ -63,30 +63,46 @@ public class Storage {
      * @throws IOException if the snapshot cannot be written or moved into place.
      */
     public void save(List<Task> tasks) throws IOException {
+        Path directory = createSaveDirectory();
+        Path temporaryFile = Files.createTempFile(directory, "friday-", ".tmp");
+        try {
+            writeTasks(temporaryFile, tasks);
+            replaceSaveFile(temporaryFile);
+        } finally {
+            Files.deleteIfExists(temporaryFile);
+        }
+    }
+
+    /** Creates and returns the folder that will contain the task save file. */
+    private Path createSaveDirectory() throws IOException {
         Path directory = file.getParent();
         if (directory == null) {
             directory = Path.of(".");
         }
         Files.createDirectories(directory);
-        Path temporaryFile = Files.createTempFile(directory, "friday-", ".tmp");
+        return directory;
+    }
+
+    /** Writes each task as one independently encoded record in the temporary snapshot. */
+    private void writeTasks(Path temporaryFile, List<Task> tasks) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile, StandardCharsets.UTF_8)) {
+            for (Task task : tasks) {
+                String record = formatTask(task);
+                assert !record.contains("\n") && !record.contains("\r")
+                        : "Each encoded task must occupy exactly one storage record.";
+                writer.write(record);
+                writer.newLine();
+            }
+        }
+    }
+
+    /** Replaces the destination atomically when supported, otherwise using a regular replacement move. */
+    private void replaceSaveFile(Path temporaryFile) throws IOException {
         try {
-            try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile, StandardCharsets.UTF_8)) {
-                for (Task task : tasks) {
-                    String record = formatTask(task);
-                    assert !record.contains("\n") && !record.contains("\r")
-                            : "Each encoded task must occupy exactly one storage record.";
-                    writer.write(record);
-                    writer.newLine();
-                }
-            }
-            try {
-                Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING,
-                        StandardCopyOption.ATOMIC_MOVE);
-            } catch (AtomicMoveNotSupportedException e) {
-                Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } finally {
-            Files.deleteIfExists(temporaryFile);
+            Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

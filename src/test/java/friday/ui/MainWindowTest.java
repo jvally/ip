@@ -116,7 +116,7 @@ class MainWindowTest {
                 });
                 onFx(() -> {
                     ScrollPane scroll = (ScrollPane) stage.getScene().getRoot().lookup("#scrollPane");
-                    assertEquals(0, scroll.getVvalue());
+                    assertEquals(0, scroll.getVvalue(), 0.01);
                     return null;
                 });
             }

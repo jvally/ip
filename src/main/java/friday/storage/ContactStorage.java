@@ -63,28 +63,44 @@ public final class ContactStorage {
      */
     public void save(List<Contact> contacts) throws IOException {
         List<Contact> snapshot = new ContactList(contacts).toList();
+        Path directory = createSaveDirectory();
+        Path temporaryFile = Files.createTempFile(directory, "friday-contacts-", ".tmp");
+        try {
+            writeContacts(temporaryFile, snapshot);
+            replaceSaveFile(temporaryFile);
+        } finally {
+            Files.deleteIfExists(temporaryFile);
+        }
+    }
+
+    /** Creates and returns the folder that will contain the contact save file. */
+    private Path createSaveDirectory() throws IOException {
         Path directory = file.getParent();
         if (directory == null) {
             directory = Path.of(".");
         }
         Files.createDirectories(directory);
-        Path temporaryFile = Files.createTempFile(directory, "friday-contacts-", ".tmp");
+        return directory;
+    }
+
+    /** Writes each contact as one encoded record in the temporary snapshot. */
+    private void writeContacts(Path temporaryFile, List<Contact> contacts) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile, StandardCharsets.UTF_8)) {
+            for (Contact contact : contacts) {
+                writer.write("C|" + escape(contact.getName()) + "|" + escape(contact.getPhone())
+                        + "|" + escape(contact.getEmail()));
+                writer.newLine();
+            }
+        }
+    }
+
+    /** Replaces the destination atomically when supported, otherwise using a regular replacement move. */
+    private void replaceSaveFile(Path temporaryFile) throws IOException {
         try {
-            try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile, StandardCharsets.UTF_8)) {
-                for (Contact contact : snapshot) {
-                    writer.write("C|" + escape(contact.getName()) + "|" + escape(contact.getPhone())
-                            + "|" + escape(contact.getEmail()));
-                    writer.newLine();
-                }
-            }
-            try {
-                Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING,
-                        StandardCopyOption.ATOMIC_MOVE);
-            } catch (AtomicMoveNotSupportedException e) {
-                Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } finally {
-            Files.deleteIfExists(temporaryFile);
+            Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(temporaryFile, file, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

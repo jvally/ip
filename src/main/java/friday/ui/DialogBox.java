@@ -32,6 +32,18 @@ public class DialogBox extends HBox {
     private VBox messagePanel;
 
     private DialogBox(String text, boolean isFriday, Response.Severity severity) {
+        loadLayout();
+        configureAvatar(isFriday);
+        dialog.setText(text);
+        if (isFriday) {
+            configureFridayDialog(severity);
+        } else {
+            configureUserDialog();
+        }
+    }
+
+    /** Loads the shared FXML structure before applying message-specific content and styling. */
+    private void loadLayout() {
         try {
             FXMLLoader loader = new FXMLLoader(DialogBox.class.getResource("/view/DialogBox.fxml"));
             loader.setController(this);
@@ -40,10 +52,13 @@ public class DialogBox extends HBox {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load the dialog-box layout.", e);
         }
-        dialog.setText(text);
+    }
+
+    /** Selects, crops, and rounds the correct avatar for this side of the conversation. */
+    private void configureAvatar(boolean isFriday) {
         displayPicture.setImage(isFriday ? FRIDAY_AVATAR : USER_AVATAR);
         if (!isFriday) {
-            // Focus the supplied full-body artwork on the mask and upper torso.
+            // Focus the portrait on its face and upper torso.
             displayPicture.setViewport(new Rectangle2D(USER_AVATAR.getWidth() * 0.34,
                     USER_AVATAR.getHeight() * 0.24, USER_AVATAR.getWidth() * 0.34,
                     USER_AVATAR.getWidth() * 0.34));
@@ -52,26 +67,31 @@ public class DialogBox extends HBox {
         clip.setArcWidth(12);
         clip.setArcHeight(12);
         displayPicture.setClip(clip);
-        if (isFriday) {
-            speaker.setText(switch (severity) {
-                case NORMAL -> "FRIDAY";
-                case ERROR -> "FRIDAY · Command error";
-                case WARNING -> "FRIDAY · Warning";
-            });
-            getStyleClass().add(switch (severity) {
-                case NORMAL -> "assistant";
-                case ERROR -> "error";
-                case WARNING -> "warning";
-            });
-        } else {
-            getStyleClass().add("user");
-            speaker.setText("YOU");
-            getChildren().setAll(messagePanel, displayPicture);
-            setAlignment(Pos.TOP_RIGHT);
-            HBox.setHgrow(messagePanel, Priority.NEVER);
-            // Leave some visual asymmetry without sacrificing reply width on small windows.
-            messagePanel.maxWidthProperty().bind(widthProperty().subtract(AVATAR_SIZE + 8).multiply(0.85));
-        }
+    }
+
+    /** Applies severity-specific speaker text and styling to an assistant reply. */
+    private void configureFridayDialog(Response.Severity severity) {
+        speaker.setText(switch (severity) {
+            case NORMAL -> "FRIDAY";
+            case ERROR -> "FRIDAY · Command error";
+            case WARNING -> "FRIDAY · Warning";
+        });
+        getStyleClass().add(switch (severity) {
+            case NORMAL -> "assistant";
+            case ERROR -> "error";
+            case WARNING -> "warning";
+        });
+    }
+
+    /** Applies the right-aligned layout and width limit for a user command. */
+    private void configureUserDialog() {
+        getStyleClass().add("user");
+        speaker.setText("YOU");
+        getChildren().setAll(messagePanel, displayPicture);
+        setAlignment(Pos.TOP_RIGHT);
+        HBox.setHgrow(messagePanel, Priority.NEVER);
+        // Leave some visual asymmetry without sacrificing reply width on small windows.
+        messagePanel.maxWidthProperty().bind(widthProperty().subtract(AVATAR_SIZE + 8).multiply(0.85));
     }
 
     /** Creates a right-aligned command bubble. */

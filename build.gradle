@@ -46,11 +46,23 @@ tasks.named('test', Test) {
     }
 }
 
+tasks.register('desktopTest', Test) {
+    group = 'verification'
+    description = 'Runs the opt-in JavaFX desktop acceptance tests.'
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    environment 'FRIDAY_GUI_TESTS', 'true'
+    jvmArgs '--enable-native-access=javafx.graphics'
+    include 'friday/ui/MainWindowTest.class'
+}
+
 application {
     mainClass = 'friday.Launcher'
 }
 
 tasks.named('run', JavaExec) {
+    jvmArgs '--enable-native-access=javafx.graphics'
     // Gradle otherwise supplies an empty input stream to the console chatbot.
     standardInput = System.in
     // Keep the existing data/friday.txt location independent of how Gradle is invoked.

@@ -57,10 +57,14 @@ project root:
 ```bash
 ./gradlew test
 ./gradlew test --tests friday.parser.ParserTest
+./gradlew desktopTest
 ./gradlew clean build
 ```
 
 `test` runs JUnit Jupiter 5.14.4. `build` includes the same tests before packaging.
+`desktopTest` explicitly enables the JavaFX desktop acceptance checks, including command-error
+presentation and storage-warning recovery; it requires a graphical desktop session. It is kept
+separate so normal CI can run on headless machines.
 Use `--rerun-tasks` to execute tests again even when Gradle considers their outputs current.
 The first run needs internet access for JUnit dependencies. HTML results are written to
 `build/reports/tests/test/index.html` and XML results to `build/test-results/test/`.
@@ -273,7 +277,7 @@ For phone and email rules, see [Managing contacts](#managing-contacts).
 
 ## Using the GUI
 
-FRIDAY uses a Stark-inspired dark theme with an Iron Spider user avatar and a FRIDAY AI-core avatar.
+FRIDAY uses a dark navy, cyan, and gold theme with original user and FRIDAY AI-core avatars.
 Your commands appear in compact bubbles on the right; assistant replies use wider panels on the left.
 
 - **Command error** panels use a red border and tint. Read the explanation, correct your command, and submit again.
@@ -290,7 +294,7 @@ Your commands appear in compact bubbles on the right; assistant replies use wide
 
 ![Long replies at the minimum window size](images/friday-minimum.png)
 
-See [artwork provenance](images/artwork.md) for the supplied Iron Spider image and generated AI-core credit.
+See [artwork provenance](images/artwork.md) for the generated avatar credits and prompts.
 
 ## Adding todos
 
