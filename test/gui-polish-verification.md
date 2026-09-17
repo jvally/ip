@@ -4,7 +4,9 @@ Verified on macOS with Java `25.0.3.fx-zulu` on 2026-09-13.
 
 ## Automated checks
 
-`FRIDAY_GUI_TESTS=true ./gradlew test` passed: **378 tests, zero failures, zero skipped**.
+`./gradlew desktopTest` runs the opt-in JavaFX acceptance tests with `FRIDAY_GUI_TESTS=true`.
+It requires a graphical desktop session. The full suite can still be run with
+`FRIDAY_GUI_TESTS=true ./gradlew test` when needed.
 This includes 46 source-of-truth console cases and two opt-in JavaFX desktop acceptance tests.
 Normal `./gradlew test` runs the business/console suite and skips the desktop tests unless
 `FRIDAY_GUI_TESTS=true` is set. The desktop tests require a graphical display.
@@ -35,7 +37,7 @@ The actual production FXML/controller was loaded against temporary data. JavaFX 
 - Manual scrolling remains available; the next submission scrolls to the latest reply.
 - Red command-error panels and amber startup/save-warning panels have explicit text labels.
 - `bye` disables both submission controls and displays the session-ended hint.
-- The supplied Iron Spider crop is recognizable at 36 px. FRIDAY's generated core has PNG alpha transparency.
+- The generated user avatar and FRIDAY core have PNG alpha transparency and remain recognizable at 36 px.
 
 Reviewed the default, minimum, enlarged, warning, and ended-session JavaFX snapshots.
 Screenshots show scene contents; macOS title-bar height is excluded.
@@ -43,7 +45,7 @@ Screenshots show scene contents; macOS title-bar height is excluded.
 ## Limits
 
 Desktop rendering was verified on macOS only. Windows/Linux appearance was not visually tested.
-The supplied Iron Spider artwork retains its original background within the rounded crop, rather than being
+The generated user artwork retains a transparent background within the rounded crop, rather than being
 regenerated or background-removed. Its original illustrator was not supplied; provenance is documented in
 `docs/images/artwork.md`.
 

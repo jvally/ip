@@ -16,6 +16,10 @@ public final class ContactParser {
         ADD, LIST, FIND, DELETE
     }
 
+    /** Holds optional fields extracted from one contact-add command. */
+    private record ContactFields(String phone, String email) {
+    }
+
     private ContactParser() {
         // Parsing has no state.
     }
@@ -49,6 +53,12 @@ public final class ContactParser {
             throw new IllegalArgumentException(Contact.INVALID_FORMAT_MESSAGE);
         }
         String name = body.substring(0, prefixes.start()).strip();
+        ContactFields fields = parseFields(body, prefixes);
+        return new Contact(name, fields.phone(), fields.email());
+    }
+
+    /** Extracts unique, nonblank phone and email fields after the first field prefix has been found. */
+    private static ContactFields parseFields(String body, Matcher prefixes) {
         String phone = "";
         String email = "";
         boolean hasPhone = false;
@@ -80,7 +90,7 @@ public final class ContactParser {
                 default -> throw new IllegalArgumentException(Contact.INVALID_FORMAT_MESSAGE);
             }
         }
-        return new Contact(name, phone, email);
+        return new ContactFields(phone, email);
     }
 
     /** Returns the trimmed, nonblank search phrase, preserving internal whitespace and case. */

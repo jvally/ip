@@ -233,39 +233,51 @@ public class Friday {
     /** Executes contact operations and saves only after a successful contact mutation. */
     private void processContactCommand(String command) {
         switch (ContactParser.parseCommandType(command)) {
-            case ADD -> {
-                Contact contact = ContactParser.parseContact(command);
-                contacts.add(contact);
-                ui.showContactAdded(contact, contacts.size());
-                saveContacts();
-            }
-            case LIST -> {
-                if (contacts.size() == 0) {
-                    ui.showError("Your contact directory is empty.");
-                    return;
-                }
-                ui.showContactListHeader(false);
-                for (int number = 1; number <= contacts.size(); number++) {
-                    ui.showNumberedContact(number, contacts.get(number));
-                }
-            }
-            case FIND -> {
-                List<Integer> matches = contacts.findContactNumbersContaining(ContactParser.parseFindKeyword(command));
-                if (matches.isEmpty()) {
-                    ui.showError("Contact scan complete. No matches found.");
-                    return;
-                }
-                ui.showContactListHeader(true);
-                for (int number : matches) {
-                    ui.showNumberedContact(number, contacts.get(number));
-                }
-            }
-            case DELETE -> {
-                Contact removed = contacts.delete(ContactParser.parseContactNumber(command));
-                ui.showContactDeleted(removed, contacts.size());
-                saveContacts();
-            }
+            case ADD -> addContact(command);
+            case LIST -> showContacts();
+            case FIND -> showMatchingContacts(command);
+            case DELETE -> deleteContact(command);
         }
+    }
+
+    /** Adds a parsed contact, presents it, and persists the changed directory. */
+    private void addContact(String command) {
+        Contact contact = ContactParser.parseContact(command);
+        contacts.add(contact);
+        ui.showContactAdded(contact, contacts.size());
+        saveContacts();
+    }
+
+    /** Shows all contacts, or an empty-directory message when there are none. */
+    private void showContacts() {
+        if (contacts.size() == 0) {
+            ui.showError("Your contact directory is empty.");
+            return;
+        }
+        ui.showContactListHeader(false);
+        for (int number = 1; number <= contacts.size(); number++) {
+            ui.showNumberedContact(number, contacts.get(number));
+        }
+    }
+
+    /** Shows contacts matching the supplied find command without changing the directory. */
+    private void showMatchingContacts(String command) {
+        List<Integer> matches = contacts.findContactNumbersContaining(ContactParser.parseFindKeyword(command));
+        if (matches.isEmpty()) {
+            ui.showError("Contact scan complete. No matches found.");
+            return;
+        }
+        ui.showContactListHeader(true);
+        for (int number : matches) {
+            ui.showNumberedContact(number, contacts.get(number));
+        }
+    }
+
+    /** Deletes the selected contact, presents it, and persists the changed directory. */
+    private void deleteContact(String command) {
+        Contact removed = contacts.delete(ContactParser.parseContactNumber(command));
+        ui.showContactDeleted(removed, contacts.size());
+        saveContacts();
     }
 
     /** Keeps contact recovery independent from task saving and retries after ordinary write failures. */
