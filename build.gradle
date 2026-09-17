@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.gradleup.shadow' version '9.5.1'
 }
 
 java {
@@ -59,6 +60,10 @@ tasks.register('desktopTest', Test) {
 
 application {
     mainClass = 'friday.Launcher'
+}
+
+tasks.named('shadowJar') {
+    archiveFileName = 'friday.jar'
 }
 
 tasks.named('run', JavaExec) {
